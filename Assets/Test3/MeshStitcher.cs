@@ -224,6 +224,7 @@ public class MeshStitcher : MonoBehaviour
 
                 float weight = .05f / distance;
                 vertexKeys[i].insertionWeightLeftVertex += Mathf.Clamp(weight, 0, 1);
+                vertexKeys[i].insertionWeightLeftVertex = Mathf.Clamp(vertexKeys[i].insertionWeightLeftVertex, 0, 1);
             }
 
             else
@@ -231,7 +232,8 @@ public class MeshStitcher : MonoBehaviour
                 Vector3 vertexPosWorldSpace = meshRight.transform.TransformPoint(deformableVertices[i].curRightVertexPos);
                 float distance = Vector3.Distance(vertexPosWorldSpace, insertionPoint);
 
-                if (distance < 0.005f && distance > .6f)
+                //This changes how many vertices gets affected from the weight of the current suturing
+                if (distance < 0.009f && distance > .5f)
                 {
                     return;
                 }
@@ -239,6 +241,7 @@ public class MeshStitcher : MonoBehaviour
                 // At a higher distance, the weight is smaller
                 float weight = .05f / distance;
                 vertexKeys[i].insertionWeightRightVertex += Mathf.Clamp(weight, 0, 1);
+                vertexKeys[i].insertionWeightRightVertex = Mathf.Clamp(vertexKeys[i].insertionWeightRightVertex, 0, 1);
             }
         }
     }
