@@ -8,10 +8,13 @@ public class NeedleDetector : MonoBehaviour
     public enum Side
     {
         Left,
-        Right
+        Right,
+        LeftDown,
+        RightDown
     };
 
     public static event EventHandler<Vector3> onNeedleEnter;
+    public static event EventHandler<Vector3> onNeedleExit;
 
     public Side side;
 
@@ -22,6 +25,13 @@ public class NeedleDetector : MonoBehaviour
             Debug.Log("Needle inserted");
             Vector3 collisionPoint = other.ClosestPoint(transform.position);
             onNeedleEnter?.Invoke(this, collisionPoint);
+        }
+
+        if (other.CompareTag("TopNeedle") && (side != Side.LeftDown && side != Side.RightDown))
+        {
+            Debug.Log("Needle inserted");
+            Vector3 collisionPoint = other.ClosestPoint(transform.position);
+            onNeedleExit?.Invoke(this, collisionPoint);
         }
     }
 }

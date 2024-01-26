@@ -39,6 +39,7 @@ public class AnatomicalForcepsDeform : MonoBehaviour
 
     private void Update()
     {
+
         TopBone.localRotation = Quaternion.Slerp(originalTopRotation_Q, deformedlTopRotation_Q, topKey);
         BottomBone.localRotation = Quaternion.Slerp(originalBottomRotation_Q, deformedlBottomRotation_Q, bottomKey);
     }

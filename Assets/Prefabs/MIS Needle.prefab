@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 649787202322515179}
   - component: {fileID: 6305038713941230143}
   - component: {fileID: 3041113270176980441}
+  - component: {fileID: 991127341245426191}
   m_Layer: 0
   m_Name: MIS Needle
   m_TagString: Untagged
@@ -26,9 +27,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 755051600263286091}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.3940411, y: 0.60042745, z: -0.5744135, w: 0.39276922}
+  m_LocalRotation: {x: -0.39404237, y: 0.60042876, z: -0.5744099, w: 0.39277133}
   m_LocalPosition: {x: -0.036, y: 1.562, z: 0.436}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.99999976, y: 0.9999998, z: 0.99999976}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6804501443009944113}
@@ -75,6 +76,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 1
+--- !u!114 &991127341245426191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755051600263286091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62359d80fdc0e4315ab6331b78ec5b90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kinematicForParticles: 0
 --- !u!1 &1027412321551228500
 GameObject:
   m_ObjectHideFlags: 0
@@ -140,6 +154,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5603136644678758095}
   - component: {fileID: 4035956095724899935}
+  - component: {fileID: 1915887023928863530}
   m_Layer: 0
   m_Name: TopCollider
   m_TagString: TopNeedle
@@ -185,6 +200,23 @@ CapsuleCollider:
   m_Height: 0.065
   m_Direction: 0
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1915887023928863530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3679363761776057548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6757b231cedd544c583ef8aeaf773b2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thickness: 0.09
+  material: {fileID: 0}
+  filter: -65535
+  m_SourceCollider: {fileID: 4035956095724899935}
+  m_DistanceField: {fileID: 0}
 --- !u!1001 &6477525913717243354
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -212,7 +212,7 @@ public class MeshStitcher : MonoBehaviour
     {
         for(int i = 0; i < vertexKeys.Length; i++)
         {
-            if(side == NeedleDetector.Side.Left)
+            if(side == NeedleDetector.Side.Left || side == NeedleDetector.Side.LeftDown)
             {
                 Vector3 vertexPosWorldSpace = meshLeft.transform.TransformPoint(deformableVertices[i].curLeftVertexPos);
                 float distance = Vector3.Distance(vertexPosWorldSpace, insertionPoint);
@@ -227,7 +227,7 @@ public class MeshStitcher : MonoBehaviour
                 vertexKeys[i].insertionWeightLeftVertex = Mathf.Clamp(vertexKeys[i].insertionWeightLeftVertex, 0, 1);
             }
 
-            else
+            else if(side == NeedleDetector.Side.Right || side == NeedleDetector.Side.RightDown)
             {
                 Vector3 vertexPosWorldSpace = meshRight.transform.TransformPoint(deformableVertices[i].curRightVertexPos);
                 float distance = Vector3.Distance(vertexPosWorldSpace, insertionPoint);
