@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thickness: 0
-  material: {fileID: 11400000, guid: 4c46db05afff546f8a9f9333946e9882, type: 2}
+  material: {fileID: 11400000, guid: 56297c6e785b44eb28e469b62cedc016, type: 2}
   filter: -262140
   m_SourceCollider: {fileID: 4171752693171291968}
   m_DistanceField: {fileID: 0}
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thickness: 0
-  material: {fileID: 11400000, guid: 4c46db05afff546f8a9f9333946e9882, type: 2}
+  material: {fileID: 11400000, guid: 56297c6e785b44eb28e469b62cedc016, type: 2}
   filter: -262140
   m_SourceCollider: {fileID: 824721592825670866}
   m_DistanceField: {fileID: 0}
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thickness: 0
-  material: {fileID: 11400000, guid: 4c46db05afff546f8a9f9333946e9882, type: 2}
+  material: {fileID: 11400000, guid: 56297c6e785b44eb28e469b62cedc016, type: 2}
   filter: -262140
   m_SourceCollider: {fileID: 1461110218625667016}
   m_DistanceField: {fileID: 0}
@@ -323,7 +323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thickness: 0
-  material: {fileID: 11400000, guid: 4c46db05afff546f8a9f9333946e9882, type: 2}
+  material: {fileID: 11400000, guid: 56297c6e785b44eb28e469b62cedc016, type: 2}
   filter: -262140
   m_SourceCollider: {fileID: 5174222718174331410}
   m_DistanceField: {fileID: 0}

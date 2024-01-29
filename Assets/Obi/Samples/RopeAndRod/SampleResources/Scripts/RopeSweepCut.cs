@@ -13,6 +13,8 @@ public class RopeSweepCut : MonoBehaviour
     LineRenderer lineRenderer;
     Vector3 cutStartPosition;
 
+    ObiRod rod;
+
     private void Awake()
     {
         rope = GetComponent<ObiRope>();
