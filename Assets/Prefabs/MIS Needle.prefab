@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 649787202322515179}
   - component: {fileID: 6305038713941230143}
   - component: {fileID: 3041113270176980441}
-  - component: {fileID: 991127341245426191}
   m_Layer: 0
   m_Name: MIS Needle
   m_TagString: Untagged
@@ -49,6 +48,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f965fdd5ed6d0c64096a0b49d4976924, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  needleTop: {fileID: 0}
+  needleBottom: {fileID: 0}
+  torusColliderPrefab: {fileID: 0}
 --- !u!54 &3041113270176980441
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -76,19 +78,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 1
---- !u!114 &991127341245426191
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 755051600263286091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62359d80fdc0e4315ab6331b78ec5b90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  kinematicForParticles: 0
 --- !u!1 &1027412321551228500
 GameObject:
   m_ObjectHideFlags: 0
