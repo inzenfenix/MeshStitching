@@ -88,17 +88,10 @@ public class ThreadBehaviour : MonoBehaviour
                     return attachments[i];
                 }
             }
-
-            //In case we didn't find a match
-            return rope.solver.actors[0].AddComponent<ObiParticleAttachment>();
-
         }
 
-        //If there is no current attachments added
-        else
-        {
-            return rope.solver.actors[0].AddComponent<ObiParticleAttachment>();
-        }
+        //If there is no current attachments added, or no match was found
+        return rope.solver.actors[0].AddComponent<ObiParticleAttachment>();
     }
 
 
