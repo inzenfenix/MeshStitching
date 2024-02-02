@@ -27,9 +27,19 @@ public class NeedleDetector : MonoBehaviour
             onNeedleEnter?.Invoke(this, collisionPoint);
         }
 
-        if (other.CompareTag("TopNeedle"))
+        /*if (other.CompareTag("TopNeedle"))
         {
             Debug.Log("Needle inserted");
+            Vector3 collisionPoint = other.ClosestPoint(transform.position);
+            onNeedleExit?.Invoke(this, collisionPoint);
+        }*/
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("TopNeedle"))
+        {
+            Debug.Log("Needle out");
             Vector3 collisionPoint = other.ClosestPoint(transform.position);
             onNeedleExit?.Invoke(this, collisionPoint);
         }

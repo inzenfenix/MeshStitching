@@ -7,6 +7,7 @@ using UnityEngine;
 public class MISNeedleBehaviour : MonoBehaviour
 {
 
+
     [Header("Needle components")]
     [SerializeField] private Transform needleTop;
     [SerializeField] private Transform needleBottom;
@@ -29,12 +30,12 @@ public class MISNeedleBehaviour : MonoBehaviour
 
     private void OnEnable()
     { 
-        NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
+        //NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
     }
 
     private void OnDisable()
     {
-        NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
+        //NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
     }
 
     private void Update()
@@ -108,7 +109,7 @@ public class MISNeedleBehaviour : MonoBehaviour
             direction = Quaternion.Euler(90f, 0f, 90f);
         }
 
-        Vector3 spawnPos = needleTop.transform.position + TorusOffset(needleBottom.position, needleTop.position);
+        Vector3 spawnPos = needleTop.transform.position + ContactOffset(needleBottom.position, needleTop.position);
 
         if(torusColliders.Count > 0 )
         {
@@ -129,7 +130,7 @@ public class MISNeedleBehaviour : MonoBehaviour
 
     }
 
-    private Vector3 TorusOffset(Vector3 needleStartPos, Vector3 needleEndPos)
+    private Vector3 ContactOffset(Vector3 needleStartPos, Vector3 needleEndPos)
     {
         if(needleStartPos.y > needleEndPos.y)
         {
