@@ -147,7 +147,7 @@ public class ThreadBehaviour : MonoBehaviour
             nextAttachment.target = nextTarget.transform;
             nextAttachment.particleGroup = particleGroup;
 
-            StartCoroutine(MoveParticle(nextTarget.transform, nextParticlePos, curParticlePos));
+            StartCoroutine(MoveAttachmentTarget(nextTarget.transform, nextParticlePos, curParticlePos));
 
             //nextTarget.transform.position = curParticlePos;
 
@@ -159,7 +159,7 @@ public class ThreadBehaviour : MonoBehaviour
         Debug.Log("Last particle: " + stitchAttachments[0].particleGroup.particleIndices[0]);
     }
 
-    private IEnumerator MoveParticle(Transform target, Vector3 start, Vector3 end)
+    private IEnumerator MoveAttachmentTarget(Transform target, Vector3 start, Vector3 end)
     {
         float t = 0;
         movingParticles = true;
@@ -264,7 +264,7 @@ public class ThreadBehaviour : MonoBehaviour
         curAttachment.particleGroup = particleGroup;
         curAttachment.target = spawnPoint;
 
-        MoveParticle(spawnPoint, spawnPoint.position, stitchPos);
+        MoveAttachmentTarget(spawnPoint, spawnPoint.position, stitchPos);
         //spawnPoint.position = stitchPos;
 
         stitchAttachments.Add(curAttachment);
