@@ -1,13 +1,7 @@
 using Obi;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
 
 public class ThreadBehaviour : MonoBehaviour
 {
@@ -27,8 +21,7 @@ public class ThreadBehaviour : MonoBehaviour
 
     private readonly float stitchStretchThresholdOffset = 0.0075f;
 
-    private Vector3 entrancePoint;
-    private Vector3 exitPoint;
+    [SerializeField] private int inBetweenAttachmentsParticles = 10;
 
 
     private void Awake()
@@ -45,13 +38,7 @@ public class ThreadBehaviour : MonoBehaviour
         AnatomicalForcepsBehaviour.onHookedRope += AnatomicalForcepsBehaviour_onHookedRope;
         AnatomicalForcepsBehaviour.onUnhookedRope += AnatomicalForcepsBehaviour_onUnhookedRope;
 
-        NeedleDetector.onNeedleEnter += NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
-    }
-
-    private void NeedleDetector_onNeedleEnter(object sender, Vector3 e)
-    {
-        entrancePoint = e;
     }
 
     private void OnDisable()
@@ -59,7 +46,6 @@ public class ThreadBehaviour : MonoBehaviour
         AnatomicalForcepsBehaviour.onHookedRope -= AnatomicalForcepsBehaviour_onHookedRope;
         AnatomicalForcepsBehaviour.onUnhookedRope -= AnatomicalForcepsBehaviour_onUnhookedRope;
 
-        NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
         NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
     }
 
@@ -82,7 +68,7 @@ public class ThreadBehaviour : MonoBehaviour
         }
 
         UpdateStichAttachments();
-        //CustomParticlesVelocity();
+        ChangeMiddleParticlesPositions();
     }
 
     private void UpdateStichAttachments()
@@ -110,90 +96,184 @@ public class ThreadBehaviour : MonoBehaviour
 
         for (int i = 0; i < stitchAttachments.Count; i++)
         {
+
             Vector3 curParticlePos = stitchAttachments[i].target.position;
             int curParticle = stitchAttachments[i].particleGroup.particleIndices[0];
 
-            if (curParticle >= rope.elements.Count - 2)
-            {
+            if (curParticle >= rope.elements.Count - 1)
+            {                
+
                 DestroyStitchAttachmentAt(i);
                 continue;
             }
 
-            int nextParticle = curParticle + 1;
+            rope.solver.invMasses[curParticle + 1] = 0.1f;
 
-            stitchAttachments[i].enabled = false;
+            MoveAttachedParticle(curParticle, i, curParticlePos);
 
-            Destroy(stitchAttachments[i].particleGroup);
-
-            var particleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
-            rope.solver.positions[nextParticle] = curParticlePos;
-            particleGroup.particleIndices.Add(nextParticle);
-
-            stitchAttachments[i].particleGroup = particleGroup;
-            stitchAttachments[i].enabled = true;
         }
 
     }
 
-    private void CustomParticlesVelocity()
+    private void MoveAttachedParticle(int particle, int stitchIndex, Vector3 attachmentPos, int times = 1)
     {
-        if(stitchAttachments.Count <= 0)
+        stitchAttachments[stitchIndex].enabled = false;
+
+        int nextParticle = particle + 1;
+
+        for (int i = 0; i < times; i++) 
+        {
+            Destroy(stitchAttachments[stitchIndex].particleGroup);
+
+            var particleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
+            rope.solver.positions[nextParticle] = attachmentPos;
+            particleGroup.particleIndices.Add(nextParticle);
+
+            stitchAttachments[stitchIndex].particleGroup = particleGroup;
+
+            nextParticle++;
+        }
+
+        stitchAttachments[stitchIndex].enabled = true;
+    }
+
+
+    private void ChangeMiddleParticlesPositions()
+    {
+        if(stitchAttachments.Count <= 1)
         {
             return;
         }
 
-        for(int i = 0; i < stitchAttachments[0].particleGroup.particleIndices[0]; i++)
+        for(int i = stitchAttachments.Count - 1; i > 0; i--)
         {
-            rope.solver.velocities[i] = Vector3.zero;
+            int firstParticle = stitchAttachments[i].particleGroup.particleIndices[0];
+            int lastParticle = stitchAttachments[i - 1].particleGroup.particleIndices[0];
+
+            if(Mathf.Abs(firstParticle - lastParticle) < 4)
+            {
+                continue;
+            }
+
+            float lerpDen = lastParticle - firstParticle;
+            int lerpNum = 1;
+
+            Vector3 firstPos = rope.GetParticlePosition(firstParticle);
+            Vector3 secondPos = rope.GetParticlePosition(lastParticle);
+
+            float minDistance = 0.075f;
+
+            if (Vector3.Distance(firstPos, secondPos) < minDistance) continue;
+
+            firstParticle += 1;
+            lastParticle -= 1;
+
+            for (int j = firstParticle; j < lastParticle; j++)
+            {
+                if (IsAttachedParticle(j)) continue;
+
+                Vector3 particlePos = Vector3.Lerp(firstPos,
+                                                   secondPos,
+                                                   lerpNum / lerpDen);
+
+                rope.solver.positions[j] = particlePos;
+                rope.solver.velocities[j] = Vector3.zero;
+                rope.solver.invMasses[j] = 0;
+
+                lerpNum++;
+            }
         }
+    }
+
+    private bool IsAttachedParticle(int particle)
+    {
+        if(stitchAttachments.Count <= 0)
+        {
+            return false;
+        }
+
+        for(int i = 0; i < stitchAttachments.Count; i++)
+        {
+            if (stitchAttachments[i].particleGroup.particleIndices[0] == particle)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void ChangeCustomParticleProperties()
     {
+        //Return back to normal if there's no attachments
         if(stitchAttachments.Count <= 0)
         {
+            for (int i = 5; i < rope.elements.Count - 5; i++)
+            {
+                rope.solver.invMasses[i] = 0.1f;
+
+                int particle1 = rope.elements[i].particle1;
+                int particle2 = rope.elements[i].particle2;
+
+                ChangeParticleColliders(particle1, true);
+                ChangeParticleColliders(particle2, true);
+            }
             return;
         }
 
-        //Doesn't collide with mask one
+        //Doesn't collide with mask 1
         for (int i = 0; i < stitchAttachments[0].particleGroup.particleIndices[0]; i++)
         {
-            if (i > rope.elements.Count - 10)
+            if (i > rope.elements.Count - 8 || i < 5)
             {
-                rope.solver.invMasses[i] = 1.0f;
-                int maskDefault = 0;
-                rope.solver.filters[i] = ObiUtils.MakeFilter(maskDefault, 10);
-                return;
+                rope.solver.invMasses[i] = 0.1f;
+                int nullMask = 0;
+                rope.solver.filters[i] = ObiUtils.MakeFilter(nullMask, 10);
+                continue;
             }
-
             rope.solver.invMasses[i] = 0.01f;
 
-            int mask = (1 << 0) | (1 << 2) | (1 << 3) | (1 << 4) |
-                       (1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) |
-                       (1 << 9) | (1 << 10) | (1 << 11) | (1 << 12) |
-                       (1 << 13) | (1 << 14) | (1 << 15);
-            rope.solver.filters[i] = ObiUtils.MakeFilter(mask, 10);
+            ChangeParticleColliders(i, false);
         }
 
         //Collides with everything
         for (int i = stitchAttachments[0].particleGroup.particleIndices[0]; i < rope.elements.Count; i++)
         {
-            if(i > rope.elements.Count - 10)
+            if(i > rope.elements.Count - 8 || i < 5)
             {
-                rope.solver.invMasses[i] = 1.0f;
+                rope.solver.invMasses[i] = 0.1f;
                 int maskDefault = 0;
                 rope.solver.filters[i] = ObiUtils.MakeFilter(maskDefault, 10);
-                return;
+                continue;
             }
 
             rope.solver.invMasses[i] = 1.0f;
 
-            int mask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) |
-                       (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7) |
-                       (1 << 8) | (1 << 9) | (1 << 10) | (1 << 11) |
-                       (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15);
-            rope.solver.filters[i] = ObiUtils.MakeFilter(mask, 10);
+            ChangeParticleColliders(i, true);
         }
+    }
+
+    private void ChangeParticleColliders(int particle, bool bodyCollision)
+    {
+        int mask;
+
+        if(bodyCollision)
+        {
+            mask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) |
+                   (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7) |
+                   (1 << 8) | (1 << 9) | (1 << 10) | (1 << 11) |
+                   (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15);
+        }
+
+        else
+        {
+            mask = (1 << 0) | (1 << 2) | (1 << 3) |
+                   (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7) |
+                   (1 << 8) | (1 << 9) | (1 << 10) | (1 << 11) |
+                   (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15);
+        }
+
+        rope.solver.filters[particle] = ObiUtils.MakeFilter(mask, 10);
     }
 
     private void DestroyStitchAttachmentAt(int index, bool removeFromList = true)
@@ -235,25 +315,14 @@ public class ThreadBehaviour : MonoBehaviour
 
     private void NeedleDetector_onNeedleExit(object sender, Vector3 e)
     {
-        exitPoint = e;
         NeedleDetector needleDetector = sender as NeedleDetector;
 
         if (needleDetector.side != NeedleDetector.Side.LeftDown && needleDetector.side != NeedleDetector.Side.RightDown)
         {
-            if (exitPoint.y > entrancePoint.y)
-            {
-                float exitOffset = 0.025f;
-                e -= Vector3.up * exitOffset;
-            }
-
-            else
-            {
-                float entranceOffset = 0.075f;
-                e += Vector3.up * entranceOffset;
-            }
+            e.y = .988f;
         }
 
-        float stitchThreshold = .05f;
+        float stitchThreshold = .035f;
 
         for (int i = 0; i < stitchAttachments.Count; i++)
         {
@@ -264,7 +333,12 @@ public class ThreadBehaviour : MonoBehaviour
         }
         
         AddStitchAttachment(e);
-        MoveStitchParticles();
+
+        for(int i = 0; i < inBetweenAttachmentsParticles; i++)
+        {
+            MoveStitchParticles();
+        }
+        
     }
 
     private void AddStitchAttachment(Vector3 stitchPos)
@@ -289,19 +363,19 @@ public class ThreadBehaviour : MonoBehaviour
         stitchAttachments.Add(curAttachment);
     }
 
-    private void AnatomicalForcepsBehaviour_onHookedRope(object sender, Transform e)
+    private void AnatomicalForcepsBehaviour_onHookedRope(object sender, Transform forceps)
     {
-        int element = ClosestParticle(e.position);
+        int element = ClosestParticle(forceps.position);
         Vector3 curParticlePos = rope.solver.positions[rope.elements[element].particle1];
 
         //Check that the forceps are not too far from the thread
-        if (Vector3.Distance(curParticlePos, e.position) > forcepsDistanceThreshold)
+        if (Vector3.Distance(curParticlePos, forceps.position) > forcepsDistanceThreshold)
         {
             return;
         }
 
         //Create the attachment
-        ObiParticleAttachment curAttachment = CheckAttachments(e, forcepsAttachments);
+        ObiParticleAttachment curAttachment = CheckAttachments(forceps, forcepsAttachments);
         curAttachment.enabled = true;
 
 
@@ -310,7 +384,7 @@ public class ThreadBehaviour : MonoBehaviour
         particleGroup.particleIndices.Add(rope.elements[element].particle1);
 
         curAttachment.particleGroup = particleGroup;
-        curAttachment.target = e;
+        curAttachment.target = forceps;
 
         forcepsAttachments.Add(curAttachment);
     }
