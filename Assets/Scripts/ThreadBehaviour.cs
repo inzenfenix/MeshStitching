@@ -22,6 +22,7 @@ public class ThreadBehaviour : MonoBehaviour
     private readonly float stitchStretchThresholdOffset = 0.0075f;
 
     [SerializeField] private int inBetweenAttachmentsParticles = 10;
+    [SerializeField] private int maxInBetweenAttachmentsParticles = 20;
 
 
     private void Awake()
@@ -68,7 +69,7 @@ public class ThreadBehaviour : MonoBehaviour
         }
 
         UpdateStichAttachments();
-        ChangeMiddleParticlesPositions();
+        ChangeInBetweenParticlesProperties();
     }
 
     private void UpdateStichAttachments()
@@ -89,20 +90,24 @@ public class ThreadBehaviour : MonoBehaviour
 
         MoveStitchParticles();
         ChangeCustomParticleProperties();
+        //ChangeInBetweenParticlesProperties();
     }
 
-    private void MoveStitchParticles()
+    private void MoveStitchParticles(bool moveLastParticles = true)
     {
 
         for (int i = 0; i < stitchAttachments.Count; i++)
         {
+            if(i == 0 && !moveLastParticles)
+            {
+                continue;
+            }
 
             Vector3 curParticlePos = stitchAttachments[i].target.position;
             int curParticle = stitchAttachments[i].particleGroup.particleIndices[0];
 
             if (curParticle >= rope.elements.Count - 1)
-            {                
-
+            {
                 DestroyStitchAttachmentAt(i);
                 continue;
             }
@@ -110,7 +115,6 @@ public class ThreadBehaviour : MonoBehaviour
             rope.solver.invMasses[curParticle + 1] = 0.1f;
 
             MoveAttachedParticle(curParticle, i, curParticlePos);
-
         }
 
     }
@@ -137,8 +141,18 @@ public class ThreadBehaviour : MonoBehaviour
         stitchAttachments[stitchIndex].enabled = true;
     }
 
+    private void CapInBetweenAttachmentParticles(int firstParticle, int lastParticle, int index)
+    {
+        int particleAmount = lastParticle - (firstParticle + 1);
+        Vector3 pos = rope.GetParticlePosition(firstParticle);
 
-    private void ChangeMiddleParticlesPositions()
+        if(particleAmount > maxInBetweenAttachmentsParticles)
+        {
+            MoveAttachedParticle(firstParticle, index, pos, maxInBetweenAttachmentsParticles - particleAmount);
+        }
+    }
+
+    private void ChangeInBetweenParticlesProperties()
     {
         if(stitchAttachments.Count <= 1)
         {
@@ -161,7 +175,7 @@ public class ThreadBehaviour : MonoBehaviour
             Vector3 firstPos = rope.GetParticlePosition(firstParticle);
             Vector3 secondPos = rope.GetParticlePosition(lastParticle);
 
-            float minDistance = 0.075f;
+            float minDistance = 0.1f;
 
             if (Vector3.Distance(firstPos, secondPos) < minDistance) continue;
 
@@ -208,7 +222,7 @@ public class ThreadBehaviour : MonoBehaviour
         //Return back to normal if there's no attachments
         if(stitchAttachments.Count <= 0)
         {
-            for (int i = 5; i < rope.elements.Count - 5; i++)
+            for (int i = 10; i < rope.elements.Count - 10; i++)
             {
                 rope.solver.invMasses[i] = 0.1f;
 
@@ -319,7 +333,7 @@ public class ThreadBehaviour : MonoBehaviour
 
         if (needleDetector.side != NeedleDetector.Side.LeftDown && needleDetector.side != NeedleDetector.Side.RightDown)
         {
-            e.y = .988f;
+            e.y = .97f;
         }
 
         float stitchThreshold = .035f;
@@ -336,7 +350,17 @@ public class ThreadBehaviour : MonoBehaviour
 
         for(int i = 0; i < inBetweenAttachmentsParticles; i++)
         {
-            MoveStitchParticles();
+            bool moveLastParticles = true;
+            
+            int firstAttachmentParticle = stitchAttachments[0].particleGroup.particleIndices[0];
+            int lastParticle = rope.elements[rope.elements.Count - 1].particle2;
+
+            if (lastParticle - (firstAttachmentParticle + 1) <= maxInBetweenAttachmentsParticles)
+            {
+                moveLastParticles = false;
+            }
+
+            MoveStitchParticles(moveLastParticles);
         }
         
     }
