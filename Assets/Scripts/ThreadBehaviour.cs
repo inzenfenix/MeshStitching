@@ -183,7 +183,7 @@ public class ThreadBehaviour : MonoBehaviour
             Vector3 firstPos = rope.GetParticlePosition(firstParticle);
             Vector3 secondPos = rope.GetParticlePosition(lastParticle);
 
-            float minDistance = 0.145f;
+            float minDistance = 0.16f;
 
             if (Vector3.Distance(firstPos, secondPos) < minDistance) continue;
 
