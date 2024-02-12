@@ -6,6 +6,7 @@ TagManager:
   tags:
   - TopNeedle
   - BottomNeedle
+  - MidNeedle
   layers:
   - Default
   - TransparentFX
@@ -17,8 +18,8 @@ TagManager:
   - BodyPart
   - Nail
   - MouseTouch
-  - 
-  - 
+  - IgnoreNeedle
+  - Needle
   - 
   - 
   - 

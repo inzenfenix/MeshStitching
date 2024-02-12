@@ -14,8 +14,9 @@ public class ThreadBehaviour : MonoBehaviour
     //[SerializeField] private float ropeLengthOffset;
 
     private List<ObiParticleAttachment> forcepsAttachments;
-
     private List<ObiParticleAttachment> stitchAttachments;
+
+    private bool isNeedleInserted;
 
     private float stitchStretchThreshold;
 
@@ -39,14 +40,18 @@ public class ThreadBehaviour : MonoBehaviour
         AnatomicalForcepsBehaviour.onHookedRope += AnatomicalForcepsBehaviour_onHookedRope;
         AnatomicalForcepsBehaviour.onUnhookedRope += AnatomicalForcepsBehaviour_onUnhookedRope;
 
+        NeedleDetector.onNeedleEnter += NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
     }
+
+    
 
     private void OnDisable()
     {
         AnatomicalForcepsBehaviour.onHookedRope -= AnatomicalForcepsBehaviour_onHookedRope;
         AnatomicalForcepsBehaviour.onUnhookedRope -= AnatomicalForcepsBehaviour_onUnhookedRope;
 
+        NeedleDetector.onNeedleEnter -= NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
     }
 
@@ -55,6 +60,11 @@ public class ThreadBehaviour : MonoBehaviour
         //cursor.ChangeLength(rope.restLength + ropeLengthOffset);
 
         //AddStitchAttachment(rope.GetParticlePosition(2));
+    }
+
+    private void NeedleDetector_onNeedleEnter(object sender, Vector3 e)
+    {
+        isNeedleInserted = true;
     }
 
     private void Update()
@@ -90,7 +100,6 @@ public class ThreadBehaviour : MonoBehaviour
 
         MoveStitchParticles();
         ChangeCustomParticleProperties();
-        //ChangeInBetweenParticlesProperties();
     }
 
     private void MoveStitchParticles(bool moveLastParticles = true)
@@ -112,11 +121,10 @@ public class ThreadBehaviour : MonoBehaviour
                 continue;
             }
 
-            rope.solver.invMasses[curParticle + 1] = 0.1f;
-
             MoveAttachedParticle(curParticle, i, curParticlePos);
-        }
 
+            
+        }
     }
 
     private void MoveAttachedParticle(int particle, int stitchIndex, Vector3 attachmentPos, int times = 1)
@@ -175,7 +183,7 @@ public class ThreadBehaviour : MonoBehaviour
             Vector3 firstPos = rope.GetParticlePosition(firstParticle);
             Vector3 secondPos = rope.GetParticlePosition(lastParticle);
 
-            float minDistance = 0.1f;
+            float minDistance = 0.145f;
 
             if (Vector3.Distance(firstPos, secondPos) < minDistance) continue;
 
@@ -231,6 +239,7 @@ public class ThreadBehaviour : MonoBehaviour
 
                 ChangeParticleColliders(particle1, true);
                 ChangeParticleColliders(particle2, true);
+
             }
             return;
         }
@@ -238,6 +247,7 @@ public class ThreadBehaviour : MonoBehaviour
         //Doesn't collide with mask 1
         for (int i = 0; i < stitchAttachments[0].particleGroup.particleIndices[0]; i++)
         {
+
             if (i > rope.elements.Count - 8 || i < 5)
             {
                 rope.solver.invMasses[i] = 0.1f;
@@ -253,7 +263,8 @@ public class ThreadBehaviour : MonoBehaviour
         //Collides with everything
         for (int i = stitchAttachments[0].particleGroup.particleIndices[0]; i < rope.elements.Count; i++)
         {
-            if(i > rope.elements.Count - 8 || i < 5)
+
+            if (i > rope.elements.Count - 8 || i < 5)
             {
                 rope.solver.invMasses[i] = 0.1f;
                 int maskDefault = 0;
@@ -329,6 +340,13 @@ public class ThreadBehaviour : MonoBehaviour
 
     private void NeedleDetector_onNeedleExit(object sender, Vector3 e)
     {
+        if(!isNeedleInserted)
+        {
+            return;
+        }
+
+        isNeedleInserted = false;
+
         NeedleDetector needleDetector = sender as NeedleDetector;
 
         if (needleDetector.side != NeedleDetector.Side.LeftDown && needleDetector.side != NeedleDetector.Side.RightDown)
@@ -361,8 +379,9 @@ public class ThreadBehaviour : MonoBehaviour
             }
 
             MoveStitchParticles(moveLastParticles);
+            
         }
-        
+
     }
 
     private void AddStitchAttachment(Vector3 stitchPos)

@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class MISNeedleBehaviour : MonoBehaviour
 {
-
-
     [Header("Needle components")]
     [SerializeField] private Transform needleTop;
     [SerializeField] private Transform needleBottom;
@@ -21,6 +19,10 @@ public class MISNeedleBehaviour : MonoBehaviour
 
     private Rigidbody rb;
 
+    [Header("Insertion Components")]
+    [SerializeField] private Collider[] colliders;
+    private bool isNeedleInserted;
+
 
     private void Start()
     {
@@ -30,21 +32,30 @@ public class MISNeedleBehaviour : MonoBehaviour
 
     private void OnEnable()
     { 
-        //NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
+        NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
+        NeedleDetector.onNeedleEnter += NeedleDetector_onNeedleEnter;
+        NeedleDetector.onNeedleMidEnter += NeedleDetector_onNeedleMidEnter;
+        NeedleDetector.onNeedleMidExit += NeedleDetector_onNeedleMidExit;
     }
 
     private void OnDisable()
     {
-        //NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
+        NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
+        NeedleDetector.onNeedleEnter -= NeedleDetector_onNeedleEnter;
+        NeedleDetector.onNeedleMidEnter -= NeedleDetector_onNeedleMidEnter;
+        NeedleDetector.onNeedleMidExit -= NeedleDetector_onNeedleMidExit;
     }
 
     private void Update()
     {
+        rb.velocity = Vector3.zero;
+
         if (Input.GetKey(KeyCode.W))
         {
             float zSpeed = 1.5f;
             Vector3 zMovement = transform.position + Vector3.forward * zSpeed * Time.deltaTime;
             rb.MovePosition(zMovement);
+
         }
 
         if (Input.GetKey(KeyCode.S))
@@ -98,50 +109,48 @@ public class MISNeedleBehaviour : MonoBehaviour
     }
 
 
-    private void NeedleDetector_onNeedleExit(object sender, Vector3 e)
+    private void NeedleDetector_onNeedleEnter(object sender, Vector3 e)
     {
-        NeedleDetector curDetector = sender as NeedleDetector;
-
-        Quaternion direction = Quaternion.identity;
-
-        if(curDetector.side == NeedleDetector.Side.LeftDown || curDetector.side == NeedleDetector.Side.LeftDown)
-        {
-            direction = Quaternion.Euler(90f, 0f, 90f);
-        }
-
-        Vector3 spawnPos = needleTop.transform.position + ContactOffset(needleBottom.position, needleTop.position);
-
-        if(torusColliders.Count > 0 )
-        {
-            for (int i = 0; i < torusColliders.Count; i++)
-            {
-                Vector3 otherColliderPos = torusColliders[i].transform.position;
-
-                if (Vector3.Distance(otherColliderPos, spawnPos) < minTorusDistance)
-                {
-                    return;
-                }
-            }
-        }
-        
-        GameObject torusCollider = Instantiate(torusColliderPrefab, spawnPos, direction);
-
-        torusColliders.Add(torusCollider);
-
+        isNeedleInserted = true;
     }
 
-    private Vector3 ContactOffset(Vector3 needleStartPos, Vector3 needleEndPos)
+    private void NeedleDetector_onNeedleExit(object sender, Vector3 e)
     {
-        if(needleStartPos.y > needleEndPos.y)
+        isNeedleInserted = false;
+
+        for(int i = 0; i < colliders.Length; i++)
         {
-            float outOffset = 0.035f;
-            return Vector3.up * outOffset;
+            colliders[i].isTrigger = false;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //Debug.Log(collision.gameObject);
+    }
+
+    private void NeedleDetector_onNeedleMidEnter(object sender, Collider e)
+    {
+        if(!isNeedleInserted)
+        {
+            return;
         }
 
-        else
+        SetTriggerOnOff(e, true);
+    }
+
+    private void NeedleDetector_onNeedleMidExit(object sender, Collider e)
+    {
+        if(!isNeedleInserted)
         {
-            float inOffset = -0.075f;
-            return Vector3.up * inOffset;
+            return;
         }
+
+        SetTriggerOnOff(e, false);
+    }
+
+    private void SetTriggerOnOff(Collider collider, bool enabled)
+    {
+        collider.isTrigger = enabled;
     }
 }
