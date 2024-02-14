@@ -143,6 +143,7 @@ public class MeshStitcher : MonoBehaviour
 
             Vector3 middlePoint = MidPointVertex(leftVertexPos, minRightVertexPos);
 
+            //Using inverse transform point we get where the point is in the local space of each mesh/game object
             Vector3 middlePointLeft = meshLeft.transform.InverseTransformPoint(middlePoint);
             Vector3 middlePointRight = meshRight.transform.InverseTransformPoint(middlePoint);
 
@@ -181,6 +182,8 @@ public class MeshStitcher : MonoBehaviour
 
     private void NeedleDetector_onNeedleEnter(object sender, Vector3 insertionPoint)
     {
+        //Currently using a simple system that checks if the four parts of the body where touched by the needle
+        //This is test code
         NeedleDetector curDetector = sender as NeedleDetector;
 
         if(insertionTriggers.Contains(curDetector))
@@ -269,12 +272,14 @@ public class MeshStitcher : MonoBehaviour
             if (vertexKeys[i].leftVertexKey != defaultVertexKeys[i].leftVertexKey ||
                 vertexKeys[i].rightVertexKey != defaultVertexKeys[i].rightVertexKey)
             {
+                //Changes the current default position of the vertices to the current one
                 defaultVertexKeys[i].leftVertexKey = vertexKeys[i].leftVertexKey;
                 defaultVertexKeys[i].rightVertexKey = vertexKeys[i].rightVertexKey;
 
                 Vector3[] verticesLeft = meshLeft.mesh.vertices;
                 Vector3[] verticesRight = meshRight.mesh.vertices;
 
+                //Lerp each vertex closer to the space
                 deformableVertices[i].curLeftVertexPos = Vector3.Lerp(deformableVertices[i].defaultLeftVertexPos,
                                                                       deformableVertices[i].middlePointLeftPos, vertexKeys[i].leftVertexKey);
 
@@ -310,6 +315,7 @@ public class MeshStitcher : MonoBehaviour
         }
     }
 
+    //To get the center between a pair
     private Vector3 MidPointVertex(Vector3 leftVertexPos, Vector3 rightVertexPos)
     {
         float x = (leftVertexPos.x + rightVertexPos.x) / 2;
@@ -319,6 +325,7 @@ public class MeshStitcher : MonoBehaviour
         return new Vector3(x, y, z);
     }
 
+    //Checks that no vertex has more than one pair
     private bool CheckForDuplicates(Vector3 leftPos, Vector3 rightPos)
     {
         for (int i = 0; i < deformableVertices.Count; i++)

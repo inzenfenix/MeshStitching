@@ -50,6 +50,7 @@ public class MISNeedleBehaviour : MonoBehaviour
     {
         rb.velocity = Vector3.zero;
 
+        //Test code
         if (Input.GetKey(KeyCode.W))
         {
             float zSpeed = 1.5f;

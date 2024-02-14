@@ -5,25 +5,27 @@ using UnityEngine;
 
 public class ThreadBehaviour : MonoBehaviour
 {
+    //The distance between the forceps and the thread to start interacting with each other
     private static readonly float forcepsDistanceThreshold = 0.12f;
+
+    //How much should the user stretch the thread before it moves the particles
+    private readonly float stitchStretchThresholdOffset = 0.0075f;
+
+    private readonly int bodyMask = 1 << 1;
 
     private ObiRopeCursor cursor;
     private ObiRope rope;
 
-    [SerializeField] private float ropeLengthSpeed;
-    //[SerializeField] private float ropeLengthOffset;
 
     private List<ObiParticleAttachment> forcepsAttachments;
     private List<ObiParticleAttachment> stitchAttachments;
 
     private bool isNeedleInserted;
-
     private float stitchStretchThreshold;
-
-    private readonly float stitchStretchThresholdOffset = 0.0075f;
 
     [SerializeField] private int inBetweenAttachmentsParticles = 10;
     [SerializeField] private int maxInBetweenAttachmentsParticles = 20;
+    [SerializeField] private float ropeLengthSpeed = 1.1f;
 
 
     private void Awake()
@@ -82,9 +84,10 @@ public class ThreadBehaviour : MonoBehaviour
         ChangeInBetweenParticlesProperties();
     }
 
+    //Takes care of updatinge the particles of the thread
     private void UpdateStichAttachments()
     {
-
+        //If no stitch attachment, the length needed to unstretch the thread goes back to default
         if (stitchAttachments.Count <= 0)
         {
             stitchStretchThreshold = ThreadLength() + stitchStretchThresholdOffset;
@@ -107,34 +110,38 @@ public class ThreadBehaviour : MonoBehaviour
 
         for (int i = 0; i < stitchAttachments.Count; i++)
         {
+            //In case we don't want to move the last particles of the thread
             if(i == 0 && !moveLastParticles)
             {
                 continue;
             }
 
+            //We get the position of the current particle and the index of it
             Vector3 curParticlePos = stitchAttachments[i].target.position;
             int curParticle = stitchAttachments[i].particleGroup.particleIndices[0];
 
+            //In case the current particle is the last particle
             if (curParticle >= rope.elements.Count - 1)
             {
                 DestroyStitchAttachmentAt(i);
                 continue;
             }
 
-            MoveAttachedParticle(curParticle, i, curParticlePos);
-
-            
+            MoveAttachedParticle(curParticle, i, curParticlePos);            
         }
     }
 
+    //We move the particles n times to the right into a certain attachment, in a certain position
     private void MoveAttachedParticle(int particle, int stitchIndex, Vector3 attachmentPos, int times = 1)
     {
-        stitchAttachments[stitchIndex].enabled = false;
 
         int nextParticle = particle + 1;
 
         for (int i = 0; i < times; i++) 
         {
+            //First disable the attachment so it doesn't move the old particle
+            stitchAttachments[stitchIndex].enabled = false;
+
             Destroy(stitchAttachments[stitchIndex].particleGroup);
 
             var particleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
@@ -144,22 +151,14 @@ public class ThreadBehaviour : MonoBehaviour
             stitchAttachments[stitchIndex].particleGroup = particleGroup;
 
             nextParticle++;
+
+            stitchAttachments[stitchIndex].enabled = true;
         }
 
-        stitchAttachments[stitchIndex].enabled = true;
+        
     }
 
-    private void CapInBetweenAttachmentParticles(int firstParticle, int lastParticle, int index)
-    {
-        int particleAmount = lastParticle - (firstParticle + 1);
-        Vector3 pos = rope.GetParticlePosition(firstParticle);
-
-        if(particleAmount > maxInBetweenAttachmentsParticles)
-        {
-            MoveAttachedParticle(firstParticle, index, pos, maxInBetweenAttachmentsParticles - particleAmount);
-        }
-    }
-
+    //This funcion takes care of giving stiffness to the particles between attachments
     private void ChangeInBetweenParticlesProperties()
     {
         if(stitchAttachments.Count <= 1)
@@ -169,6 +168,7 @@ public class ThreadBehaviour : MonoBehaviour
 
         for(int i = stitchAttachments.Count - 1; i > 0; i--)
         {
+            //Get pair particles from attachments
             int firstParticle = stitchAttachments[i].particleGroup.particleIndices[0];
             int lastParticle = stitchAttachments[i - 1].particleGroup.particleIndices[0];
 
@@ -185,13 +185,22 @@ public class ThreadBehaviour : MonoBehaviour
 
             float minDistance = 0.16f;
 
-            if (Vector3.Distance(firstPos, secondPos) < minDistance) continue;
-
-            firstParticle += 1;
-            lastParticle -= 1;
+            //We check that the distance between the two particles is far enough that it makes sense to stiff it
+            //Also make sure that the amount of particles is not bigger than the recommended amount between attachments
+            if (Vector3.Distance(firstPos, secondPos) < minDistance || 
+                lerpDen > maxInBetweenAttachmentsParticles)
+            {
+                continue;
+            }
+                
+            //We move to the particles in between the attachments
+            firstParticle += 1; //One particle to the right
+            lastParticle -= 1; //One particle to the left
 
             for (int j = firstParticle; j < lastParticle; j++)
             {
+                //The final position of each particle is going to be
+                //Somewhere in between the attached particles
                 if (IsAttachedParticle(j)) continue;
 
                 Vector3 particlePos = Vector3.Lerp(firstPos,
@@ -207,6 +216,7 @@ public class ThreadBehaviour : MonoBehaviour
         }
     }
 
+    //Goes through each attached particle to check if the particle has an attachment
     private bool IsAttachedParticle(int particle)
     {
         if(stitchAttachments.Count <= 0)
@@ -225,9 +235,10 @@ public class ThreadBehaviour : MonoBehaviour
         return false;
     }
 
+    //Changes the properties of each particle at runtime
     private void ChangeCustomParticleProperties()
     {
-        //Return back to normal if there's no attachments
+        //Return particles back to normal if there's no attachments
         if(stitchAttachments.Count <= 0)
         {
             for (int i = 10; i < rope.elements.Count - 10; i++)
@@ -244,10 +255,12 @@ public class ThreadBehaviour : MonoBehaviour
             return;
         }
 
-        //Doesn't collide with mask 1
+        //Makes the particles between attachments not collide with the body
         for (int i = 0; i < stitchAttachments[0].particleGroup.particleIndices[0]; i++)
         {
 
+            //In the case that we are at the start or end of the thread, we want this particles to not have any
+            //Physical interaction and have them always with the default properties
             if (i > rope.elements.Count - 8 || i < 5)
             {
                 rope.solver.invMasses[i] = 0.1f;
@@ -255,15 +268,16 @@ public class ThreadBehaviour : MonoBehaviour
                 rope.solver.filters[i] = ObiUtils.MakeFilter(nullMask, 10);
                 continue;
             }
-            rope.solver.invMasses[i] = 0.01f;
+            rope.solver.invMasses[i] = 0.1f;
 
             ChangeParticleColliders(i, false);
         }
 
-        //Collides with everything
+        //Makes the particles collide with everything
         for (int i = stitchAttachments[0].particleGroup.particleIndices[0]; i < rope.elements.Count; i++)
         {
-
+            //In the case that we are at the start or end of the thread, we want this particles to not have any
+            //Physical interaction and have them always with the default properties
             if (i > rope.elements.Count - 8 || i < 5)
             {
                 rope.solver.invMasses[i] = 0.1f;
@@ -272,19 +286,21 @@ public class ThreadBehaviour : MonoBehaviour
                 continue;
             }
 
-            rope.solver.invMasses[i] = 1.0f;
+            rope.solver.invMasses[i] = 0.1f;
 
             ChangeParticleColliders(i, true);
         }
     }
 
+    //If bodyCollision = true, then it will add the body mask to the colliders of a particle
     private void ChangeParticleColliders(int particle, bool bodyCollision)
     {
         int mask;
 
+        //Obi has 16 different masks, i used the mask 1 as the body mask
         if(bodyCollision)
         {
-            mask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) |
+            mask = (1 << 0) | (bodyMask) | (1 << 2) | (1 << 3) |
                    (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7) |
                    (1 << 8) | (1 << 9) | (1 << 10) | (1 << 11) |
                    (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15);
@@ -301,6 +317,7 @@ public class ThreadBehaviour : MonoBehaviour
         rope.solver.filters[particle] = ObiUtils.MakeFilter(mask, 10);
     }
 
+    //Removes an attachment, if removeFromList = false, it will no remove it from the "stitchAttachments" list
     private void DestroyStitchAttachmentAt(int index, bool removeFromList = true)
     {
         stitchAttachments[index].enabled = false;
@@ -317,6 +334,8 @@ public class ThreadBehaviour : MonoBehaviour
         }
     }
 
+    //Goes through each particle from the thread, from the first one to the last attached one to get the current
+    //Length of the used thread
     private float ThreadLength()
     {
         if (stitchAttachments.Count <= 0)
@@ -325,21 +344,24 @@ public class ThreadBehaviour : MonoBehaviour
         }
 
         float length = 0;
-        float lastParticle = stitchAttachments[0].particleGroup.particleIndices[0];
+        int lastParticle = stitchAttachments[0].particleGroup.particleIndices[0];
+        int firstParticle = rope.elements[0].particle1;
 
-        for (int i = 0; i < lastParticle; i++)
+        for (int i = firstParticle; i < lastParticle; i++)
         {
-            Vector3 firstParticle = rope.GetParticlePosition(i);
-            Vector3 secondParticle = rope.GetParticlePosition(i + 1);
+            Vector3 particle1 = rope.GetParticlePosition(i);
+            Vector3 particle2 = rope.GetParticlePosition(i + 1);
 
-            length += Vector3.Distance(firstParticle, secondParticle);
+            length += Vector3.Distance(particle1, particle2);
         }
 
         return length;
     }
 
+    //Takes care of spawning a new attachment when the needle exits the body
     private void NeedleDetector_onNeedleExit(object sender, Vector3 e)
     {
+        //In case the needle hasn't been inserted
         if(!isNeedleInserted)
         {
             return;
@@ -349,11 +371,13 @@ public class ThreadBehaviour : MonoBehaviour
 
         NeedleDetector needleDetector = sender as NeedleDetector;
 
+        //If the side the needle exited from is either the left or right one, we want the y position to always be the same
         if (needleDetector.side != NeedleDetector.Side.LeftDown && needleDetector.side != NeedleDetector.Side.RightDown)
         {
             e.y = .97f;
         }
 
+        //How far each stitching has to be from each other
         float stitchThreshold = .035f;
 
         for (int i = 0; i < stitchAttachments.Count; i++)
@@ -366,14 +390,16 @@ public class ThreadBehaviour : MonoBehaviour
         
         AddStitchAttachment(e);
 
+        //We add at least the minimum amount of particles between attachments
         for(int i = 0; i < inBetweenAttachmentsParticles; i++)
         {
+            //In the case theres not enough particles at the first attachment, we don't move more of the first particles
             bool moveLastParticles = true;
             
             int firstAttachmentParticle = stitchAttachments[0].particleGroup.particleIndices[0];
             int lastParticle = rope.elements[rope.elements.Count - 1].particle2;
 
-            if (lastParticle - (firstAttachmentParticle + 1) <= maxInBetweenAttachmentsParticles)
+            if (Mathf.Abs(lastParticle - (firstAttachmentParticle + 1)) <= maxInBetweenAttachmentsParticles)
             {
                 moveLastParticles = false;
             }
@@ -384,6 +410,7 @@ public class ThreadBehaviour : MonoBehaviour
 
     }
 
+    //Adds an attachment at a given position
     private void AddStitchAttachment(Vector3 stitchPos)
     {
         GameObject spawnObject = new GameObject();
@@ -406,8 +433,10 @@ public class ThreadBehaviour : MonoBehaviour
         stitchAttachments.Add(curAttachment);
     }
 
+    //If the forceps tried to grab something, we check for which particle (if any) was grabbed
     private void AnatomicalForcepsBehaviour_onHookedRope(object sender, Transform forceps)
     {
+        //Checks for the closest particle
         int element = ClosestParticle(forceps.position);
         Vector3 curParticlePos = rope.solver.positions[rope.elements[element].particle1];
 
@@ -432,6 +461,8 @@ public class ThreadBehaviour : MonoBehaviour
         forcepsAttachments.Add(curAttachment);
     }
 
+    //Looks for the closes particle to a given position, can also specify if we don't want a particle
+    //To be chosen, or if we want a certain starting position
     private int ClosestParticle(Vector3 pos, int curElement = -1, int startPos = 0)
     {
         int element = startPos;
@@ -456,6 +487,7 @@ public class ThreadBehaviour : MonoBehaviour
         return element;
     }
 
+    //Check if there's an attachment at given position
     private ObiParticleAttachment CheckAttachments(Transform e, List<ObiParticleAttachment> attachments)
     {
         if (attachments.Count > 0)
@@ -474,7 +506,7 @@ public class ThreadBehaviour : MonoBehaviour
         return rope.solver.actors[0].AddComponent<ObiParticleAttachment>();
     }
 
-
+    //Disables attachment of forceps if the thread is currently being hooked by it
     private void AnatomicalForcepsBehaviour_onUnhookedRope(object sender, Transform e)
     {
         if (forcepsAttachments.Count <= 0)
