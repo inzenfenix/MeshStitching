@@ -49,10 +49,7 @@ public class AnatomicalForcepsDeform : MonoBehaviour
 
     private void Update()
     {
-        if(currentSelectedForcep != this.gameObject)
-        {
-            return;
-        }
+        
 
         //START TEST CODE
         if(Input.GetKey(KeyCode.L))
@@ -76,6 +73,13 @@ public class AnatomicalForcepsDeform : MonoBehaviour
             topKey = currentValue;
             bottomKey = currentValue;
         }
+        
+
+        if (currentSelectedForcep != this.gameObject)
+        {
+            return;
+        }
+
         //END TEST CODE
 
         TopBone.localRotation = Quaternion.Slerp(originalTopRotation_Q, deformedlTopRotation_Q, topKey);
