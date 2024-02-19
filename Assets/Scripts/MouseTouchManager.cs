@@ -10,6 +10,18 @@ public class MouseTouchManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetMouseButton(2))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue))
+            {
+                if(hit.collider.gameObject.TryGetComponent<AnatomicalForcepsDeform>(out AnatomicalForcepsDeform anatomicalForcepsDeform))
+                {
+                    anatomicalForcepsDeform.SelectForcep();
+                }
+            }
+        }
 
 #if UNITY_EDITOR
         if (Input.GetMouseButton(0))

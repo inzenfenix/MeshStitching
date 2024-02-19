@@ -284,6 +284,7 @@ GameObject:
   - component: {fileID: 1281102162478182468}
   - component: {fileID: 8284848337022714914}
   - component: {fileID: 4061200785579593417}
+  - component: {fileID: 4268796971880906081}
   m_Layer: 0
   m_Name: AnatomicalForceps
   m_TagString: Untagged
@@ -343,7 +344,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hookPoint: {fileID: 3977421024906889072}
-  hookRope: 0
+--- !u!65 &4268796971880906081
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5117439812307622700}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.09458408, y: 0.16064966, z: 0.9675765}
+  m_Center: {x: 0, y: 0, z: 0.45517313}
 --- !u!1 &5168081140099032308
 GameObject:
   m_ObjectHideFlags: 0

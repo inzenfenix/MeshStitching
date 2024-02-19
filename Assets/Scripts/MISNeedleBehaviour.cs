@@ -10,12 +10,6 @@ public class MISNeedleBehaviour : MonoBehaviour
     [SerializeField] private Transform needleTop;
     [SerializeField] private Transform needleBottom;
 
-    [Header("Prefab for the thread collider")]
-    [SerializeField] private GameObject torusColliderPrefab;
-
-    private List<GameObject> torusColliders;
-
-    private float minTorusDistance = .15f;
 
     private Rigidbody rb;
 
@@ -26,7 +20,6 @@ public class MISNeedleBehaviour : MonoBehaviour
 
     private void Start()
     {
-        torusColliders = new List<GameObject>();
         rb = GetComponent<Rigidbody>();
     }
 

@@ -39,8 +39,11 @@ public class ThreadBehaviour : MonoBehaviour
 
     private void OnEnable()
     {
-        AnatomicalForcepsBehaviour.onHookedRope += AnatomicalForcepsBehaviour_onHookedRope;
-        AnatomicalForcepsBehaviour.onUnhookedRope += AnatomicalForcepsBehaviour_onUnhookedRope;
+        AnatomicalForcepsBehaviour.onHookedRope += OnHookedRope;
+        AnatomicalForcepsBehaviour.onUnhookedRope += OnUnhookedRope;
+
+        HoldScissorsBehaviour.onHookedRope += OnHookedRope;
+        HoldScissorsBehaviour.onUnhookedRope += OnUnhookedRope;
 
         NeedleDetector.onNeedleEnter += NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
@@ -50,8 +53,11 @@ public class ThreadBehaviour : MonoBehaviour
 
     private void OnDisable()
     {
-        AnatomicalForcepsBehaviour.onHookedRope -= AnatomicalForcepsBehaviour_onHookedRope;
-        AnatomicalForcepsBehaviour.onUnhookedRope -= AnatomicalForcepsBehaviour_onUnhookedRope;
+        AnatomicalForcepsBehaviour.onHookedRope -= OnHookedRope;
+        AnatomicalForcepsBehaviour.onUnhookedRope -= OnUnhookedRope;
+
+        HoldScissorsBehaviour.onHookedRope -= OnHookedRope;
+        HoldScissorsBehaviour.onUnhookedRope -= OnUnhookedRope;
 
         NeedleDetector.onNeedleEnter -= NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
@@ -434,7 +440,7 @@ public class ThreadBehaviour : MonoBehaviour
     }
 
     //If the forceps tried to grab something, we check for which particle (if any) was grabbed
-    private void AnatomicalForcepsBehaviour_onHookedRope(object sender, Transform forceps)
+    private void OnHookedRope(object sender, Transform forceps)
     {
         //Checks for the closest particle
         int element = ClosestParticle(forceps.position);
@@ -507,7 +513,7 @@ public class ThreadBehaviour : MonoBehaviour
     }
 
     //Disables attachment of forceps if the thread is currently being hooked by it
-    private void AnatomicalForcepsBehaviour_onUnhookedRope(object sender, Transform e)
+    private void OnUnhookedRope(object sender, Transform e)
     {
         if (forcepsAttachments.Count <= 0)
         {
