@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(HoldScissorsDeform))]
 public class HoldScissorsBehaviour : MonoBehaviour
 {
     public static event EventHandler<Transform> onHookedRope;
@@ -14,23 +15,49 @@ public class HoldScissorsBehaviour : MonoBehaviour
 
     private bool hookedRope;
 
+    private void OnEnable()
+    {
+        HoldScissorsDeform holdScissorsDeform = GetComponent<HoldScissorsDeform>();
+
+        holdScissorsDeform.OnScissorsJoin += HoldScissorsDeform_OnScissorsJoin;
+        holdScissorsDeform.OnScissorsSeparate += HoldScissorsDeform_OnScissorsSeparate;
+    }
+
+    private void OnDisable()
+    {
+        HoldScissorsDeform holdScissorsDeform = GetComponent<HoldScissorsDeform>();
+
+        holdScissorsDeform.OnScissorsJoin -= HoldScissorsDeform_OnScissorsJoin;
+        holdScissorsDeform.OnScissorsSeparate -= HoldScissorsDeform_OnScissorsSeparate;
+    }
+
+    private void HoldScissorsDeform_OnScissorsSeparate(object sender, EventArgs e)
+    {
+        UnhookRope();
+    }
+
+    private void HoldScissorsDeform_OnScissorsJoin(object sender, EventArgs e)
+    {
+        HookRope();
+    }
+
     private void Update()
     {
         if (!hookRope)
         {
             if (hookedRope)
             {
-                UnhookRope();
+                //UnhookRope();
             }
-            return;
+            //return;
         }
 
         if (hookedRope)
         {
-            return;
+            //return;
         }
 
-        HookRope();
+        //HookRope();
 
     }
 

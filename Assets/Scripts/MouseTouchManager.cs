@@ -16,9 +16,16 @@ public class MouseTouchManager : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue))
             {
-                if(hit.collider.gameObject.TryGetComponent<AnatomicalForcepsDeform>(out AnatomicalForcepsDeform anatomicalForcepsDeform))
+                if(hit.collider.gameObject.TryGetComponent(out AnatomicalForcepsDeform anatomicalForcepsDeform))
                 {
                     anatomicalForcepsDeform.SelectForcep();
+                }
+
+                Debug.Log(hit.collider.gameObject);
+
+                if (hit.collider.gameObject.TryGetComponent(out HoldScissorsDeform holdScissorsDeform))
+                {
+                    holdScissorsDeform.SelectScissors();
                 }
             }
         }
