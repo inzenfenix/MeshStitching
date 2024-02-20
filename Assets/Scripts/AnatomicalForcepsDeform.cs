@@ -49,10 +49,13 @@ public class AnatomicalForcepsDeform : MonoBehaviour
 
     private void Update()
     {
-        
+        if (currentSelectedForcep != this.gameObject)
+        {
+            return;
+        }
 
         //START TEST CODE
-        if(Input.GetKey(KeyCode.L))
+        if (Input.GetKey(KeyCode.L))
         {
             float currentValue = topKey;
             float nextValue = topKey + Time.deltaTime * forcepsSpeed;
@@ -72,12 +75,6 @@ public class AnatomicalForcepsDeform : MonoBehaviour
 
             topKey = currentValue;
             bottomKey = currentValue;
-        }
-        
-
-        if (currentSelectedForcep != this.gameObject)
-        {
-            return;
         }
 
         //END TEST CODE
