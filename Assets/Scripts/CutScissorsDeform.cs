@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HoldScissorsDeform : MonoBehaviour
+public class CutScissorsDeform : MonoBehaviour
 {
-    //public static GameObject currentSelectedScissor;
-
     public event EventHandler OnScissorsJoin;
     public event EventHandler OnScissorsSeparate;
 
@@ -39,7 +37,7 @@ public class HoldScissorsDeform : MonoBehaviour
     private void Start()
     {
         originalRotationLeft = LeftScissor.localRotation;
-        goalRotationLeft = Quaternion.Euler(LeftScissor.localRotation.eulerAngles + new Vector3 (0, 0, rotationAmount));
+        goalRotationLeft = Quaternion.Euler(LeftScissor.localRotation.eulerAngles + new Vector3(0, 0, rotationAmount));
 
         originalRotationRight = RightScissor.localRotation;
         goalRotationRight = Quaternion.Euler(RightScissor.localRotation.eulerAngles + new Vector3(0, 0, rotationAmount));
@@ -89,7 +87,6 @@ public class HoldScissorsDeform : MonoBehaviour
         if (leftKey > 0.2f && rightKey > 0.2f && scissorsJoined)
         {
             scissorsJoined = false;
-            OnScissorsSeparate?.Invoke(this, EventArgs.Empty);
         }
     }
 

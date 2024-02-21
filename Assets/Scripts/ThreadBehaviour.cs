@@ -47,9 +47,14 @@ public class ThreadBehaviour : MonoBehaviour
 
         NeedleDetector.onNeedleEnter += NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
+
+        CutScissorsBehaviour.onCutRope += CutScissorsBehaviour_onCutRope;
     }
 
-
+    private void CutScissorsBehaviour_onCutRope(object sender, Transform e)
+    {
+        CutRope(e.position);
+    }
 
     private void OnDisable()
     {
@@ -532,19 +537,24 @@ public class ThreadBehaviour : MonoBehaviour
 
     private void CutRope(Vector3 cutPosition)
     {
+        bool cut = false;
+
         for(int i = 0; i < rope.elements.Count; i++)
         {
             int particle = rope.elements[i].particle1;
             Vector3 particlePos = rope.GetParticlePosition(particle);
 
-            float minDistance = 0.1f;
+            float minDistance = 0.06f;
 
             if(Vector3.Distance(particlePos, cutPosition) < minDistance)
             {
                 rope.Tear(rope.elements[i]);
-                return;
+                cut = true;
+                break;
             }
         }
+
+        if (cut) rope.RebuildConstraintsFromElements();
     }
 
     private void OnDrawGizmos()
