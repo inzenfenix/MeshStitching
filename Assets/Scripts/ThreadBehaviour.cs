@@ -49,7 +49,7 @@ public class ThreadBehaviour : MonoBehaviour
         NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
     }
 
-    
+
 
     private void OnDisable()
     {
@@ -117,7 +117,7 @@ public class ThreadBehaviour : MonoBehaviour
         for (int i = 0; i < stitchAttachments.Count; i++)
         {
             //In case we don't want to move the last particles of the thread
-            if(i == 0 && !moveLastParticles)
+            if (i == 0 && !moveLastParticles)
             {
                 continue;
             }
@@ -133,7 +133,7 @@ public class ThreadBehaviour : MonoBehaviour
                 continue;
             }
 
-            MoveAttachedParticle(curParticle, i, curParticlePos);            
+            MoveAttachedParticle(curParticle, i, curParticlePos);
         }
     }
 
@@ -143,7 +143,7 @@ public class ThreadBehaviour : MonoBehaviour
 
         int nextParticle = particle + 1;
 
-        for (int i = 0; i < times; i++) 
+        for (int i = 0; i < times; i++)
         {
             //First disable the attachment so it doesn't move the old particle
             stitchAttachments[stitchIndex].enabled = false;
@@ -161,24 +161,24 @@ public class ThreadBehaviour : MonoBehaviour
             stitchAttachments[stitchIndex].enabled = true;
         }
 
-        
+
     }
 
     //This funcion takes care of giving stiffness to the particles between attachments
     private void ChangeInBetweenParticlesProperties()
     {
-        if(stitchAttachments.Count <= 1)
+        if (stitchAttachments.Count <= 1)
         {
             return;
         }
 
-        for(int i = stitchAttachments.Count - 1; i > 0; i--)
+        for (int i = stitchAttachments.Count - 1; i > 0; i--)
         {
             //Get pair particles from attachments
             int firstParticle = stitchAttachments[i].particleGroup.particleIndices[0];
             int lastParticle = stitchAttachments[i - 1].particleGroup.particleIndices[0];
 
-            if(Mathf.Abs(firstParticle - lastParticle) < 4)
+            if (Mathf.Abs(firstParticle - lastParticle) < 4)
             {
                 continue;
             }
@@ -193,12 +193,12 @@ public class ThreadBehaviour : MonoBehaviour
 
             //We check that the distance between the two particles is far enough that it makes sense to stiff it
             //Also make sure that the amount of particles is not bigger than the recommended amount between attachments
-            if (Vector3.Distance(firstPos, secondPos) < minDistance || 
+            if (Vector3.Distance(firstPos, secondPos) < minDistance ||
                 lerpDen > maxInBetweenAttachmentsParticles)
             {
                 continue;
             }
-                
+
             //We move to the particles in between the attachments
             firstParticle += 1; //One particle to the right
             lastParticle -= 1; //One particle to the left
@@ -225,12 +225,12 @@ public class ThreadBehaviour : MonoBehaviour
     //Goes through each attached particle to check if the particle has an attachment
     private bool IsAttachedParticle(int particle)
     {
-        if(stitchAttachments.Count <= 0)
+        if (stitchAttachments.Count <= 0)
         {
             return false;
         }
 
-        for(int i = 0; i < stitchAttachments.Count; i++)
+        for (int i = 0; i < stitchAttachments.Count; i++)
         {
             if (stitchAttachments[i].particleGroup.particleIndices[0] == particle)
             {
@@ -245,7 +245,7 @@ public class ThreadBehaviour : MonoBehaviour
     private void ChangeCustomParticleProperties()
     {
         //Return particles back to normal if there's no attachments
-        if(stitchAttachments.Count <= 0)
+        if (stitchAttachments.Count <= 0)
         {
             for (int i = 10; i < rope.elements.Count - 10; i++)
             {
@@ -304,7 +304,7 @@ public class ThreadBehaviour : MonoBehaviour
         int mask;
 
         //Obi has 16 different masks, i used the mask 1 as the body mask
-        if(bodyCollision)
+        if (bodyCollision)
         {
             mask = (1 << 0) | (bodyMask) | (1 << 2) | (1 << 3) |
                    (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7) |
@@ -368,7 +368,7 @@ public class ThreadBehaviour : MonoBehaviour
     private void NeedleDetector_onNeedleExit(object sender, Vector3 e)
     {
         //In case the needle hasn't been inserted
-        if(!isNeedleInserted)
+        if (!isNeedleInserted)
         {
             return;
         }
@@ -391,17 +391,17 @@ public class ThreadBehaviour : MonoBehaviour
             if (Vector3.Distance(stitchAttachments[i].target.position, e) < stitchThreshold)
             {
                 return;
-            }    
+            }
         }
-        
+
         AddStitchAttachment(e);
 
         //We add at least the minimum amount of particles between attachments
-        for(int i = 0; i < inBetweenAttachmentsParticles; i++)
+        for (int i = 0; i < inBetweenAttachmentsParticles; i++)
         {
             //In the case theres not enough particles at the first attachment, we don't move more of the first particles
             bool moveLastParticles = true;
-            
+
             int firstAttachmentParticle = stitchAttachments[0].particleGroup.particleIndices[0];
             int lastParticle = rope.elements[rope.elements.Count - 1].particle2;
 
@@ -411,7 +411,7 @@ public class ThreadBehaviour : MonoBehaviour
             }
 
             MoveStitchParticles(moveLastParticles);
-            
+
         }
 
     }
@@ -525,6 +525,23 @@ public class ThreadBehaviour : MonoBehaviour
             if (forcepsAttachments[i].target == e)
             {
                 forcepsAttachments[i].enabled = false;
+                return;
+            }
+        }
+    }
+
+    private void CutRope(Vector3 cutPosition)
+    {
+        for(int i = 0; i < rope.elements.Count; i++)
+        {
+            int particle = rope.elements[i].particle1;
+            Vector3 particlePos = rope.GetParticlePosition(particle);
+
+            float minDistance = 0.1f;
+
+            if(Vector3.Distance(particlePos, cutPosition) < minDistance)
+            {
+                rope.Tear(rope.elements[i]);
                 return;
             }
         }
