@@ -66,6 +66,11 @@ public class AnatomicalForcepsDeform : MedicalTool
             currentHand = GameManager.LeftHand;
         }
 
+        if (currentHand == null)
+        {
+            return;
+        }
+
         //Formula to obtain a value between 0 and 1 from the distance between the index finger and the thumb
         float value = -currentHand.PinchDistance / 15 + 2.5f;
         topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);

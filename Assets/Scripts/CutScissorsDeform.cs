@@ -60,6 +60,11 @@ public class CutScissorsDeform : MedicalTool
             currentHand = GameManager.LeftHand;
         }
 
+        if (currentHand == null)
+        {
+            return;
+        }
+
         //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
         float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.75f;
 
