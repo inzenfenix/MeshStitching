@@ -66,6 +66,7 @@ public class AnatomicalForcepsDeform : MedicalTool
             currentHand = GameManager.LeftHand;
         }
 
+        //Formula to obtain a value between 0 and 1 from the distance between the index finger and the thumb
         float value = -currentHand.PinchDistance / 15 + 2.5f;
         topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);
 
@@ -96,6 +97,7 @@ public class AnatomicalForcepsDeform : MedicalTool
 
         //END TEST CODE
 
+        //Moves the tool on its axis of rotation, if it passes the threshold then the tool's system activates
         TopBone.localRotation = Quaternion.Slerp(originalTopRotation_Q, deformedlTopRotation_Q, topKey);
         BottomBone.localRotation = Quaternion.Slerp(originalBottomRotation_Q, deformedlBottomRotation_Q, bottomKey);
 

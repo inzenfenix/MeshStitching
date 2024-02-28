@@ -66,6 +66,7 @@ public class HoldScissorsDeform : MedicalTool
             currentHand = GameManager.LeftHand;
         }
 
+        //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
         float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.75f;
 
         leftKey = rightKey = Mathf.Clamp(value, 0f, 1f);
@@ -96,6 +97,7 @@ public class HoldScissorsDeform : MedicalTool
         */
         //END TEST CODE
 
+        //Moves the tool on its axis of rotation, if it passes the threshold then the tool's system activates
         LeftScissor.localRotation = Quaternion.Slerp(originalRotationLeft, goalRotationLeft, leftKey);
         RightScissor.localRotation = Quaternion.Slerp(originalRotationRight, goalRotationRight, rightKey);
 
