@@ -6,11 +6,9 @@ using UnityEngine;
 
 public class MedicalTool : MonoBehaviour
 {
-    public static GameObject selectedTool;
+    public static GameObject[] selectedTools = new GameObject[2];
 
     protected InteractionBehaviour interactor;
-
-    protected bool handIsLeft = false;
 
     protected virtual void Awake()
     {
@@ -19,28 +17,36 @@ public class MedicalTool : MonoBehaviour
 
     public void SelectTool()
     {
+        if(GameManager.LeftHand == null ||
+           GameManager.RightHand == null)
+        {
+            return;
+        }
+
         if(Vector3.Distance(GameManager.LeftHand.PalmPosition, this.transform.position) <
            Vector3.Distance(GameManager.RightHand.PalmPosition, this.transform.position))
         {
-            handIsLeft = true;
+            selectedTools[0] = gameObject;
         }
 
         else
         {
-            handIsLeft = false;
+            selectedTools[1] = gameObject;
         }
 
-        selectedTool = this.gameObject;
-
         Debug.Log("Selected tool: " + this.gameObject.name);
-        Debug.Log("Is Hand Left?: " + handIsLeft);
     }
 
     public virtual void DeselectTool(GameObject tool)
     {
-        if (selectedTool != tool) return;
-
-        selectedTool = null;
+        for(int i = 0; i < selectedTools.Length; i++)
+        {
+            if (selectedTools[i] == tool)
+            {
+                selectedTools[i] = null;
+                return;
+            }
+        }
 
     }
 }

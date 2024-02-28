@@ -54,16 +54,21 @@ public class HoldScissorsDeform : MedicalTool
 
     private void Update()
     {
-        if (selectedTool != this.gameObject)
-        {
-            return;
-        }
+        Leap.Hand currentHand;
 
-        Leap.Hand currentHand = GameManager.RightHand;
-
-        if (handIsLeft)
+        if (selectedTools[0] == this.gameObject)
         {
             currentHand = GameManager.LeftHand;
+        }
+
+        else if (selectedTools[1] == this.gameObject)
+        {
+            currentHand = GameManager.RightHand;
+        }
+
+        else
+        {
+            return;
         }
 
         if(currentHand == null)
