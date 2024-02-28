@@ -1,3 +1,4 @@
+using Leap.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,6 +52,18 @@ public class CutScissorsDeform : MedicalTool
         {
             return;
         }
+
+        Leap.Hand currentHand = GameManager.RightHand;
+
+        if (handIsLeft)
+        {
+            currentHand = GameManager.LeftHand;
+        }
+
+
+        float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.75f;
+
+        leftKey = rightKey = Mathf.Clamp(value, 0f, 1f);
 
         //START TEST CODE
         if (Input.GetKey(KeyCode.L))

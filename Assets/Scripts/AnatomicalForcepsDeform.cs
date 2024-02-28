@@ -66,7 +66,12 @@ public class AnatomicalForcepsDeform : MedicalTool
             currentHand = GameManager.LeftHand;
         }
 
+        float value = -currentHand.PinchDistance / 15 + 2.5f;
+        topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);
+
+
         //START TEST CODE
+        /*
         if (Input.GetKey(KeyCode.L))
         {
             float currentValue = topKey;
@@ -87,7 +92,7 @@ public class AnatomicalForcepsDeform : MedicalTool
 
             topKey = currentValue;
             bottomKey = currentValue;
-        }
+        }*/
 
         //END TEST CODE
 

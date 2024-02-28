@@ -1,7 +1,9 @@
+using Leap.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public class HoldScissorsDeform : MedicalTool
@@ -57,7 +59,19 @@ public class HoldScissorsDeform : MedicalTool
             return;
         }
 
+        Leap.Hand currentHand = GameManager.RightHand;
+
+        if (handIsLeft)
+        {
+            currentHand = GameManager.LeftHand;
+        }
+
+        float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.75f;
+
+        leftKey = rightKey = Mathf.Clamp(value, 0f, 1f);
+
         //START TEST CODE
+        /*
         if (Input.GetKey(KeyCode.L))
         {
             float currentValue = leftKey;
@@ -79,7 +93,7 @@ public class HoldScissorsDeform : MedicalTool
             leftKey = currentValue;
             rightKey = currentValue;
         }
-
+        */
         //END TEST CODE
 
         LeftScissor.localRotation = Quaternion.Slerp(originalRotationLeft, goalRotationLeft, leftKey);
