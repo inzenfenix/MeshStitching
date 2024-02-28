@@ -1,11 +1,13 @@
+using Leap.Unity.Interaction;
+using Leap.Unity.PhysicalHands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
-public class AnatomicalForcepsDeform : MonoBehaviour
+public class AnatomicalForcepsDeform : MedicalTool
 {
-    public static GameObject currentSelectedForcep;
 
     public event EventHandler OnForcepsJoin;
     public event EventHandler OnForcepsSeparate;
@@ -37,21 +39,31 @@ public class AnatomicalForcepsDeform : MonoBehaviour
     private bool forcepsJoined = false;
     private float forcepsSpeed = 5.0f;
 
-
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake();
+
         originalTopRotation_Q = Quaternion.Euler(originalTopRotation);
         deformedlTopRotation_Q = Quaternion.Euler(deformedTopRotation);
 
         originalBottomRotation_Q = Quaternion.Euler(originalBottomRotation);
         deformedlBottomRotation_Q = Quaternion.Euler(deformedBottomRotation);
+
+        interactor = GetComponent<InteractionBehaviour>();
     }
 
     private void Update()
     {
-        if (currentSelectedForcep != this.gameObject)
+        if (selectedTool != this.gameObject)
         {
             return;
+        }
+
+        Leap.Hand currentHand = GameManager.RightHand;
+
+        if(handIsLeft)
+        {
+            currentHand = GameManager.LeftHand;
         }
 
         //START TEST CODE
@@ -95,9 +107,13 @@ public class AnatomicalForcepsDeform : MonoBehaviour
         }
     }
 
-    public void SelectForcep()
+    public override void DeselectTool(GameObject tool)
     {
-        currentSelectedForcep = this.gameObject;
-    }
+        base.DeselectTool(tool);
 
+        topKey = 0;
+        bottomKey = 0;
+        forcepsJoined = false;
+        OnForcepsSeparate?.Invoke(this, EventArgs.Empty);
+    }
 }

@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class HoldScissorsDeform : MonoBehaviour
+public class HoldScissorsDeform : MedicalTool
 {
     //public static GameObject currentSelectedScissor;
 
@@ -35,6 +36,10 @@ public class HoldScissorsDeform : MonoBehaviour
 
     [SerializeField] private bool activated = true;
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     private void Start()
     {
@@ -47,7 +52,7 @@ public class HoldScissorsDeform : MonoBehaviour
 
     private void Update()
     {
-        if (!activated)
+        if (selectedTool != this.gameObject)
         {
             return;
         }
@@ -91,10 +96,5 @@ public class HoldScissorsDeform : MonoBehaviour
             scissorsJoined = false;
             OnScissorsSeparate?.Invoke(this, EventArgs.Empty);
         }
-    }
-
-    public void SelectScissors()
-    {
-        //currentSelectedScissor = this.gameObject;
     }
 }

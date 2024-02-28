@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MISNeedleBehaviour : MonoBehaviour
+public class MISNeedleBehaviour : MedicalTool
 {
     [Header("Needle components")]
     [SerializeField] private Transform needleTop;
@@ -41,6 +41,7 @@ public class MISNeedleBehaviour : MonoBehaviour
 
     private void Update()
     {
+
         rb.velocity = Vector3.zero;
 
         //Test code

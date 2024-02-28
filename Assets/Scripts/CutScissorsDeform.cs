@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CutScissorsDeform : MonoBehaviour
+public class CutScissorsDeform : MedicalTool
 {
     public event EventHandler OnScissorsJoin;
     public event EventHandler OnScissorsSeparate;
@@ -31,8 +31,10 @@ public class CutScissorsDeform : MonoBehaviour
     private bool scissorsJoined = true;
     private float scissorsSpeed = 5.0f;
 
-    [SerializeField] private bool activated = true;
-
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     private void Start()
     {
@@ -45,7 +47,7 @@ public class CutScissorsDeform : MonoBehaviour
 
     private void Update()
     {
-        if (!activated)
+        if(selectedTool != this.gameObject)
         {
             return;
         }
@@ -88,10 +90,5 @@ public class CutScissorsDeform : MonoBehaviour
         {
             scissorsJoined = false;
         }
-    }
-
-    public void SelectScissors()
-    {
-        //currentSelectedScissor = this.gameObject;
     }
 }
