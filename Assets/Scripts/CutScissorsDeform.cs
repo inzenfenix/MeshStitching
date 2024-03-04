@@ -48,6 +48,8 @@ public class CutScissorsDeform : MedicalTool
 
     private void Update()
     {
+        rb.isKinematic = true;
+
         Leap.Hand currentHand;
 
         if (selectedTools[0] == this.gameObject)
@@ -71,7 +73,7 @@ public class CutScissorsDeform : MedicalTool
         }
 
         //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
-        float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.75f;
+        float value = -currentHand.PinchDistance / 15 + 2.5f;
 
         leftKey = rightKey = Mathf.Clamp(value, 0f, 1f);
 
@@ -101,16 +103,16 @@ public class CutScissorsDeform : MedicalTool
         //END TEST CODE
 
         //Moves the tool on its axis of rotation, if it passes the threshold then the tool's system activates
-        LeftScissor.localRotation = Quaternion.Slerp(originalRotationLeft, goalRotationLeft, leftKey);
-        RightScissor.localRotation = Quaternion.Slerp(originalRotationRight, goalRotationRight, rightKey);
+        LeftScissor.localRotation = Quaternion.Slerp(goalRotationLeft, originalRotationLeft, leftKey);
+        RightScissor.localRotation = Quaternion.Slerp(goalRotationRight, originalRotationRight, rightKey);
 
-        if (leftKey <= 0.1f && rightKey <= 0.1f && !scissorsJoined)
+        if (leftKey > 0.9f && rightKey > 0.9f && !scissorsJoined)
         {
             scissorsJoined = true;
             OnScissorsJoin?.Invoke(this, EventArgs.Empty);
         }
 
-        if (leftKey > 0.2f && rightKey > 0.2f && scissorsJoined)
+        if (leftKey <= 0.8f && rightKey <= 0.8f && scissorsJoined)
         {
             scissorsJoined = false;
         }

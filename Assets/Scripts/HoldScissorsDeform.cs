@@ -38,6 +38,8 @@ public class HoldScissorsDeform : MedicalTool
 
     [SerializeField] private bool activated = true;
 
+    [SerializeField] private float holdRotationAmount = 2.5f;
+
     protected override void Awake()
     {
         base.Awake();
@@ -45,15 +47,17 @@ public class HoldScissorsDeform : MedicalTool
 
     private void Start()
     {
-        originalRotationLeft = LeftScissor.localRotation;
+        originalRotationLeft = Quaternion.Euler(LeftScissor.localRotation.eulerAngles + new Vector3(0, 0, holdRotationAmount));
         goalRotationLeft = Quaternion.Euler(LeftScissor.localRotation.eulerAngles + new Vector3 (0, 0, rotationAmount));
 
-        originalRotationRight = RightScissor.localRotation;
+        originalRotationRight = Quaternion.Euler(RightScissor.localRotation.eulerAngles + new Vector3(0, 0, holdRotationAmount));
         goalRotationRight = Quaternion.Euler(RightScissor.localRotation.eulerAngles + new Vector3(0, 0, rotationAmount));
     }
 
     private void Update()
     {
+        rb.isKinematic = true;
+
         Leap.Hand currentHand;
 
         if (selectedTools[0] == this.gameObject)
@@ -76,10 +80,28 @@ public class HoldScissorsDeform : MedicalTool
             return;
         }
 
+
+        float minValue = currentHand.GetFingerPinchDistance(3) * 10 - 0.75f;
+
+        if (minValue >= 0.75f)
+        {
+            DeselectTool(this.gameObject);
+        }
+
+        else
+        {
+            SelectTool();
+        }
+
         //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
-        float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.75f;
+        float value = -currentHand.PinchDistance / 15 + 2.5f;
 
         leftKey = rightKey = Mathf.Clamp(value, 0f, 1f);
+
+        if(leftKey >= 0.7f)
+        {
+            leftKey = rightKey = 1f;
+        }
 
         //START TEST CODE
         /*
@@ -108,16 +130,16 @@ public class HoldScissorsDeform : MedicalTool
         //END TEST CODE
 
         //Moves the tool on its axis of rotation, if it passes the threshold then the tool's system activates
-        LeftScissor.localRotation = Quaternion.Slerp(originalRotationLeft, goalRotationLeft, leftKey);
-        RightScissor.localRotation = Quaternion.Slerp(originalRotationRight, goalRotationRight, rightKey);
+        LeftScissor.localRotation = Quaternion.Slerp(goalRotationLeft, originalRotationLeft, leftKey);
+        RightScissor.localRotation = Quaternion.Slerp(goalRotationRight, originalRotationRight, rightKey);
 
-        if (leftKey <= 0.1f && rightKey <= 0.1f && !scissorsJoined)
+        if (leftKey > 0.7f && rightKey > 0.7f && !scissorsJoined)
         {
             scissorsJoined = true;
             OnScissorsJoin?.Invoke(this, EventArgs.Empty);
         }
 
-        if (leftKey > 0.2f && rightKey > 0.2f && scissorsJoined)
+        if (leftKey <= 0.3f && rightKey <= 0.3f && scissorsJoined)
         {
             scissorsJoined = false;
             OnScissorsSeparate?.Invoke(this, EventArgs.Empty);

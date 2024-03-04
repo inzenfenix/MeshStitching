@@ -4,21 +4,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class MedicalTool : MonoBehaviour
 {
     public static GameObject[] selectedTools = new GameObject[2];
 
     protected InteractionBehaviour interactor;
 
+    protected Rigidbody rb;
+
     protected virtual void Awake()
     {
         interactor = GetComponent<InteractionBehaviour>();
+
+        rb = GetComponent<Rigidbody>();
     }
 
     public void SelectTool()
     {
-        if(GameManager.LeftHand == null ||
-           GameManager.RightHand == null)
+        Debug.Log("Selected: " + this.gameObject.name);
+
+        if(GameManager.LeftHand == null &&
+           GameManager.RightHand != null)
+        {
+            selectedTools[1] = gameObject;
+            return;
+        }
+
+        else if (GameManager.LeftHand != null &&
+                 GameManager.RightHand == null)
+        {
+            selectedTools[0] = gameObject;
+            return;
+        }
+
+        else if (GameManager.LeftHand == null ||
+                 GameManager.RightHand == null)
         {
             return;
         }

@@ -10,17 +10,16 @@ public class MISNeedleBehaviour : MedicalTool
     [SerializeField] private Transform needleTop;
     [SerializeField] private Transform needleBottom;
 
-
-    private Rigidbody rb;
-
     [Header("Insertion Components")]
     [SerializeField] private Collider[] colliders;
     private bool isNeedleInserted;
 
+    [SerializeField] Transform forcepsHookPoint;
 
-    private void Start()
+
+    protected override void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        base.Awake();
     }
 
     private void OnEnable()
@@ -29,6 +28,9 @@ public class MISNeedleBehaviour : MedicalTool
         NeedleDetector.onNeedleEnter += NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleMidEnter += NeedleDetector_onNeedleMidEnter;
         NeedleDetector.onNeedleMidExit += NeedleDetector_onNeedleMidExit;
+
+        AnatomicalForcepsBehaviour.onHookedRope += OnHookedRope;
+        AnatomicalForcepsBehaviour.onUnhookedRope += OnUnhookedRope;
     }
 
     private void OnDisable()
@@ -37,6 +39,9 @@ public class MISNeedleBehaviour : MedicalTool
         NeedleDetector.onNeedleEnter -= NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleMidEnter -= NeedleDetector_onNeedleMidEnter;
         NeedleDetector.onNeedleMidExit -= NeedleDetector_onNeedleMidExit;
+
+        AnatomicalForcepsBehaviour.onHookedRope -= OnHookedRope;
+        AnatomicalForcepsBehaviour.onUnhookedRope -= OnUnhookedRope;
     }
 
     private void Update()
@@ -147,5 +152,23 @@ public class MISNeedleBehaviour : MedicalTool
     private void SetTriggerOnOff(Collider collider, bool enabled)
     {
         collider.isTrigger = enabled;
+    }
+
+    private void OnHookedRope(object sender, Transform forceps)
+    {
+        float forcepsDistanceThreshold = .1f;
+
+        //Check that the forceps are not too far from the needle
+        if (Vector3.Distance(forcepsHookPoint.position, forceps.position) > forcepsDistanceThreshold)
+        {
+            return;
+        }
+
+        this.transform.parent = forceps;
+    }
+
+    private void OnUnhookedRope(object sender, Transform forceps)
+    {
+        this.transform.parent = null;
     }
 }

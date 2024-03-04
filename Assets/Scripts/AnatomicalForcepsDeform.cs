@@ -54,6 +54,8 @@ public class AnatomicalForcepsDeform : MedicalTool
 
     private void Update()
     {
+        rb.isKinematic = true;
+
         Leap.Hand currentHand;
 
         if (selectedTools[0] == this.gameObject)
@@ -111,13 +113,13 @@ public class AnatomicalForcepsDeform : MedicalTool
         TopBone.localRotation = Quaternion.Slerp(originalTopRotation_Q, deformedlTopRotation_Q, topKey);
         BottomBone.localRotation = Quaternion.Slerp(originalBottomRotation_Q, deformedlBottomRotation_Q, bottomKey);
 
-        if(topKey > 0.9f && bottomKey > 0.9f && !forcepsJoined)
+        if(topKey > 0.85f && bottomKey > 0.85f && !forcepsJoined)
         {
             forcepsJoined = true;
             OnForcepsJoin?.Invoke(this, EventArgs.Empty);
         }
 
-        if(topKey <= 0.8f && bottomKey <= 0.8f && forcepsJoined)
+        if(topKey <= 0.7f && bottomKey <= 0.7f && forcepsJoined)
         {
             forcepsJoined = false;
             OnForcepsSeparate?.Invoke(this, EventArgs.Empty);
