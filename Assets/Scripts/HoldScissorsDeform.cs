@@ -1,4 +1,5 @@
 using Leap.Unity;
+using LeapInternal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,7 +59,18 @@ public class HoldScissorsDeform : MedicalTool
     {
         rb.isKinematic = true;
 
-        Leap.Hand currentHand;
+        Leap.Hand currentHand = ClosestHand();
+
+        if (currentHand == null)
+        {
+            return;
+        }
+
+        else
+        {
+            transform.position = currentHand.PalmPosition;
+            transform.rotation = currentHand.Rotation;
+        }
 
         if (selectedTools[0] == this.gameObject)
         {
@@ -144,5 +156,54 @@ public class HoldScissorsDeform : MedicalTool
             scissorsJoined = false;
             OnScissorsSeparate?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    private Leap.Hand ClosestHand()
+    {
+        float minDistance = 0.1f;
+        Leap.Hand selectedHand = null;
+
+        if (GameManager.LeftHand == null &&
+           GameManager.RightHand != null)
+        {
+            if (Vector3.Distance(GameManager.RightHand.PalmPosition, this.transform.position) < minDistance)
+            {
+                selectedHand = GameManager.RightHand;
+            }
+        }
+
+        else if (GameManager.LeftHand != null &&
+                 GameManager.RightHand == null)
+        {
+            if (Vector3.Distance(GameManager.LeftHand.PalmPosition, this.transform.position) < minDistance)
+            {
+                selectedHand = GameManager.LeftHand;
+            }
+        }
+
+        else if (GameManager.LeftHand == null ||
+                 GameManager.RightHand == null)
+        {
+            return null;
+        }
+
+        else if (Vector3.Distance(GameManager.LeftHand.PalmPosition, this.transform.position) <
+                 Vector3.Distance(GameManager.RightHand.PalmPosition, this.transform.position))
+        {
+            if (Vector3.Distance(GameManager.LeftHand.PalmPosition, this.transform.position) < minDistance)
+            {
+                selectedHand = GameManager.LeftHand;
+            }
+        }
+
+        else
+        {
+            if (Vector3.Distance(GameManager.RightHand.PalmPosition, this.transform.position) < minDistance)
+            {
+                selectedHand = GameManager.RightHand;
+            }
+        }
+
+        return selectedHand;
     }
 }
