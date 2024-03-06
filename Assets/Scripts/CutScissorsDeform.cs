@@ -50,7 +50,18 @@ public class CutScissorsDeform : MedicalTool
     {
         rb.isKinematic = true;
 
-        Leap.Hand currentHand;
+        Leap.Hand currentHand = ClosestHand();
+
+        if (currentHand == null)
+        {
+            return;
+        }
+
+        else
+        {
+            transform.position = currentHand.PalmPosition;
+            transform.rotation = currentHand.Rotation;
+        }
 
         if (selectedTools[0] == this.gameObject)
         {
