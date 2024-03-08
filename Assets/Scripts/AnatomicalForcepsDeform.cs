@@ -1,3 +1,4 @@
+using Leap.Unity;
 using Leap.Unity.Interaction;
 using Leap.Unity.PhysicalHands;
 using System;
@@ -60,6 +61,13 @@ public class AnatomicalForcepsDeform : MedicalTool
 
         if (currentHand == null)
         {
+            if (selectedThisTool)
+            {
+                selectedThisTool = false;
+                DeselectTool(this.gameObject);
+                thumbPos = Vector3.zero;
+            }
+
             return;
         }
 
@@ -67,31 +75,24 @@ public class AnatomicalForcepsDeform : MedicalTool
         {
             transform.position = currentHand.PalmPosition;
             transform.rotation = currentHand.Rotation;
+
+            if(!selectedThisTool)
+            {
+                SelectTool();
+                selectedThisTool = true;
+
+                thumbPos = currentHand.GetThumb().TipPosition.InLocalSpace(this.transform);
+            }
         }
 
-        if (selectedTools[0] == this.gameObject)
-        {
-            currentHand = GameManager.LeftHand;
-        }
+        Vector3 curThumbPos = currentHand.GetThumb().TipPosition.InLocalSpace(this.transform);
 
-        else if (selectedTools[1] == this.gameObject)
-        {
-            currentHand = GameManager.RightHand;
-        }
+        float thumbCurDistance = Vector3.Distance(curThumbPos, thumbPos);
 
-        else
-        {
-            return;
-        }
+        Debug.Log(thumbCurDistance);
 
-        if (currentHand == null)
-        {
-            return;
-        }
-
-        //Formula to obtain a value between 0 and 1 from the distance between the index finger and the thumb
-        float value = -currentHand.PinchDistance / 15 + 2.5f;
-        topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);
+        //float value = -currentHand.PinchDistance / 15 + 2.5f;
+        //topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);
 
 
         //START TEST CODE
@@ -145,5 +146,19 @@ public class AnatomicalForcepsDeform : MedicalTool
         bottomKey = 0;
         forcepsJoined = false;
         OnForcepsSeparate?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying) return;
+
+        Gizmos.color = Color.black;
+        Gizmos.DrawSphere(transform.TransformPoint(thumbPos), .01f);        
+
+        Leap.Hand curHand = ClosestHand();
+        if (curHand == null) return;
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(curHand.GetThumb().TipPosition, .01f);
     }
 }

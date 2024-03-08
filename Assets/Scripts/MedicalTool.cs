@@ -13,6 +13,10 @@ public class MedicalTool : MonoBehaviour
 
     protected Rigidbody rb;
 
+    protected bool selectedThisTool;
+
+    protected Vector3 thumbPos;
+
     protected virtual void Awake()
     {
         interactor = GetComponent<InteractionBehaviour>();
