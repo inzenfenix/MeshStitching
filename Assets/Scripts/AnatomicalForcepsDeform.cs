@@ -75,6 +75,17 @@ public class AnatomicalForcepsDeform : MedicalTool
             return;
         }
 
+        if(currentHand.GrabStrength <= .1f)
+        {
+            if (selectedThisTool)
+            {
+                selectedThisTool = false;
+                DeselectTool();
+            }
+
+            return;
+        }
+
         transform.position = currentHand.PalmPosition;
         transform.rotation = currentHand.Rotation;
 
