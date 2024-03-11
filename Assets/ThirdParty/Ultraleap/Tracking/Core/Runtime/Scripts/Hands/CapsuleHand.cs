@@ -121,6 +121,9 @@ namespace Leap.Unity
 
         private float currentLossyScaleX;
 
+        private Color originalSphereColor;
+        private Color originalCylinderColor;
+
         [HideInInspector]
         public bool SetIndividualSphereColors = false;
         public Color[] SphereColors
@@ -138,6 +141,16 @@ namespace Leap.Unity
             {
                 _sphereColors = value;
             }
+        }
+
+        public void SetTransparentHands()
+        {
+            SetCustomColours(new Color(0, 0, 0, 0), new Color(0, 0, 0, 0));
+        }
+
+        public void SetMaterialToNormal()
+        {
+            SetCustomColours(originalSphereColor, originalCylinderColor);
         }
 
         /// <summary>
@@ -227,6 +240,9 @@ namespace Leap.Unity
                 {
                     _sphereMat.color = _sphereColor;
                     _backing_material.color = _cylinderColor;
+
+                    originalCylinderColor = _cylinderColor;
+                    originalSphereColor = _sphereColor;
                 }
             }
         }

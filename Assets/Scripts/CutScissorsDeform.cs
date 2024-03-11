@@ -54,12 +54,6 @@ public class CutScissorsDeform : MedicalTool
 
         if (currentHand == null)
         {
-            if (selectedThisTool)
-            {
-                selectedThisTool = false;
-                DeselectTool();
-            }
-
             return;
         }
 
@@ -68,10 +62,12 @@ public class CutScissorsDeform : MedicalTool
             return;
         }
 
-        if (currentHand.GrabStrength <= .1f)
+        if (currentHand.GrabStrength <= .2f)
         {
             if (selectedThisTool)
             {
+                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
+                else rightHand.SetMaterialToNormal();
                 selectedThisTool = false;
                 DeselectTool();
             }
@@ -84,6 +80,8 @@ public class CutScissorsDeform : MedicalTool
 
         if (!selectedThisTool)
         {
+            if (currentHand.IsLeft) leftHand.SetTransparentHands();
+            else rightHand.SetTransparentHands();
             SelectTool();
             selectedThisTool = true;
         }

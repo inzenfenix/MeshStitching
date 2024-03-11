@@ -1,12 +1,17 @@
 using Leap;
+using Leap.Unity;
 using Leap.Unity.Interaction;
+using Leap.Unity.PhysicalHands;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MedicalTool : MonoBehaviour
 {
+
     public static GameObject[] selectedTools = new GameObject[2];
 
     protected InteractionBehaviour interactor;
@@ -14,6 +19,9 @@ public class MedicalTool : MonoBehaviour
     protected Rigidbody rb;
 
     protected bool selectedThisTool;
+
+    [SerializeField] protected CapsuleHand leftHand;
+    [SerializeField] protected CapsuleHand rightHand;
 
     protected virtual void Awake()
     {
