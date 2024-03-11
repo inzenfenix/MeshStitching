@@ -72,7 +72,7 @@ public class HoldScissorsDeform : MedicalTool
             return;
         }
 
-        if (currentHand.GrabStrength <= .1f)
+        if (currentHand.GrabStrength <= .001d)
         {
             if (selectedThisTool)
             {

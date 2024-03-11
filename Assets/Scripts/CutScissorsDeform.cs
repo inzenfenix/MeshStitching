@@ -62,7 +62,8 @@ public class CutScissorsDeform : MedicalTool
             return;
         }
 
-        if (currentHand.GrabStrength <= .1f)
+        Debug.Log(currentHand.GrabStrength);
+        if (currentHand.GrabStrength <= .001d)
         {
 
             if (selectedThisTool)
