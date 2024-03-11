@@ -83,7 +83,7 @@ public class MedicalTool : MonoBehaviour
 
     protected Leap.Hand ClosestHand()
     {
-        float minDistance = 0.1f;
+        float minDistance = 0.075f;
         Leap.Hand selectedHand = null;
 
         if (GameManager.LeftHand == null &&

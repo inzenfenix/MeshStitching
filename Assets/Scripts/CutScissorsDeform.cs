@@ -62,8 +62,9 @@ public class CutScissorsDeform : MedicalTool
             return;
         }
 
-        if (currentHand.GrabStrength <= .2f)
+        if (currentHand.GrabStrength <= .1f)
         {
+
             if (selectedThisTool)
             {
                 if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
@@ -127,7 +128,7 @@ public class CutScissorsDeform : MedicalTool
             OnScissorsSeparate?.Invoke(this, EventArgs.Empty);
         }
 
-        if (leftKey <= 0.2f && rightKey <= 0.2f && !scissorsJoined)
+        if (leftKey <= 0.25f && rightKey <= 0.25f && !scissorsJoined)
         {
             scissorsJoined = true;
             OnScissorsJoin?.Invoke(this, EventArgs.Empty);
