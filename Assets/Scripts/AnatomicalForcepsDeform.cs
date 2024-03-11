@@ -23,7 +23,7 @@ public class AnatomicalForcepsDeform : MedicalTool
     public float topKey;
 
     [Header("\nBOTTOM PART OF THE FORCEPS")]
-    [SerializeField]private Transform BottomBone;
+    [SerializeField] private Transform BottomBone;
 
     public Vector3 originalBottomRotation;
     public Vector3 deformedBottomRotation;
@@ -64,35 +64,28 @@ public class AnatomicalForcepsDeform : MedicalTool
             if (selectedThisTool)
             {
                 selectedThisTool = false;
-                DeselectTool(this.gameObject);
-                thumbPos = Vector3.zero;
+                DeselectTool();
             }
 
             return;
         }
 
-        else
+        if (IsCurrentHandOccupied(currentHand))
         {
-            transform.position = currentHand.PalmPosition;
-            transform.rotation = currentHand.Rotation;
-
-            if(!selectedThisTool)
-            {
-                SelectTool();
-                selectedThisTool = true;
-
-                thumbPos = currentHand.GetThumb().TipPosition.InLocalSpace(this.transform);
-            }
+            return;
         }
 
-        Vector3 curThumbPos = currentHand.GetThumb().TipPosition.InLocalSpace(this.transform);
+        transform.position = currentHand.PalmPosition;
+        transform.rotation = currentHand.Rotation;
 
-        float thumbCurDistance = Vector3.Distance(curThumbPos, thumbPos);
+        if (!selectedThisTool)
+        {
+            SelectTool();
+            selectedThisTool = true;
+        }
 
-        Debug.Log(thumbCurDistance);
-
-        //float value = -currentHand.PinchDistance / 15 + 2.5f;
-        //topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);
+        float value = -currentHand.PinchDistance / 15 + 2.5f;
+        topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);
 
 
         //START TEST CODE
@@ -125,40 +118,26 @@ public class AnatomicalForcepsDeform : MedicalTool
         TopBone.localRotation = Quaternion.Slerp(originalTopRotation_Q, deformedlTopRotation_Q, topKey);
         BottomBone.localRotation = Quaternion.Slerp(originalBottomRotation_Q, deformedlBottomRotation_Q, bottomKey);
 
-        if(topKey > 0.85f && bottomKey > 0.85f && !forcepsJoined)
+        if (topKey > 0.85f && bottomKey > 0.85f && !forcepsJoined)
         {
             forcepsJoined = true;
             OnForcepsJoin?.Invoke(this, EventArgs.Empty);
         }
 
-        if(topKey <= 0.7f && bottomKey <= 0.7f && forcepsJoined)
+        if (topKey <= 0.7f && bottomKey <= 0.7f && forcepsJoined)
         {
             forcepsJoined = false;
             OnForcepsSeparate?.Invoke(this, EventArgs.Empty);
         }
     }
 
-    public override void DeselectTool(GameObject tool)
+    public override void DeselectTool()
     {
-        base.DeselectTool(tool);
+        base.DeselectTool();
 
         topKey = 0;
         bottomKey = 0;
         forcepsJoined = false;
         OnForcepsSeparate?.Invoke(this, EventArgs.Empty);
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (!Application.isPlaying) return;
-
-        Gizmos.color = Color.black;
-        Gizmos.DrawSphere(transform.TransformPoint(thumbPos), .01f);        
-
-        Leap.Hand curHand = ClosestHand();
-        if (curHand == null) return;
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(curHand.GetThumb().TipPosition, .01f);
     }
 }

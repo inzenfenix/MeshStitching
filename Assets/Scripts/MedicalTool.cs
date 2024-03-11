@@ -15,8 +15,6 @@ public class MedicalTool : MonoBehaviour
 
     protected bool selectedThisTool;
 
-    protected Vector3 thumbPos;
-
     protected virtual void Awake()
     {
         interactor = GetComponent<InteractionBehaviour>();
@@ -62,11 +60,11 @@ public class MedicalTool : MonoBehaviour
         Debug.Log("Selected tool: " + this.gameObject.name);
     }
 
-    public virtual void DeselectTool(GameObject tool)
+    public virtual void DeselectTool()
     {
         for(int i = 0; i < selectedTools.Length; i++)
         {
-            if (selectedTools[i] == tool)
+            if (selectedTools[i] == this.gameObject)
             {
                 selectedTools[i] = null;
                 return;
@@ -122,5 +120,26 @@ public class MedicalTool : MonoBehaviour
         }
 
         return selectedHand;
+    }
+
+    protected bool IsCurrentHandOccupied(Leap.Hand hand)
+    {
+        if (hand.IsLeft)
+        {
+            if (selectedTools[0] != this.gameObject && selectedTools[0] != null)
+            {
+                return true;
+            }
+        }
+
+        else
+        {
+            if (selectedTools[1] != this.gameObject && selectedTools[1] != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
