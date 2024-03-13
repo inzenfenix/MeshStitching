@@ -30,24 +30,6 @@ public class MedicalTool : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    protected virtual void FixedUpdate()
-    {
-        if(leftHand == null || rightHand == null)
-        {
-            return;
-        }
-
-        if (selectedTools[0] == null)
-        {
-            leftHand.SetMaterialToNormal();
-        }
-
-        if (selectedTools[1] == null)
-        {
-            rightHand.SetMaterialToNormal();
-        }
-    }
-
     public void SelectTool()
     {
         Debug.Log("Selected: " + this.gameObject.name);
