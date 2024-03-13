@@ -32,6 +32,11 @@ public class MedicalTool : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        if(leftHand == null || rightHand == null)
+        {
+            return;
+        }
+
         if (selectedTools[0] == null)
         {
             leftHand.SetMaterialToNormal();
