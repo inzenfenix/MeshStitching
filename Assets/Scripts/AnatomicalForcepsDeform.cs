@@ -69,7 +69,7 @@ public class AnatomicalForcepsDeform : MedicalTool
             return;
         }
 
-        if(currentHand.GrabStrength <= .1f)
+        if(currentHand.GrabStrength <= .075f)
         {
             if (selectedThisTool)
             {
@@ -94,7 +94,7 @@ public class AnatomicalForcepsDeform : MedicalTool
             selectedThisTool = true;
         }
 
-        float value = -currentHand.PinchDistance / 15 + 2.5f;
+        float value = -currentHand.PinchDistance / 15 + 2.25f;
         topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);
 
 

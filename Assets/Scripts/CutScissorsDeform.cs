@@ -62,8 +62,8 @@ public class CutScissorsDeform : MedicalTool
             return;
         }
 
-        Debug.Log(currentHand.GrabStrength);
-        if (currentHand.GrabStrength <= .001d)
+        Debug.Log(currentHand.GetFingerStrength(4));
+        if (currentHand.GetFingerStrength(4) <= .15d)
         {
 
             if (selectedThisTool)
@@ -89,7 +89,7 @@ public class CutScissorsDeform : MedicalTool
         }
 
         //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
-        float value = currentHand.GetFingerPinchDistance(3) * 10 - 0.8f;
+        float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.8f;
 
         leftKey = rightKey = Mathf.Clamp(value, 0f, 1f);
 
