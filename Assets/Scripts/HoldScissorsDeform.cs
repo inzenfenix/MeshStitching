@@ -107,6 +107,7 @@ public class HoldScissorsDeform : MedicalTool
 
         //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
         float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.8f;
+        Debug.Log(value);
 
         leftKey = rightKey = Mathf.Clamp(value, 0f, 1f);
 
@@ -140,13 +141,13 @@ public class HoldScissorsDeform : MedicalTool
         LeftScissor.localRotation = Quaternion.Slerp(originalRotationLeft, goalRotationLeft, leftKey);
         RightScissor.localRotation = Quaternion.Slerp(originalRotationRight, goalRotationRight, rightKey);
 
-        if (leftKey > 0.5f && rightKey > 0.5f && scissorsJoined)
+        if (leftKey > 0.55f && rightKey > 0.55f && scissorsJoined)
         {
             scissorsJoined = false;
             OnScissorsSeparate?.Invoke(this, EventArgs.Empty);
         }
 
-        if (leftKey <= 0.2f && rightKey <= 0.2f && !scissorsJoined)
+        if (leftKey <= 0.3f && rightKey <= 0.3f && !scissorsJoined)
         {
             scissorsJoined = true;
             OnScissorsJoin?.Invoke(this, EventArgs.Empty);

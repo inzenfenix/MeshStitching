@@ -71,7 +71,6 @@ public class CutScissorsDeform : MedicalTool
             return;
         }
 
-        Debug.Log(currentHand.GetFingerStrength(4));
         if (currentHand.GetFingerStrength(4) <= .15d)
         {
 
@@ -132,7 +131,7 @@ public class CutScissorsDeform : MedicalTool
         LeftScissor.localRotation = Quaternion.Slerp(originalRotationLeft, goalRotationLeft, leftKey);
         RightScissor.localRotation = Quaternion.Slerp(originalRotationRight, goalRotationRight, rightKey);
 
-        if (leftKey > 0.5f && rightKey > 0.5f && scissorsJoined)
+        if (leftKey > 0.55f && rightKey > 0.55f && scissorsJoined)
         {
             scissorsJoined = false;
             OnScissorsSeparate?.Invoke(this, EventArgs.Empty);

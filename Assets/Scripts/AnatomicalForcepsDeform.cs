@@ -78,7 +78,7 @@ public class AnatomicalForcepsDeform : MedicalTool
             return;
         }
 
-        if(currentHand.GrabStrength <= .075f)
+        if(currentHand.GetFingerStrength(4) <= .15d)
         {
             if (selectedThisTool)
             {
@@ -103,7 +103,10 @@ public class AnatomicalForcepsDeform : MedicalTool
             selectedThisTool = true;
         }
 
-        float value = -currentHand.PinchDistance / 15 + 2.25f;
+        float value = currentHand.PinchDistance/16 - 1.1f;
+
+        Debug.Log(value + ", Distance: " + currentHand.PinchDistance);
+
         topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);
 
 
@@ -134,16 +137,16 @@ public class AnatomicalForcepsDeform : MedicalTool
         //END TEST CODE
 
         //Moves the tool on its axis of rotation, if it passes the threshold then the tool's system activates
-        TopBone.localRotation = Quaternion.Slerp(originalTopRotation_Q, deformedlTopRotation_Q, topKey);
-        BottomBone.localRotation = Quaternion.Slerp(originalBottomRotation_Q, deformedlBottomRotation_Q, bottomKey);
+        TopBone.localRotation = Quaternion.Slerp(deformedlTopRotation_Q, originalTopRotation_Q, topKey);
+        BottomBone.localRotation = Quaternion.Slerp(deformedlBottomRotation_Q, originalBottomRotation_Q, bottomKey);
 
-        if (topKey > 0.85f && bottomKey > 0.85f && !forcepsJoined)
+        if (topKey <= 0.25f && bottomKey <= 0.25f && !forcepsJoined)
         {
             forcepsJoined = true;
             OnForcepsJoin?.Invoke(this, EventArgs.Empty);
         }
 
-        if (topKey <= 0.7f && bottomKey <= 0.7f && forcepsJoined)
+        if (topKey > 0.7f && bottomKey > 0.7f && forcepsJoined)
         {
             forcepsJoined = false;
             OnForcepsSeparate?.Invoke(this, EventArgs.Empty);
