@@ -54,6 +54,15 @@ public class CutScissorsDeform : MedicalTool
 
         if (currentHand == null)
         {
+            if (selectedThisTool)
+            {
+                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
+                else rightHand.SetMaterialToNormal();
+                selectedThisTool = false;
+                DeselectTool();
+
+            }
+
             return;
         }
 
