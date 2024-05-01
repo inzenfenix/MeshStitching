@@ -186,7 +186,7 @@ public class AnatomicalForcepsDeform : MedicalTool
             OnForcepsJoin?.Invoke(this, EventArgs.Empty);
         }
 
-        if (topKey > 0.7f && bottomKey > 0.7f && forcepsJoined)
+        if (topKey > 0.8f && bottomKey > 0.8f && forcepsJoined)
         {
             forcepsJoined = false;
             OnForcepsSeparate?.Invoke(this, EventArgs.Empty);

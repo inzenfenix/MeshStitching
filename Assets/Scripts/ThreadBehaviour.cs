@@ -194,7 +194,7 @@ public class ThreadBehaviour : MonoBehaviour
             Vector3 firstPos = rope.GetParticlePosition(firstParticle);
             Vector3 secondPos = rope.GetParticlePosition(lastParticle);
 
-            float minDistance = 0.16f;
+            float minDistance = 0.075f;
 
             //We check that the distance between the two particles is far enough that it makes sense to stiff it
             //Also make sure that the amount of particles is not bigger than the recommended amount between attachments
