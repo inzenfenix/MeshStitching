@@ -38,7 +38,6 @@ public class AnatomicalForcepsDeform : MedicalTool
     private Quaternion deformedlBottomRotation_Q;
 
     private bool forcepsJoined = false;
-    private float forcepsSpeed = 5.0f;
 
     private bool isHandLeft = false;
 

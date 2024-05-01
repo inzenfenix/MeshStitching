@@ -35,7 +35,6 @@ public class HoldScissorsDeform : MedicalTool
     [SerializeField] private float rotationAmount = -17.8f;
 
     private bool scissorsJoined = true;
-    private float scissorsSpeed = 5.0f;
 
     [SerializeField] private bool activated = true;
 

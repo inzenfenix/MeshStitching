@@ -30,7 +30,6 @@ public class CutScissorsDeform : MedicalTool
     [SerializeField] private float rotationAmount = -17.8f;
 
     private bool scissorsJoined = true;
-    private float scissorsSpeed = 5.0f;
 
     private bool isHandLeft = false;
 
