@@ -41,6 +41,8 @@ public class HoldScissorsDeform : MedicalTool
 
     [SerializeField] private float holdRotationAmount = 2.5f;
 
+    private bool isHandLeft = false;
+
     protected override void Awake()
     {
         base.Awake();
@@ -66,8 +68,15 @@ public class HoldScissorsDeform : MedicalTool
         {
             if (selectedThisTool)
             {
-                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
-                else rightHand.SetMaterialToNormal();
+                if (isHandLeft)
+                {
+                    leftHand.SetMaterialToNormal();
+                }
+
+                else
+                {
+                    rightHand.SetMaterialToNormal();
+                }
                 selectedThisTool = false;
                 DeselectTool();
 
@@ -80,8 +89,15 @@ public class HoldScissorsDeform : MedicalTool
         {
             if (selectedThisTool)
             {
-                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
-                else rightHand.SetMaterialToNormal();
+                if (isHandLeft)
+                {
+                    leftHand.SetMaterialToNormal();
+                }
+
+                else
+                {
+                    rightHand.SetMaterialToNormal();
+                }
 
                 selectedThisTool = false;
                 DeselectTool();
@@ -108,14 +124,24 @@ public class HoldScissorsDeform : MedicalTool
 
         if (!selectedThisTool)
         {
-            if (currentHand.IsLeft) leftHand.SetTransparentHands();
-            else rightHand.SetTransparentHands();
+            if (currentHand.IsLeft)
+            {
+                isHandLeft = true;
+                leftHand.SetTransparentHands();
+            }
+            else
+            {
+                isHandLeft = false;
+                rightHand.SetTransparentHands();
+            }
             SelectTool();
             selectedThisTool = true;
         }
 
         //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
         float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.8f;
+
+
         Debug.Log(value);
 
         leftKey = rightKey = Mathf.Clamp(value, 0f, 1f);

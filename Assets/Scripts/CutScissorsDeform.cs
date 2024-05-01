@@ -32,6 +32,8 @@ public class CutScissorsDeform : MedicalTool
     private bool scissorsJoined = true;
     private float scissorsSpeed = 5.0f;
 
+    private bool isHandLeft = false;
+
     protected override void Awake()
     {
         base.Awake();
@@ -56,8 +58,15 @@ public class CutScissorsDeform : MedicalTool
         {
             if (selectedThisTool)
             {
-                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
-                else rightHand.SetMaterialToNormal();
+                if (isHandLeft)
+                {
+                    leftHand.SetMaterialToNormal();
+                }
+
+                else
+                {
+                    rightHand.SetMaterialToNormal();
+                }
                 selectedThisTool = false;
                 DeselectTool();
 
@@ -70,8 +79,15 @@ public class CutScissorsDeform : MedicalTool
         {
             if (selectedThisTool)
             {
-                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
-                else rightHand.SetMaterialToNormal();
+                if (isHandLeft)
+                {
+                    leftHand.SetMaterialToNormal();
+                }
+
+                else
+                {
+                    rightHand.SetMaterialToNormal();
+                }
 
                 selectedThisTool = false;
                 DeselectTool();
@@ -99,8 +115,16 @@ public class CutScissorsDeform : MedicalTool
 
         if (!selectedThisTool)
         {
-            if (currentHand.IsLeft) leftHand.SetTransparentHands();
-            else rightHand.SetTransparentHands();
+            if (currentHand.IsLeft)
+            {
+                isHandLeft = true;
+                leftHand.SetTransparentHands();
+            }
+            else
+            {
+                isHandLeft = false;
+                rightHand.SetTransparentHands();
+            }
             SelectTool();
             selectedThisTool = true;
         }

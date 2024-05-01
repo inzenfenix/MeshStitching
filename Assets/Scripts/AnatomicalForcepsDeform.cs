@@ -40,6 +40,8 @@ public class AnatomicalForcepsDeform : MedicalTool
     private bool forcepsJoined = false;
     private float forcepsSpeed = 5.0f;
 
+    private bool isHandLeft = false;
+
     protected override void Awake()
     {
         base.Awake();
@@ -63,9 +65,21 @@ public class AnatomicalForcepsDeform : MedicalTool
         {
             if (selectedThisTool)
             {
-                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
-                else rightHand.SetMaterialToNormal();
+                if (leftHand == null || rightHand == null)
+                    return;
+
+                if (isHandLeft)
+                {
+                    leftHand.SetMaterialToNormal();
+                }
+
+                else
+                {
+                    rightHand.SetMaterialToNormal();
+                }
+
                 selectedThisTool = false;
+
                 DeselectTool();
 
             }
@@ -77,8 +91,18 @@ public class AnatomicalForcepsDeform : MedicalTool
         {
             if (selectedThisTool)
             {
-                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
-                else rightHand.SetMaterialToNormal();
+                if (leftHand == null || rightHand == null)
+                    return;
+
+                if (isHandLeft)
+                {
+                    leftHand.SetMaterialToNormal();
+                }
+
+                else
+                {
+                    rightHand.SetMaterialToNormal();
+                }
 
                 selectedThisTool = false;
                 DeselectTool();
@@ -106,15 +130,23 @@ public class AnatomicalForcepsDeform : MedicalTool
 
         if (!selectedThisTool)
         {
-            if (currentHand.IsLeft) leftHand.SetTransparentHands();
-            else rightHand.SetTransparentHands();
+            if (currentHand.IsLeft)
+            {
+                isHandLeft = true;
+                leftHand.SetTransparentHands();
+            }
+            else
+            {
+                isHandLeft = false;
+                rightHand.SetTransparentHands();
+            }
             SelectTool();
             selectedThisTool = true;
         }
 
         float value = currentHand.PinchDistance/16 - 1.1f;
 
-        Debug.Log(value + ", Distance: " + currentHand.PinchDistance);
+       // Debug.Log(value + ", Distance: " + currentHand.PinchDistance);
 
         topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);
 

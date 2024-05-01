@@ -14,7 +14,7 @@ public class MISNeedleBehaviour : MedicalTool
     [SerializeField] private Collider[] colliders;
     private bool isNeedleInserted;
 
-    [SerializeField] Transform forcepsHookPoint;
+    [SerializeField] Transform[] forcepsHookPoints;
 
 
     protected override void Awake()
@@ -156,13 +156,24 @@ public class MISNeedleBehaviour : MedicalTool
 
     private void OnHookedRope(object sender, Transform forceps)
     {
-        float forcepsDistanceThreshold = .1f;
+        float forcepsDistanceThreshold = .05f;
+        Vector3 selectedHookPoint = new Vector3(int.MinValue, int.MinValue, int.MinValue);
+
+        for(int i = 0; i < forcepsHookPoints.Length; i++)
+        {
+            if (Vector3.Distance(forcepsHookPoints[i].position, forceps.position) < forcepsDistanceThreshold)
+            {
+                selectedHookPoint = forcepsHookPoints[i].position;
+                break;
+            }
+        }
 
         //Check that the forceps are not too far from the needle
-        if (Vector3.Distance(forcepsHookPoint.position, forceps.position) > forcepsDistanceThreshold)
+        if(selectedHookPoint == new Vector3(int.MinValue, int.MinValue, int.MinValue))
         {
             return;
         }
+        
 
         this.transform.parent = forceps;
     }
