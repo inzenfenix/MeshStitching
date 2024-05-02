@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ToolTriggerSwitcher : MonoBehaviour
 {
-    [SerializeField] private Collider col;
+    [SerializeField] private Collider objectCollider;
 
     [SerializeField] private CutScissorsBehaviour cutScissors;
     [SerializeField] private HoldScissorsBehaviour holdScissors;
@@ -42,11 +42,11 @@ public class ToolTriggerSwitcher : MonoBehaviour
 
     private void OnScissorsTogether(object sender, Transform e)
     {
-        col.isTrigger = false;
+        objectCollider.isTrigger = false;
     }
 
     private void OnScissorsSeparate(object sender, Transform e)
     {
-        col.isTrigger = true;
+        objectCollider.isTrigger = true;
     }
 }
