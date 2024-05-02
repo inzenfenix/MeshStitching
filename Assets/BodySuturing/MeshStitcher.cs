@@ -211,6 +211,8 @@ public class MeshStitcher : MonoBehaviour
         }
     }
 
+    //Calculates how much should a vertex moves towards the center when an insertion is made
+
     private void AddWeights(Vector3 insertionPoint, NeedleDetector.Side side)
     {
         for(int i = 0; i < vertexKeys.Length; i++)
@@ -220,9 +222,10 @@ public class MeshStitcher : MonoBehaviour
                 Vector3 vertexPosWorldSpace = meshLeft.transform.TransformPoint(deformableVertices[i].curLeftVertexPos);
                 float distance = Vector3.Distance(vertexPosWorldSpace, insertionPoint);
 
-                if(distance < 0.005f && distance > .6f) 
+                //In case the insertion point was too far or too close from the vertex
+                if(distance < 0.005f || distance > .5f) 
                 {
-                    return;
+                    continue;
                 }
 
                 float weight = .05f / distance;
@@ -235,10 +238,10 @@ public class MeshStitcher : MonoBehaviour
                 Vector3 vertexPosWorldSpace = meshRight.transform.TransformPoint(deformableVertices[i].curRightVertexPos);
                 float distance = Vector3.Distance(vertexPosWorldSpace, insertionPoint);
 
-                //This changes how many vertices gets affected from the weight of the current suturing
-                if (distance < 0.009f && distance > .5f)
+                //In case the insertion point was too far or too close from the vertex
+                if (distance < 0.005f || distance > .5f)
                 {
-                    return;
+                    continue;
                 }
 
                 // At a higher distance, the weight is smaller

@@ -31,6 +31,9 @@ public class MISNeedleBehaviour : MedicalTool
 
         AnatomicalForcepsBehaviour.onHookedRope += OnHookedRope;
         AnatomicalForcepsBehaviour.onUnhookedRope += OnUnhookedRope;
+
+        HoldScissorsBehaviour.onHookedRope += OnHookedRope;
+        HoldScissorsBehaviour.onUnhookedRope += OnUnhookedRope;
     }
 
     private void OnDisable()
@@ -42,6 +45,9 @@ public class MISNeedleBehaviour : MedicalTool
 
         AnatomicalForcepsBehaviour.onHookedRope -= OnHookedRope;
         AnatomicalForcepsBehaviour.onUnhookedRope -= OnUnhookedRope;
+
+        HoldScissorsBehaviour.onHookedRope -= OnHookedRope;
+        HoldScissorsBehaviour.onUnhookedRope -= OnUnhookedRope;
     }
 
     private void Update()
@@ -156,7 +162,7 @@ public class MISNeedleBehaviour : MedicalTool
 
     private void OnHookedRope(object sender, Transform forceps)
     {
-        float forcepsDistanceThreshold = .05f;
+        float forcepsDistanceThreshold = .03f;
         Vector3 selectedHookPoint = new Vector3(int.MinValue, int.MinValue, int.MinValue);
 
         for(int i = 0; i < forcepsHookPoints.Length; i++)
