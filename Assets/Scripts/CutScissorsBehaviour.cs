@@ -7,6 +7,7 @@ using UnityEngine;
 public class CutScissorsBehaviour : MonoBehaviour
 {
     public static event EventHandler<Transform> onCutRope;
+    public static event EventHandler<Transform> onSeparatedScissors;
 
     [SerializeField] private Transform hookPoint;
 
@@ -17,6 +18,7 @@ public class CutScissorsBehaviour : MonoBehaviour
         CutScissorsDeform holdScissorsDeform = GetComponent<CutScissorsDeform>();
 
         holdScissorsDeform.OnScissorsJoin += HoldScissorsDeform_OnScissorsJoin;
+        holdScissorsDeform.OnScissorsSeparate += HoldScissorsDeform_OnScissorsSeparate;
     }
 
     private void OnDisable()
@@ -24,6 +26,7 @@ public class CutScissorsBehaviour : MonoBehaviour
         CutScissorsDeform holdScissorsDeform = GetComponent<CutScissorsDeform>();
 
         holdScissorsDeform.OnScissorsJoin -= HoldScissorsDeform_OnScissorsJoin;
+        holdScissorsDeform.OnScissorsSeparate -= HoldScissorsDeform_OnScissorsSeparate;
     }
 
     private void HoldScissorsDeform_OnScissorsJoin(object sender, EventArgs e)
@@ -34,5 +37,10 @@ public class CutScissorsBehaviour : MonoBehaviour
     private void CutRope()
     {
         onCutRope?.Invoke(this, hookPoint);
+    }
+
+    private void HoldScissorsDeform_OnScissorsSeparate(object sender, EventArgs e)
+    {
+        onSeparatedScissors?.Invoke(this, hookPoint);
     }
 }
