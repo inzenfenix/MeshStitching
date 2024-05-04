@@ -45,6 +45,9 @@ public class ThreadBehaviour : MonoBehaviour
         HoldScissorsBehaviour.onHookedRope += OnHookedRope;
         HoldScissorsBehaviour.onUnhookedRope += OnUnhookedRope;
 
+        GameManager.onHookedRope += OnHookedRope;
+        GameManager.onUnhookedRope += OnUnhookedRope;
+
         NeedleDetector.onNeedleEnter += NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
 
@@ -63,6 +66,9 @@ public class ThreadBehaviour : MonoBehaviour
 
         HoldScissorsBehaviour.onHookedRope -= OnHookedRope;
         HoldScissorsBehaviour.onUnhookedRope -= OnUnhookedRope;
+
+        GameManager.onHookedRope -= OnHookedRope;
+        GameManager.onUnhookedRope -= OnUnhookedRope;
 
         NeedleDetector.onNeedleEnter -= NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
