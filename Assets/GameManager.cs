@@ -18,13 +18,16 @@ public class GameManager : MonoBehaviour
     private Hand leftHand;
     private Hand rightHand;
 
-    private float minPinchDistance = 18f;
+    private float minPinchDistance = 24f;
 
-    private bool grabbingWithLeft = false;
-    private bool grabbingWithRight = false;
+    public bool grabbingWithLeft = false;
+    public bool grabbingWithRight = false;
 
     private Transform leftHookPoint = null;
     private Transform rightHookPoint = null;
+
+    public static bool grabbingToolLeftHand = false;
+    public static bool grabbingToolRightHand = false;
 
 
     private void Start()
@@ -42,11 +45,13 @@ public class GameManager : MonoBehaviour
         if(leftHookPoint == null)
         {
             leftHookPoint = (new GameObject()).transform;
+            leftHookPoint.name = "LeftHook";
         }
 
         if (rightHookPoint == null)
         {
             rightHookPoint = (new GameObject()).transform;
+            rightHookPoint.name = "RightHook";
         }
     }
 
@@ -57,36 +62,32 @@ public class GameManager : MonoBehaviour
         rightHand = Hands.Provider.GetHand(Chirality.Right);
 
 
-        if(leftHand != null)
+        if(leftHand != null && !grabbingToolLeftHand)
         {
             leftHookPoint.position = leftHand.Fingers[0].TipPosition;
 
             if (leftHand.PinchDistance < minPinchDistance && !grabbingWithLeft)
             {
-                grabbingWithLeft = true;
                 onHookedRope?.Invoke(this, leftHookPoint);
             }
 
             else if(leftHand.PinchDistance > minPinchDistance && grabbingWithLeft)
             {
-                grabbingWithLeft = false;
                 onUnhookedRope?.Invoke(this, leftHookPoint);
             }
         }
 
-        if (rightHand != null)
+        if (rightHand != null && !grabbingToolRightHand)
         {
             rightHookPoint.position = rightHand.Fingers[0].TipPosition;
 
             if (rightHand.PinchDistance < minPinchDistance && !grabbingWithRight)
             {
-                grabbingWithRight = true;
                 onHookedRope?.Invoke(this, rightHookPoint);
             }
 
             else if (rightHand.PinchDistance > minPinchDistance && grabbingWithRight)
             {
-                grabbingWithRight = false;
                 onUnhookedRope?.Invoke(this, rightHookPoint);
             }
         }
@@ -96,7 +97,6 @@ public class GameManager : MonoBehaviour
             if(grabbingWithLeft)
             {
                 onUnhookedRope?.Invoke(this, leftHookPoint);
-                grabbingWithLeft = false;
             }
         }
 
@@ -105,7 +105,6 @@ public class GameManager : MonoBehaviour
             if (grabbingWithRight)
             {
                 onUnhookedRope?.Invoke(this, rightHookPoint);
-                grabbingWithRight = false;
             }
         }
     }

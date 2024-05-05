@@ -60,11 +60,13 @@ public class CutScissorsDeform : MedicalTool
                 if (isHandLeft)
                 {
                     leftHand.SetMaterialToNormal();
+                    GameManager.grabbingToolLeftHand = false;
                 }
 
                 else
                 {
                     rightHand.SetMaterialToNormal();
+                    GameManager.grabbingToolRightHand = false;
                 }
                 selectedThisTool = false;
                 DeselectTool();
@@ -81,11 +83,13 @@ public class CutScissorsDeform : MedicalTool
                 if (isHandLeft)
                 {
                     leftHand.SetMaterialToNormal();
+                    GameManager.grabbingToolLeftHand = false;
                 }
 
                 else
                 {
                     rightHand.SetMaterialToNormal();
+                    GameManager.grabbingToolRightHand = false;
                 }
 
                 selectedThisTool = false;
@@ -104,29 +108,51 @@ public class CutScissorsDeform : MedicalTool
                 else rightHand.SetMaterialToNormal();
                 selectedThisTool = false;
                 DeselectTool();
+
+                if (isHandLeft)
+                {
+                    GameManager.grabbingToolLeftHand = false;
+                }
+
+                else
+                {
+                    GameManager.grabbingToolRightHand = false;
+                }
             }
 
             return;
         }
 
-        transform.position = currentHand.PalmPosition;
-        transform.rotation = currentHand.Rotation;
-
         if (!selectedThisTool)
         {
             if (currentHand.IsLeft)
             {
+                if (GameManager.instance.grabbingWithLeft)
+                {
+                    return;
+                }
+
+                GameManager.grabbingToolLeftHand = true;
                 isHandLeft = true;
                 leftHand.SetTransparentHands();
             }
             else
             {
+                if (GameManager.instance.grabbingWithRight)
+                {
+                    return;
+                }
+
+                GameManager.grabbingToolRightHand = true;
                 isHandLeft = false;
                 rightHand.SetTransparentHands();
             }
             SelectTool();
             selectedThisTool = true;
         }
+
+        transform.position = currentHand.PalmPosition;
+        transform.rotation = currentHand.Rotation;
 
         //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
         float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.8f;

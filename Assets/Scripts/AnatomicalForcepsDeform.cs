@@ -70,11 +70,13 @@ public class AnatomicalForcepsDeform : MedicalTool
                 if (isHandLeft)
                 {
                     leftHand.SetMaterialToNormal();
+                    GameManager.grabbingToolLeftHand = false;
                 }
 
                 else
                 {
                     rightHand.SetMaterialToNormal();
+                    GameManager.grabbingToolRightHand = false;
                 }
 
                 selectedThisTool = false;
@@ -96,11 +98,13 @@ public class AnatomicalForcepsDeform : MedicalTool
                 if (isHandLeft)
                 {
                     leftHand.SetMaterialToNormal();
+                    GameManager.grabbingToolLeftHand = false;
                 }
 
                 else
                 {
                     rightHand.SetMaterialToNormal();
+                    GameManager.grabbingToolRightHand = false;
                 }
 
                 selectedThisTool = false;
@@ -119,29 +123,53 @@ public class AnatomicalForcepsDeform : MedicalTool
                 selectedThisTool = false;
                 DeselectTool();
 
+                if(isHandLeft)
+                {
+                    GameManager.grabbingToolLeftHand = false;
+                }
+
+                else
+                {
+                    GameManager.grabbingToolRightHand = false;
+                }
+
             }
 
             return;
         }
 
-        transform.position = currentHand.PalmPosition;
-        transform.rotation = currentHand.Rotation;
-
         if (!selectedThisTool)
         {
             if (currentHand.IsLeft)
             {
+                if (GameManager.instance.grabbingWithLeft)
+                {
+                    return;
+                }
+
+                GameManager.grabbingToolLeftHand = true;
                 isHandLeft = true;
                 leftHand.SetTransparentHands();
             }
+
             else
             {
+                if(GameManager.instance.grabbingWithRight)
+                {
+                    return;
+                }
+
+                GameManager.grabbingToolRightHand = true;
                 isHandLeft = false;
                 rightHand.SetTransparentHands();
             }
+
             SelectTool();
             selectedThisTool = true;
         }
+
+        transform.position = currentHand.PalmPosition;
+        transform.rotation = currentHand.Rotation;
 
         float value = currentHand.PinchDistance/16 - 1.1f;
 

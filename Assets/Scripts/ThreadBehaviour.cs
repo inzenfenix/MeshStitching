@@ -451,20 +451,30 @@ public class ThreadBehaviour : MonoBehaviour
     }
 
     //If the forceps tried to grab something, we check for which particle (if any) was grabbed
-    private void OnHookedRope(object sender, Transform forceps)
+    private void OnHookedRope(object sender, Transform hookPoint)
     {
         //Checks for the closest particle
-        int element = ClosestParticle(forceps.position);
+        int element = ClosestParticle(hookPoint.position);
         Vector3 curParticlePos = rope.solver.positions[rope.elements[element].particle1];
 
         //Check that the forceps are not too far from the thread
-        if (Vector3.Distance(curParticlePos, forceps.position) > forcepsDistanceThreshold)
+        if (Vector3.Distance(curParticlePos, hookPoint.position) > forcepsDistanceThreshold)
         {
             return;
         }
 
+        if (hookPoint.name.Contains("Left"))
+        {
+            GameManager.instance.grabbingWithLeft = true;
+        }
+
+        else if (hookPoint.name.Contains("Right"))
+        {
+            GameManager.instance.grabbingWithRight = true;
+        }
+
         //Create the attachment
-        ObiParticleAttachment curAttachment = CheckAttachments(forceps, forcepsAttachments);
+        ObiParticleAttachment curAttachment = CheckAttachments(hookPoint, forcepsAttachments);
         curAttachment.enabled = true;
 
 
@@ -473,7 +483,7 @@ public class ThreadBehaviour : MonoBehaviour
         particleGroup.particleIndices.Add(rope.elements[element].particle1);
 
         curAttachment.particleGroup = particleGroup;
-        curAttachment.target = forceps;
+        curAttachment.target = hookPoint;
 
         forcepsAttachments.Add(curAttachment);
     }
@@ -524,8 +534,9 @@ public class ThreadBehaviour : MonoBehaviour
     }
 
     //Disables attachment of forceps if the thread is currently being hooked by it
-    private void OnUnhookedRope(object sender, Transform e)
+    private void OnUnhookedRope(object sender, Transform hookPoint)
     {
+
         if (forcepsAttachments.Count <= 0)
         {
             return;
@@ -533,8 +544,18 @@ public class ThreadBehaviour : MonoBehaviour
 
         for (int i = 0; i < forcepsAttachments.Count; i++)
         {
-            if (forcepsAttachments[i].target == e)
+            if (forcepsAttachments[i].target == hookPoint)
             {
+                if (hookPoint.name.Contains("Left"))
+                {
+                    GameManager.instance.grabbingWithLeft = false;
+                }
+
+                else if (hookPoint.name.Contains("Right"))
+                {
+                    GameManager.instance.grabbingWithRight = false;
+                }
+
                 forcepsAttachments[i].enabled = false;
                 return;
             }
