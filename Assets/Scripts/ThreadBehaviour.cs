@@ -295,7 +295,7 @@ public class ThreadBehaviour : MonoBehaviour
         {
             //In the case that we are at the start or end of the thread, we want this particles to not have any
             //Physical interaction and have them always with the default properties
-            if (i > rope.elements.Count - 8 || i < 5)
+            if (i > rope.elements.Count - 6 || i < 4)
             {
                 rope.solver.invMasses[i] = 0.1f;
                 int maskDefault = 0;
