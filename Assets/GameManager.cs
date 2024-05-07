@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Leap;
 using System;
+using UnityEditor.SearchService;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -57,6 +59,10 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if(Input.GetKey(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
 
         leftHand = Hands.Provider.GetHand(Chirality.Left);
         rightHand = Hands.Provider.GetHand(Chirality.Right);
