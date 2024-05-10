@@ -6,7 +6,7 @@ using UnityEngine;
 public class ThreadBehaviour : MonoBehaviour
 {
     //The distance between the forceps and the thread to start interacting with each other
-    private static readonly float forcepsDistanceThreshold = 0.05f;
+    private static readonly float forcepsDistanceThreshold = 0.01f;
 
     //How much should the user stretch the thread before it moves the particles
     private readonly float stitchStretchThresholdOffset = 0.0075f;
