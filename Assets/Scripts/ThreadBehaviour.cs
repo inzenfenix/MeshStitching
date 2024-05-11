@@ -6,7 +6,7 @@ using UnityEngine;
 public class ThreadBehaviour : MonoBehaviour
 {
     //The distance between the forceps and the thread to start interacting with each other
-    private static readonly float forcepsDistanceThreshold = 0.01f;
+    private static readonly float forcepsDistanceThreshold = 0.02f;
 
     //How much should the user stretch the thread before it moves the particles
     private readonly float stitchStretchThresholdOffset = 0.0075f;
@@ -594,7 +594,7 @@ public class ThreadBehaviour : MonoBehaviour
         for(int i = 0; i < rope.elements.Count; i++)
         {
             Gizmos.color = Color.black;
-            Gizmos.DrawSphere(rope.GetParticlePosition(rope.elements[i].particle1), 0.005f);
+            //Gizmos.DrawSphere(rope.GetParticlePosition(rope.elements[i].particle1), 0.005f);
         }
     }
 }

@@ -2,12 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class ToolTriggerSwitcher : MonoBehaviour
 {
-    [SerializeField] private Collider objectCollider;
 
     [SerializeField] private CutScissorsBehaviour cutScissors;
     [SerializeField] private HoldScissorsBehaviour holdScissors;
+
+    private Collider collider;
+
+    private void Start()
+    {
+        collider = GetComponent<Collider>();
+    }
 
     private void OnEnable()
     {
@@ -42,11 +49,11 @@ public class ToolTriggerSwitcher : MonoBehaviour
 
     private void OnScissorsTogether(object sender, Transform e)
     {
-        objectCollider.isTrigger = false;
+        collider.isTrigger = !collider.isTrigger;
     }
 
     private void OnScissorsSeparate(object sender, Transform e)
     {
-        objectCollider.isTrigger = true;
+        collider.isTrigger = !collider.isTrigger;
     }
 }
