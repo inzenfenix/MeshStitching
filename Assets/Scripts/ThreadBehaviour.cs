@@ -107,7 +107,7 @@ public class ThreadBehaviour : MonoBehaviour
         //If no stitch attachment, the length needed to unstretch the thread goes back to default
         if (stitchAttachments.Count <= 0)
         {
-            stitchStretchThreshold = ThreadLength() + stitchStretchThresholdOffset;
+            stitchStretchThreshold = ThreadLength() + stitchStretchThresholdOffset * .1f;
             return;
         }
 
@@ -116,7 +116,7 @@ public class ThreadBehaviour : MonoBehaviour
             return;
         }
 
-        stitchStretchThreshold = ThreadLength() + stitchStretchThresholdOffset;
+        stitchStretchThreshold = ThreadLength() + stitchStretchThresholdOffset * .1f;
 
         MoveStitchParticles();
         ChangeCustomParticleProperties();
@@ -278,15 +278,15 @@ public class ThreadBehaviour : MonoBehaviour
 
             //In the case that we are at the start or end of the thread, we want this particles to not have any
             //Physical interaction and have them always with the default properties
-            if (i > rope.elements.Count - 8 || i < 5)
+            if (i > rope.elements.Count - 8 || i < 8)
             {
                 rope.solver.invMasses[i] = 0.1f;
                 int nullMask = 0;
                 rope.solver.filters[i] = ObiUtils.MakeFilter(nullMask, 10);
                 continue;
             }
-            rope.solver.invMasses[i] = 0.1f;
 
+            rope.solver.invMasses[i] = 0.1f;
             ChangeParticleColliders(i, false);
         }
 
@@ -594,7 +594,7 @@ public class ThreadBehaviour : MonoBehaviour
         for(int i = 0; i < rope.elements.Count; i++)
         {
             Gizmos.color = Color.black;
-            //Gizmos.DrawSphere(rope.GetParticlePosition(rope.elements[i].particle1), 0.005f);
+            Gizmos.DrawSphere(rope.GetParticlePosition(rope.elements[i].particle1), 0.005f);
         }
     }
 }

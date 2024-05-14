@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     private Hand leftHand;
     private Hand rightHand;
 
-    private float minPinchDistance = 26f;
+    private float minPinchDistance = 36f;
 
     public bool grabbingWithLeft = false;
     public bool grabbingWithRight = false;
