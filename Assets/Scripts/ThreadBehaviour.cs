@@ -1,5 +1,6 @@
 using Obi;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ public class ThreadBehaviour : MonoBehaviour
     [SerializeField] private int maxInBetweenAttachmentsParticles = 20;
     [SerializeField] private float ropeLengthSpeed = 1.1f;
 
+    [SerializeField] private bool dissapearCutRope;
 
     private void Awake()
     {
@@ -565,10 +567,11 @@ public class ThreadBehaviour : MonoBehaviour
     private void CutRope(Vector3 cutPosition)
     {
         bool cut = false;
+        int particle = 0;
 
         for(int i = 0; i < rope.elements.Count; i++)
         {
-            int particle = rope.elements[i].particle1;
+            particle = rope.elements[i].particle1;
             Vector3 particlePos = rope.GetParticlePosition(particle);
 
             float minDistance = 0.06f;
@@ -576,12 +579,38 @@ public class ThreadBehaviour : MonoBehaviour
             if(Vector3.Distance(particlePos, cutPosition) < minDistance)
             {
                 rope.Tear(rope.elements[i]);
+                particle = i + 3;
                 cut = true;
                 break;
             }
         }
 
-        if (cut) rope.RebuildConstraintsFromElements();
+
+        if (cut)
+        {
+            rope.RebuildConstraintsFromElements();
+
+            if (dissapearCutRope)
+            {
+                Vector3 upPos = Vector3.up * 1000f;
+
+                rope.solver.positions[particle] = upPos;
+
+                Transform hook = (new GameObject()).transform;
+                hook.position = upPos;
+
+                ObiParticleAttachment curAttachment = rope.solver.actors[0].AddComponent<ObiParticleAttachment>();
+                curAttachment.enabled = true;
+
+
+                var particleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
+
+                particleGroup.particleIndices.Add(particle);
+
+                curAttachment.particleGroup = particleGroup;
+                curAttachment.target = hook;
+            }
+        }
     }
 
     private void OnDrawGizmos()
