@@ -5,6 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class ToolTriggerSwitcher : MonoBehaviour
 {
+    /*
+     In case we want a collider inside of a tool, if, for example, we want
+     to have collisions with the thread when the tool is closed.
+
+    Specially useful to make knots with threads using scissors.
+    */
+
 
     [SerializeField] private CutScissorsBehaviour cutScissors;
     [SerializeField] private HoldScissorsBehaviour holdScissors;

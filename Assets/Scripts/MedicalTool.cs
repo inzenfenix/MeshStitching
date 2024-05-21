@@ -12,6 +12,7 @@ using UnityEngine.Events;
 public class MedicalTool : MonoBehaviour
 {
 
+    //Array of 2 objects with a tool for each hand, 0 is left 1 is right
     public static GameObject[] selectedTools = new GameObject[2];
 
     protected InteractionBehaviour interactor;
@@ -81,6 +82,7 @@ public class MedicalTool : MonoBehaviour
 
     }
 
+    //Checks if there's a leap hand close enough to our tool, if it is it will return it
     protected Leap.Hand ClosestHand()
     {
         float minDistance = 0.075f;

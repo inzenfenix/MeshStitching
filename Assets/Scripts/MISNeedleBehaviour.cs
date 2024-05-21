@@ -160,6 +160,7 @@ public class MISNeedleBehaviour : MedicalTool
         collider.isTrigger = enabled;
     }
 
+    //If we want to grab the needle with the forceps
     private void OnHookedRope(object sender, Transform forceps)
     {
         float forcepsDistanceThreshold = .03f;

@@ -64,10 +64,11 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
+        //Check if any of the hands are in the scene
         leftHand = Hands.Provider.GetHand(Chirality.Left);
         rightHand = Hands.Provider.GetHand(Chirality.Right);
 
-
+        //If we are not grabbing anything we check if we should try to grab the thread with the hand
         if(leftHand != null && !grabbingToolLeftHand)
         {
             leftHookPoint.position = leftHand.Fingers[0].TipPosition;
@@ -83,6 +84,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        //We try the same with the right hand
         if (rightHand != null && !grabbingToolRightHand)
         {
             rightHookPoint.position = rightHand.Fingers[0].TipPosition;

@@ -45,6 +45,7 @@ public class AnatomicalForcepsDeform : MedicalTool
     {
         base.Awake();
 
+        //Rotations of the scissors, original is closed and deformed is open
         originalTopRotation_Q = Quaternion.Euler(originalTopRotation);
         deformedlTopRotation_Q = Quaternion.Euler(deformedTopRotation);
 

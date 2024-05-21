@@ -51,8 +51,11 @@ public class CutScissorsDeform : MedicalTool
     {
         rb.isKinematic = true;
 
+        //We check for a hand that is close enough to our scissor
         Leap.Hand currentHand = ClosestHand();
 
+        // In case we don't find anything we check that we weren't using it, in case
+        // The hand disappears from the scene
         if (currentHand == null)
         {
             if (selectedThisTool)
@@ -76,6 +79,7 @@ public class CutScissorsDeform : MedicalTool
             return;
         }
 
+        //If the hand is being occupied by other tool that isn't this one
         if (IsCurrentHandOccupied(currentHand))
         {
             if (selectedThisTool)
@@ -99,6 +103,7 @@ public class CutScissorsDeform : MedicalTool
             return;
         }
 
+        //In case we stop grabbing the tool, we drop it
         if (currentHand.GetFingerStrength(4) <= .15d)
         {
 
@@ -123,6 +128,7 @@ public class CutScissorsDeform : MedicalTool
             return;
         }
 
+        //In case we haven't selected this tool and the hand doesn't have other tool
         if (!selectedThisTool)
         {
             if (currentHand.IsLeft)

@@ -41,6 +41,8 @@ public class ThreadBehaviour : MonoBehaviour
 
     private void OnEnable()
     {
+        //Events that the thread is listening to:
+        //All tools and hands where it receives a position to know if it should be hooked to the tool/hand
         AnatomicalForcepsBehaviour.onHookedRope += OnHookedRope;
         AnatomicalForcepsBehaviour.onUnhookedRope += OnUnhookedRope;
 
@@ -50,9 +52,11 @@ public class ThreadBehaviour : MonoBehaviour
         GameManager.onHookedRope += OnHookedRope;
         GameManager.onUnhookedRope += OnUnhookedRope;
 
+        //Event from the needle to know if the thread should get hooked to the surface of the body
         NeedleDetector.onNeedleEnter += NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
 
+        //Scissors event to know if the thread has been cut
         CutScissorsBehaviour.onCutRope += CutScissorsBehaviour_onCutRope;
     }
 
@@ -99,11 +103,12 @@ public class ThreadBehaviour : MonoBehaviour
             cursor.ChangeLength(rope.restLength + ropeLengthSpeed * Time.deltaTime);
         }
 
+
         UpdateStichAttachments();
         ChangeInBetweenParticlesProperties();
     }
 
-    //Takes care of updatinge the particles of the thread
+    //Takes care of updating the particles of the thread
     private void UpdateStichAttachments()
     {
         //If no stitch attachment, the length needed to unstretch the thread goes back to default
@@ -113,17 +118,21 @@ public class ThreadBehaviour : MonoBehaviour
             return;
         }
 
+        //In case the thread length hasn't passed the threshold
         if (ThreadLength() < stitchStretchThreshold)
         {
             return;
         }
 
+        //adds x amount of thread that needs to be moved for it to be stretched
         stitchStretchThreshold = ThreadLength() + stitchStretchThresholdOffset * .1f;
 
         MoveStitchParticles();
         ChangeCustomParticleProperties();
     }
 
+    //Takes care of moving the particles around whenever needed so that each
+    //stitching has enough particles
     private void MoveStitchParticles(bool moveLastParticles = true)
     {
 
