@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "com.unity.burst": "file:C:/Users/silva/Downloads/com.unity.burst-1.3.3",
+    "com.unity.burst": "file:C:/Users/solan/OneDrive/Documentos/LocalPackagesUnity/com.unity.burst-1.3.3",
     "com.unity.collab-proxy": "2.2.0",
-    "com.unity.collections": "file:C:/Users/silva/Downloads/com.unity.collections-0.8.0-preview.5",
+    "com.unity.collections": "file:C:/Users/solan/OneDrive/Documentos/LocalPackagesUnity/com.unity.collections-0.8.0-preview.5",
     "com.unity.feature.development": "1.0.1",
     "com.unity.jobs": "0.2.9-preview.15",
     "com.unity.recorder": "4.0.2",
