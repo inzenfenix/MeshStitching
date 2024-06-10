@@ -10,7 +10,7 @@ public class ThreadBehaviour : MonoBehaviour
     private static readonly float forcepsDistanceThreshold = 0.02f;
 
     //How much should the user stretch the thread before it moves the particles
-    private readonly float stitchStretchThresholdOffset = 0.0075f;
+    private readonly float stitchStretchThresholdOffset = 0.009f;
 
     private readonly int bodyMask = 1 << 1;
 
@@ -29,6 +29,8 @@ public class ThreadBehaviour : MonoBehaviour
     [SerializeField] private float ropeLengthSpeed = 1.1f;
 
     [SerializeField] private bool dissapearCutRope;
+    [SerializeField] private int numberOfCuts;
+
 
     private void Awake()
     {
@@ -85,6 +87,10 @@ public class ThreadBehaviour : MonoBehaviour
         //cursor.ChangeLength(rope.restLength + ropeLengthOffset);
 
         //AddStitchAttachment(rope.GetParticlePosition(2));
+        if(numberOfCuts == 0)
+        {
+            numberOfCuts = 999999999;
+        }
     }
 
     private void NeedleDetector_onNeedleEnter(object sender, Vector3 e)
@@ -286,18 +292,23 @@ public class ThreadBehaviour : MonoBehaviour
         //Makes the particles between attachments not collide with the body
         for (int i = 0; i < stitchAttachments[0].particleGroup.particleIndices[0]; i++)
         {
+            if (rope.solver.positions[i].y > 0.96f)
+            {
+                ChangeParticleColliders(i, true);
+                continue;
+            }
 
             //In the case that we are at the start or end of the thread, we want this particles to not have any
             //Physical interaction and have them always with the default properties
+
             if (i > rope.elements.Count - 8 || i < 8)
             {
-                rope.solver.invMasses[i] = 0.1f;
                 int nullMask = 0;
                 rope.solver.filters[i] = ObiUtils.MakeFilter(nullMask, 10);
                 continue;
             }
 
-            rope.solver.invMasses[i] = 0.1f;
+            
             ChangeParticleColliders(i, false);
         }
 
@@ -308,13 +319,10 @@ public class ThreadBehaviour : MonoBehaviour
             //Physical interaction and have them always with the default properties
             if (i > rope.elements.Count - 6 || i < 4)
             {
-                rope.solver.invMasses[i] = 0.1f;
                 int maskDefault = 0;
                 rope.solver.filters[i] = ObiUtils.MakeFilter(maskDefault, 10);
                 continue;
             }
-
-            rope.solver.invMasses[i] = 0.1f;
 
             ChangeParticleColliders(i, true);
         }
@@ -599,7 +607,7 @@ public class ThreadBehaviour : MonoBehaviour
         {
             rope.RebuildConstraintsFromElements();
 
-            if (dissapearCutRope)
+            if (dissapearCutRope && numberOfCuts > 0)
             {
                 Vector3 upPos = Vector3.up * 1000f;
 
@@ -618,6 +626,8 @@ public class ThreadBehaviour : MonoBehaviour
 
                 curAttachment.particleGroup = particleGroup;
                 curAttachment.target = hook;
+
+                numberOfCuts--;
             }
         }
     }

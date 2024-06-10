@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.unity.burst": {
-      "version": "file:C:/Users/solan/OneDrive/Documentos/LocalPackagesUnity/com.unity.burst-1.3.3",
+      "version": "file:C:/Users/silva/Downloads/com.unity.burst-1.3.3",
       "depth": 0,
       "source": "local",
       "dependencies": {
@@ -16,7 +16,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collections": {
-      "version": "file:C:/Users/solan/OneDrive/Documentos/LocalPackagesUnity/com.unity.collections-0.8.0-preview.5",
+      "version": "file:C:/Users/silva/Downloads/com.unity.collections-0.8.0-preview.5",
       "depth": 0,
       "source": "local",
       "dependencies": {
