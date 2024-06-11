@@ -10,7 +10,7 @@ public class ThreadBehaviour : MonoBehaviour
     private static readonly float forcepsDistanceThreshold = 0.02f;
 
     //How much should the user stretch the thread before it moves the particles
-    private readonly float stitchStretchThresholdOffset = 0.009f;
+    private readonly float stitchStretchThresholdOffset = 0.005f;
 
     private readonly int bodyMask = 1 << 1;
 
@@ -131,7 +131,7 @@ public class ThreadBehaviour : MonoBehaviour
         }
 
         //adds x amount of thread that needs to be moved for it to be stretched
-        stitchStretchThreshold = ThreadLength() + stitchStretchThresholdOffset * .1f;
+        stitchStretchThreshold = ThreadLength() + stitchStretchThresholdOffset;
 
         MoveStitchParticles();
         ChangeCustomParticleProperties();
@@ -292,8 +292,9 @@ public class ThreadBehaviour : MonoBehaviour
         //Makes the particles between attachments not collide with the body
         for (int i = 0; i < stitchAttachments[0].particleGroup.particleIndices[0]; i++)
         {
-            if (rope.solver.positions[i].y > 0.96f)
+            if (rope.solver.positions[i].y > 0.95f)
             {
+                Debug.Log(i);
                 ChangeParticleColliders(i, true);
                 continue;
             }
@@ -414,7 +415,7 @@ public class ThreadBehaviour : MonoBehaviour
         }
 
         //How far each stitching has to be from each other
-        float stitchThreshold = .035f;
+        float stitchThreshold = .037f;
 
         for (int i = 0; i < stitchAttachments.Count; i++)
         {
