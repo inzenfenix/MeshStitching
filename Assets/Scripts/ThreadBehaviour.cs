@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public class ThreadBehaviour : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class ThreadBehaviour : MonoBehaviour
     private ObiRope rope;
 
 
-    private List<ObiParticleAttachment> forcepsAttachments;
+    private List<ObiParticleAttachment> toolAttachments;
     private List<ObiParticleAttachment> stitchAttachments;
 
     private bool isNeedleInserted;
@@ -31,14 +32,19 @@ public class ThreadBehaviour : MonoBehaviour
     [SerializeField] private bool dissapearCutRope;
     [SerializeField] private int numberOfCuts;
 
+    private bool finishingSuturing;
+    private Transform finishingTransform;
+    private ObiParticleAttachment finishingAttachment;
+    private int lastParticle;
 
     private void Awake()
     {
         cursor = GetComponent<ObiRopeCursor>();
         rope = GetComponent<ObiRope>();
 
-        forcepsAttachments = new List<ObiParticleAttachment>();
+        toolAttachments = new List<ObiParticleAttachment>();
         stitchAttachments = new List<ObiParticleAttachment>();
+
     }
 
     private void OnEnable()
@@ -60,11 +66,8 @@ public class ThreadBehaviour : MonoBehaviour
 
         //Scissors event to know if the thread has been cut
         CutScissorsBehaviour.onCutRope += CutScissorsBehaviour_onCutRope;
-    }
 
-    private void CutScissorsBehaviour_onCutRope(object sender, Transform e)
-    {
-        CutRope(e.position);
+        FinishMeshButton.OnButtonTouched += FinishMeshButton_OnButtonTouched;
     }
 
     private void OnDisable()
@@ -80,8 +83,65 @@ public class ThreadBehaviour : MonoBehaviour
 
         NeedleDetector.onNeedleEnter -= NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
+
+        FinishMeshButton.OnButtonTouched -= FinishMeshButton_OnButtonTouched;
     }
 
+    private void FinishMeshButton_OnButtonTouched(object sender, System.EventArgs e)
+    {
+        if (stitchAttachments.Count < 2)
+        {
+            Debug.Log("No current attachments");
+            return;
+        }
+
+        finishingSuturing = !finishingSuturing;
+        int particle = lastParticle;
+
+        if(finishingSuturing)
+        {
+            if(finishingAttachment == null)
+            {
+                finishingTransform = new GameObject().transform;
+                finishingTransform.name = "FinishingObject";
+
+                Vector3 particlePos = rope.solver.positions[stitchAttachments[0].particleGroup.particleIndices[0]];
+
+                finishingTransform.position = particlePos + Vector3.up * 0.2f;
+
+                finishingAttachment = rope.solver.actors[0].AddComponent<ObiParticleAttachment>();
+
+                var particleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
+                rope.solver.positions[particle] = finishingTransform.position;
+
+                particleGroup.particleIndices.Add(particle);
+
+                finishingAttachment.particleGroup = particleGroup;
+                finishingAttachment.target = finishingTransform;
+
+                finishingAttachment.enabled = true;
+            }
+
+            else
+            {
+                rope.solver.positions[rope.elements.Count - 1] = finishingTransform.position;
+                finishingAttachment.enabled = true;
+            }
+        }
+
+        else
+        {
+            if(finishingAttachment != null)
+            {
+                finishingAttachment.enabled = false;
+            }
+        }
+    }
+
+    private void CutScissorsBehaviour_onCutRope(object sender, Transform e)
+    {
+        CutRope(e.position);
+    }
     private void Start()
     {
         //cursor.ChangeLength(rope.restLength + ropeLengthOffset);
@@ -91,6 +151,8 @@ public class ThreadBehaviour : MonoBehaviour
         {
             numberOfCuts = 999999999;
         }
+
+        lastParticle = rope.elements[rope.elements.Count - 1].particle2;
     }
 
     private void NeedleDetector_onNeedleEnter(object sender, Vector3 e)
@@ -109,9 +171,11 @@ public class ThreadBehaviour : MonoBehaviour
             cursor.ChangeLength(rope.restLength + ropeLengthSpeed * Time.deltaTime);
         }
 
-
-        UpdateStichAttachments();
-        ChangeInBetweenParticlesProperties();
+        if (!finishingSuturing)
+        {
+            UpdateStichAttachments();
+            ChangeInBetweenParticlesProperties();
+        }
     }
 
     //Takes care of updating the particles of the thread
@@ -292,11 +356,14 @@ public class ThreadBehaviour : MonoBehaviour
         //Makes the particles between attachments not collide with the body
         for (int i = 0; i < stitchAttachments[0].particleGroup.particleIndices[0]; i++)
         {
-            if (rope.solver.positions[i].y > 0.95f)
+            if (stitchAttachments.Count > 1)
             {
-                Debug.Log(i);
-                ChangeParticleColliders(i, true);
-                continue;
+                if (rope.solver.positions[i].y > 0.95f)
+                {
+                    Debug.Log(i);
+                    ChangeParticleColliders(i, true);
+                    continue;
+                }
             }
 
             //In the case that we are at the start or end of the thread, we want this particles to not have any
@@ -475,6 +542,7 @@ public class ThreadBehaviour : MonoBehaviour
     {
         //Checks for the closest particle
         int element = ClosestParticle(hookPoint.position);
+        
         Vector3 curParticlePos = rope.solver.positions[rope.elements[element].particle1];
 
         //Check that the forceps are not too far from the thread
@@ -482,7 +550,6 @@ public class ThreadBehaviour : MonoBehaviour
         {
             return;
         }
-
         if (hookPoint.name.Contains("Left"))
         {
             GameManager.instance.grabbingWithLeft = true;
@@ -493,8 +560,20 @@ public class ThreadBehaviour : MonoBehaviour
             GameManager.instance.grabbingWithRight = true;
         }
 
+        if (finishingSuturing && element > stitchAttachments[0].particleGroup.particleIndices[0])
+        {
+            finishingAttachment.enabled = false;
+
+            finishingTransform.position = curParticlePos;
+            finishingAttachment.particleGroup.particleIndices.Add(element);
+
+            finishingAttachment.enabled = true;
+
+            return;
+        }
+
         //Create the attachment
-        ObiParticleAttachment curAttachment = CheckAttachments(hookPoint, forcepsAttachments);
+        ObiParticleAttachment curAttachment = CheckAttachments(hookPoint, toolAttachments);
         curAttachment.enabled = true;
 
 
@@ -505,7 +584,36 @@ public class ThreadBehaviour : MonoBehaviour
         curAttachment.particleGroup = particleGroup;
         curAttachment.target = hookPoint;
 
-        forcepsAttachments.Add(curAttachment);
+        toolAttachments.Add(curAttachment);
+    }
+
+    //Disables attachment of forceps if the thread is currently being hooked by it
+    private void OnUnhookedRope(object sender, Transform hookPoint)
+    {
+
+        if (toolAttachments.Count <= 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < toolAttachments.Count; i++)
+        {
+            if (toolAttachments[i].target == hookPoint)
+            {
+                if (hookPoint.name.Contains("Left"))
+                {
+                    GameManager.instance.grabbingWithLeft = false;
+                }
+
+                else if (hookPoint.name.Contains("Right"))
+                {
+                    GameManager.instance.grabbingWithRight = false;
+                }
+
+                toolAttachments[i].enabled = false;
+                return;
+            }
+        }
     }
 
     //Looks for the closes particle to a given position, can also specify if we don't want a particle
@@ -553,35 +661,6 @@ public class ThreadBehaviour : MonoBehaviour
         return rope.solver.actors[0].AddComponent<ObiParticleAttachment>();
     }
 
-    //Disables attachment of forceps if the thread is currently being hooked by it
-    private void OnUnhookedRope(object sender, Transform hookPoint)
-    {
-
-        if (forcepsAttachments.Count <= 0)
-        {
-            return;
-        }
-
-        for (int i = 0; i < forcepsAttachments.Count; i++)
-        {
-            if (forcepsAttachments[i].target == hookPoint)
-            {
-                if (hookPoint.name.Contains("Left"))
-                {
-                    GameManager.instance.grabbingWithLeft = false;
-                }
-
-                else if (hookPoint.name.Contains("Right"))
-                {
-                    GameManager.instance.grabbingWithRight = false;
-                }
-
-                forcepsAttachments[i].enabled = false;
-                return;
-            }
-        }
-    }
-
     private void CutRope(Vector3 cutPosition)
     {
         bool cut = false;
@@ -607,6 +686,12 @@ public class ThreadBehaviour : MonoBehaviour
         if (cut)
         {
             rope.RebuildConstraintsFromElements();
+            if(stitchAttachments.Count > 0)
+            {
+                if(particle - 4 > stitchAttachments[0].particleGroup.particleIndices[0])
+                    lastParticle = particle - 4;
+            }
+                
 
             if (dissapearCutRope && numberOfCuts > 0)
             {
