@@ -22,7 +22,7 @@ public class ThreadBehaviour : MonoBehaviour
     private List<ObiParticleAttachment> toolAttachments;
     private List<ObiParticleAttachment> stitchAttachments;
 
-    private bool isNeedleInserted;
+    private int isNeedleInserted;
     private float stitchStretchThreshold;
 
     [SerializeField] private int inBetweenAttachmentsParticles = 10;
@@ -157,7 +157,7 @@ public class ThreadBehaviour : MonoBehaviour
 
     private void NeedleDetector_onNeedleEnter(object sender, Vector3 e)
     {
-        isNeedleInserted = true;
+        isNeedleInserted++;
     }
 
     private void Update()
@@ -466,12 +466,12 @@ public class ThreadBehaviour : MonoBehaviour
     private void NeedleDetector_onNeedleExit(object sender, Vector3 e)
     {
         //In case the needle hasn't been inserted
-        if (!isNeedleInserted)
+        if (isNeedleInserted <= 0)
         {
             return;
         }
 
-        isNeedleInserted = false;
+        isNeedleInserted--;
 
         NeedleDetector needleDetector = sender as NeedleDetector;
 
@@ -688,8 +688,8 @@ public class ThreadBehaviour : MonoBehaviour
             rope.RebuildConstraintsFromElements();
             if(stitchAttachments.Count > 0)
             {
-                if(particle - 4 > stitchAttachments[0].particleGroup.particleIndices[0])
-                    lastParticle = particle - 4;
+                if(particle - 5 > stitchAttachments[0].particleGroup.particleIndices[0])
+                    lastParticle = particle - 5;
             }
                 
 
