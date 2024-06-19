@@ -60,7 +60,7 @@ public class HoldScissorsDeform : MedicalTool
     {
         rb.isKinematic = true;
 
-        Leap.Hand currentHand = ClosestHand();
+        Leap.Hand currentHand = ClosestHandLeap();
 
 
         if (currentHand == null)

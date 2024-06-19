@@ -17,8 +17,8 @@ public class GameManager : MonoBehaviour
     //[SerializeField] private CapsuleHand leftHandC;
     //[SerializeField] private CapsuleHand rightHandC;
 
-    private Hand leftHand;
-    private Hand rightHand;
+    private Hand leftHandLeap;
+    private Hand rightHandLeap;
 
     private float minPinchDistance = 42f;
 
@@ -30,6 +30,12 @@ public class GameManager : MonoBehaviour
 
     public static bool grabbingToolLeftHand = false;
     public static bool grabbingToolRightHand = false;
+
+    public static bool isLeapMotion = false;
+    public static bool isNovaGlove = false;
+
+    public Transform[] leftFingerTips;
+    public Transform[] rightFingerTips;
 
 
     private void Start()
@@ -64,51 +70,61 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
+        if(isLeapMotion)
+            LeapMotion();
+
+        else if(isNovaGlove)
+            NovaGlove();
+
+    }
+
+    private void LeapMotion()
+    {
         //Check if any of the hands are in the scene
-        leftHand = Hands.Provider.GetHand(Chirality.Left);
-        rightHand = Hands.Provider.GetHand(Chirality.Right);
+        leftHandLeap = Hands.Provider.GetHand(Chirality.Left);
+        rightHandLeap = Hands.Provider.GetHand(Chirality.Right);
 
         //If we are not grabbing anything we check if we should try to grab the thread with the hand
-        if(leftHand != null && !grabbingToolLeftHand)
+        if (leftHandLeap != null && !grabbingToolLeftHand)
         {
-            leftHookPoint.position = leftHand.Fingers[0].TipPosition;
+            leftHookPoint.position = leftHandLeap.Fingers[0].TipPosition;
 
-            if (leftHand.PinchDistance < minPinchDistance && !grabbingWithLeft)
+            if (leftHandLeap.PinchDistance < minPinchDistance && !grabbingWithLeft)
             {
                 onHookedRope?.Invoke(this, leftHookPoint);
             }
 
-            else if(leftHand.PinchDistance > minPinchDistance && grabbingWithLeft)
+            else if (leftHandLeap.PinchDistance > minPinchDistance && grabbingWithLeft)
             {
                 onUnhookedRope?.Invoke(this, leftHookPoint);
             }
         }
 
         //We try the same with the right hand
-        if (rightHand != null && !grabbingToolRightHand)
+        if (rightHandLeap != null && !grabbingToolRightHand)
         {
-            rightHookPoint.position = rightHand.Fingers[0].TipPosition;
+            rightHookPoint.position = rightHandLeap.Fingers[0].TipPosition;
 
-            if (rightHand.PinchDistance < minPinchDistance && !grabbingWithRight)
+            if (rightHandLeap.PinchDistance < minPinchDistance && !grabbingWithRight)
             {
                 onHookedRope?.Invoke(this, rightHookPoint);
             }
 
-            else if (rightHand.PinchDistance > minPinchDistance && grabbingWithRight)
+            else if (rightHandLeap.PinchDistance > minPinchDistance && grabbingWithRight)
             {
                 onUnhookedRope?.Invoke(this, rightHookPoint);
             }
         }
 
-        if (leftHand == null)
+        if (leftHandLeap == null)
         {
-            if(grabbingWithLeft)
+            if (grabbingWithLeft)
             {
                 onUnhookedRope?.Invoke(this, leftHookPoint);
             }
         }
 
-        if (rightHand == null)
+        if (rightHandLeap == null)
         {
             if (grabbingWithRight)
             {
@@ -117,13 +133,36 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void NovaGlove()
+    {
+
+    }
+
+    public static float LeapFingerPinchDistance(int finger, Hand hand)
+    {
+        if (hand == null)
+            return 0;
+
+        return hand.GetFingerPinchDistance(finger);
+    }
+
+    public static float LeapPalmDistance(Transform transform, Hand hand)
+    {
+        if (hand == null)
+            return 0;
+
+        return Vector3.Distance(hand.PalmPosition, transform.position);
+    }
+
+
+
     public static Hand LeftHand
     {
-        get => instance.leftHand;
+        get => instance.leftHandLeap;
     }
 
     public static Hand RightHand
     {
-        get => instance.rightHand;
+        get => instance.rightHandLeap;
     }
 }

@@ -33,40 +33,43 @@ public class MedicalTool : MonoBehaviour
 
     public void SelectTool()
     {
-        Debug.Log("Selected: " + this.gameObject.name);
-
-        if(GameManager.LeftHand == null &&
-           GameManager.RightHand != null)
+        //Debug.Log("Selected: " + this.gameObject.name);
+        if (GameManager.isLeapMotion)
         {
-            selectedTools[1] = gameObject;
-            return;
+
+            if (GameManager.LeftHand == null &&
+               GameManager.RightHand != null)
+            {
+                selectedTools[1] = gameObject;
+                return;
+            }
+
+            else if (GameManager.LeftHand != null &&
+                     GameManager.RightHand == null)
+            {
+                selectedTools[0] = gameObject;
+                return;
+            }
+
+            else if (GameManager.LeftHand == null ||
+                     GameManager.RightHand == null)
+            {
+                return;
+            }
+
+            if (GameManager.LeapPalmDistance(this.transform, GameManager.LeftHand) <
+               GameManager.LeapPalmDistance(this.transform, GameManager.RightHand))
+            {
+                selectedTools[0] = gameObject;
+            }
+
+            else
+            {
+                selectedTools[1] = gameObject;
+            }
         }
 
-        else if (GameManager.LeftHand != null &&
-                 GameManager.RightHand == null)
-        {
-            selectedTools[0] = gameObject;
-            return;
-        }
-
-        else if (GameManager.LeftHand == null ||
-                 GameManager.RightHand == null)
-        {
-            return;
-        }
-
-        if(Vector3.Distance(GameManager.LeftHand.PalmPosition, this.transform.position) <
-           Vector3.Distance(GameManager.RightHand.PalmPosition, this.transform.position))
-        {
-            selectedTools[0] = gameObject;
-        }
-
-        else
-        {
-            selectedTools[1] = gameObject;
-        }
-
-        Debug.Log("Selected tool: " + this.gameObject.name);
+        //Debug.Log("Selected tool: " + this.gameObject.name);
     }
 
     public virtual void DeselectTool()
@@ -83,7 +86,7 @@ public class MedicalTool : MonoBehaviour
     }
 
     //Checks if there's a leap hand close enough to our tool, if it is it will return it
-    protected Leap.Hand ClosestHand()
+    protected Leap.Hand ClosestHandLeap()
     {
         float minDistance = 0.075f;
         Leap.Hand selectedHand = null;
@@ -91,7 +94,7 @@ public class MedicalTool : MonoBehaviour
         if (GameManager.LeftHand == null &&
            GameManager.RightHand != null)
         {
-            if (Vector3.Distance(GameManager.RightHand.PalmPosition, this.transform.position) < minDistance)
+            if (GameManager.LeapPalmDistance(this.transform, GameManager.RightHand) < minDistance)
             {
                 selectedHand = GameManager.RightHand;
             }
@@ -100,7 +103,7 @@ public class MedicalTool : MonoBehaviour
         else if (GameManager.LeftHand != null &&
                  GameManager.RightHand == null)
         {
-            if (Vector3.Distance(GameManager.LeftHand.PalmPosition, this.transform.position) < minDistance)
+            if (GameManager.LeapPalmDistance(this.transform, GameManager.LeftHand) < minDistance)
             {
                 selectedHand = GameManager.LeftHand;
             }
@@ -112,10 +115,10 @@ public class MedicalTool : MonoBehaviour
             return null;
         }
 
-        else if (Vector3.Distance(GameManager.LeftHand.PalmPosition, this.transform.position) <
-                 Vector3.Distance(GameManager.RightHand.PalmPosition, this.transform.position))
+        else if (GameManager.LeapPalmDistance(this.transform, GameManager.LeftHand) <
+                 GameManager.LeapPalmDistance(this.transform, GameManager.RightHand))
         {
-            if (Vector3.Distance(GameManager.LeftHand.PalmPosition, this.transform.position) < minDistance)
+            if (GameManager.LeapPalmDistance(this.transform, GameManager.LeftHand) < minDistance)
             {
                 selectedHand = GameManager.LeftHand;
             }
@@ -123,7 +126,7 @@ public class MedicalTool : MonoBehaviour
 
         else
         {
-            if (Vector3.Distance(GameManager.RightHand.PalmPosition, this.transform.position) < minDistance)
+            if (GameManager.LeapPalmDistance(this.transform, GameManager.RightHand) < minDistance)
             {
                 selectedHand = GameManager.RightHand;
             }

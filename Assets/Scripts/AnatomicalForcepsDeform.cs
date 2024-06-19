@@ -59,7 +59,7 @@ public class AnatomicalForcepsDeform : MedicalTool
     {
         rb.isKinematic = true;
 
-        Leap.Hand currentHand = ClosestHand();
+        Leap.Hand currentHand = ClosestHandLeap();
 
         if (currentHand == null)
         {

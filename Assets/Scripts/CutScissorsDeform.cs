@@ -52,7 +52,7 @@ public class CutScissorsDeform : MedicalTool
         rb.isKinematic = true;
 
         //We check for a hand that is close enough to our scissor
-        Leap.Hand currentHand = ClosestHand();
+        Leap.Hand currentHand = ClosestHandLeap();
 
         // In case we don't find anything we check that we weren't using it, in case
         // The hand disappears from the scene
