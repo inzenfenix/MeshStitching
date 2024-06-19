@@ -7,8 +7,8 @@ using TMPro;
 
 public class ViveTracking : MonoBehaviour
 {
-    public TMP_Text ctrl1;
-    public TMP_Text ctrl2;
+    //public TMP_Text ctrl1;
+    //public TMP_Text ctrl2;
 
     public Transform t1;
     public Transform t2;
@@ -60,20 +60,20 @@ public class ViveTracking : MonoBehaviour
                 poseStr[ctr] = "X = " + pose[ctr].x + "|" + " Y = " + pose[ctr].y + "|" + " Z = " + pose[ctr].z;// + "|" + " AX = " + pose[ctr].pitch * Mathf.Rad2Deg + "|" + " AY = " + pose[ctr].yaw * Mathf.Rad2Deg + "|" + " AZ = " + pose[ctr].roll * Mathf.Rad2Deg;
             }
 
-        ctrl1.text = poseStr[0].ToString();
-        ctrl2.text = poseStr[1].ToString();
+        //ctrl1.text = poseStr[0].ToString();
+        //ctrl2.text = poseStr[1].ToString();
 
         //control 1
-        t1.position = this.transform.position + new Vector3(pose[0].z, pose[0].y, pose[0].x) ;
+        t1.position = this.transform.position + new Vector3(pose[0].z, pose[0].y, pose[0].x);
         Quaternion prerot = Quaternion.Euler(0, -90, 0); //Prerotación
         Quaternion rotTracker = new Quaternion(-pose[0].cx, -pose[0].cy, pose[0].cz, pose[0].cw);
-        t1.rotation = prerot * rotTracker * this.transform.rotation;
+        //t1.rotation = prerot * rotTracker * this.transform.rotation;
 
         //control 2
         t2.position = this.transform.position + new Vector3(pose[1].z, pose[1].y, pose[1].x);
         Quaternion prerot1 = Quaternion.Euler(0, -90, 0); //Prerotación
         Quaternion rotTracker1 = new Quaternion(-pose[1].cx, -pose[1].cy, pose[1].cz, pose[1].cw);
-        t2.rotation = prerot1 * rotTracker1 * this.transform.rotation;
+        //t2.rotation = prerot1 * rotTracker1 * this.transform.rotation;
     }
 
     void OnDestroy()
@@ -81,3 +81,4 @@ public class ViveTracking : MonoBehaviour
         Shutdown();
     }
 }
+
