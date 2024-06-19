@@ -75,6 +75,11 @@ public class HoldScissorsDeform : MedicalTool
             return key1;
         }
 
+        if(IsCurrentHandOccupied(currentHand.IsLeft))
+        {
+            return key1;
+        }
+
         //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
         float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.8f;
 

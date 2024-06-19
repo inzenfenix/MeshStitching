@@ -76,6 +76,11 @@ public class AnatomicalForcepsDeform : MedicalTool
             return key1;
         }
 
+        if (IsCurrentHandOccupied(currentHand.IsLeft))
+        {
+            return key1;
+        }
+
         float value = currentHand.PinchDistance / 16 - 1.1f;
 
         return Mathf.Clamp(value, 0f, 1f);
