@@ -89,7 +89,7 @@ public class AnatomicalForcepsDeform : MedicalTool
             return;
         }
 
-        if (IsCurrentHandOccupied(currentHand))
+        if (IsCurrentHandOccupied(currentHand.IsLeft))
         {
             if (selectedThisTool)
             {

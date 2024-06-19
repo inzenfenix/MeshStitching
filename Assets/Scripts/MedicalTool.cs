@@ -135,9 +135,9 @@ public class MedicalTool : MonoBehaviour
         return selectedHand;
     }
 
-    protected bool IsCurrentHandOccupied(Leap.Hand hand)
+    protected bool IsCurrentHandOccupied(bool isLeft)
     {
-        if (hand.IsLeft)
+        if (isLeft)
         {
             if (selectedTools[0] != this.gameObject && selectedTools[0] != null)
             {

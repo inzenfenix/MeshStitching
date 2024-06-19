@@ -80,7 +80,7 @@ public class CutScissorsDeform : MedicalTool
         }
 
         //If the hand is being occupied by other tool that isn't this one
-        if (IsCurrentHandOccupied(currentHand))
+        if (IsCurrentHandOccupied(currentHand.IsLeft))
         {
             if (selectedThisTool)
             {
