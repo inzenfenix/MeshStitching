@@ -72,6 +72,7 @@ public struct VertexDeformationKeys
     public float insertionWeightRightVertex;
 }
 
+[RequireComponent(typeof(DistanceMeasurer))]
 public class MeshStitcher : MonoBehaviour
 {
     [SerializeField] private MeshFilter meshLeft;
@@ -80,8 +81,8 @@ public class MeshStitcher : MonoBehaviour
     [SerializeField] private MeshFilter meshRight;
     //[SerializeField] private SkinnedMeshRenderer skinnedMeshRendererRight;
 
-    [SerializeField] private float minVertexDistance;
-    [SerializeField] private float maxVertexDistance;
+    private float minVertexDistance;
+    private float maxVertexDistance;
 
     private List<DeformableVertices> deformableVertices;
 
@@ -105,6 +106,11 @@ public class MeshStitcher : MonoBehaviour
         //skinnedMeshRendererLeft.sharedMesh = meshLeft.mesh;
 
         //skinnedMeshRendererRight.sharedMesh = meshRight.mesh;
+
+        float bodyDistance = this.GetComponent<DistanceMeasurer>().Distance();
+
+        minVertexDistance = bodyDistance - .001f;
+        maxVertexDistance = bodyDistance + .001f;
 
         deformableVertices = new List<DeformableVertices>();
         insertionTriggers = new List<NeedleDetector>();

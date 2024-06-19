@@ -12,4 +12,9 @@ public class DistanceMeasurer : MonoBehaviour
     {
         Debug.Log(Vector3.Distance(point1.position, point2.position));
     }
+
+    public float Distance()
+    {
+        return Vector3.Distance(point1.position, point2.position);
+    }
 }
