@@ -55,6 +55,19 @@ public class MedicalTool : MonoBehaviour
     {
         rb.isKinematic = true;
 
+        if (GameManager.instance.isLeapMotion)
+        {
+            UsingLeapMotion();
+        }
+
+        else if(GameManager.instance.isNovaGlove)
+        {
+            UsingNovaGloves();
+        }
+    }
+
+    public void UsingLeapMotion()
+    {
         Leap.Hand currentHand = ClosestHandLeap();
 
         if (currentHand == null)
@@ -169,10 +182,129 @@ public class MedicalTool : MonoBehaviour
         transform.rotation = currentHand.Rotation;
     }
 
+    public void UsingNovaGloves()
+    {
+        Transform currentHand = GameManager.NovaPalmNearby(this.transform, out bool isLeft);
+
+        if (currentHand == null)
+        {
+            if (selectedThisTool)
+            {
+                if (leftHand == null || rightHand == null)
+                    return;
+
+                if (isHandLeft)
+                {
+                    //leftHand.SetMaterialToNormal();
+                    GameManager.grabbingToolLeftHand = false;
+                }
+
+                else
+                {
+                    //rightHand.SetMaterialToNormal();
+                    GameManager.grabbingToolRightHand = false;
+                }
+
+                selectedThisTool = false;
+
+                DeselectTool();
+
+            }
+
+            return;
+        }
+
+        if (IsCurrentHandOccupied(isLeft))
+        {
+            if (selectedThisTool)
+            {
+                if (leftHand == null || rightHand == null)
+                    return;
+
+                if (isHandLeft)
+                {
+                    //leftHand.SetMaterialToNormal();
+                    GameManager.grabbingToolLeftHand = false;
+                }
+
+                else
+                {
+                    //rightHand.SetMaterialToNormal();
+                    GameManager.grabbingToolRightHand = false;
+                }
+
+                selectedThisTool = false;
+                DeselectTool();
+
+            }
+            return;
+        }
+
+        Debug.Log(this.name + " " + GameManager.NovaFingerDistance(0, 1, isLeft));
+
+        if (GameManager.NovaFingerDistance(0, 1, isLeft) <= .08d)
+        {
+            Debug.Log("A");
+            if (selectedThisTool)
+            {
+                //if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
+                //else rightHand.SetMaterialToNormal();
+                selectedThisTool = false;
+                DeselectTool();
+
+                if (isHandLeft)
+                {
+                    GameManager.grabbingToolLeftHand = false;
+                }
+
+                else
+                {
+                    GameManager.grabbingToolRightHand = false;
+                }
+
+            }
+
+            return;
+        }
+
+        if (!selectedThisTool)
+        {
+            if (isLeft)
+            {
+                if (GameManager.instance.grabbingWithLeft)
+                {
+                    return;
+                }
+
+                GameManager.grabbingToolLeftHand = true;
+                isHandLeft = true;
+                leftHand.SetTransparentHands();
+            }
+
+            else
+            {
+                if (GameManager.instance.grabbingWithRight)
+                {
+                    return;
+                }
+
+                GameManager.grabbingToolRightHand = true;
+                isHandLeft = false;
+                //rightHand.SetTransparentHands();
+            }
+
+            SelectTool();
+            selectedThisTool = true;
+        }
+
+        transform.position = currentHand.position;
+        transform.rotation = currentHand.rotation;
+    }
+
     public void SelectTool()
     {
         //Debug.Log("Selected: " + this.gameObject.name);
-        if (GameManager.isLeapMotion)
+        if (GameManager.instance.isLeapMotion)
         {
 
             if (GameManager.LeftHand == null &&

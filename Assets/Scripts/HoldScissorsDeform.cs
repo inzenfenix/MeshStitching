@@ -40,20 +40,15 @@ public class HoldScissorsDeform : MedicalTool
     {
         base.Update();
 
-        Leap.Hand currentHand = ClosestHandLeap();
-        if (currentHand == null)
+        if (GameManager.instance.isLeapMotion)
         {
-            return;
+            key1 = key2 = WithLeapMotion();
         }
 
-        //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
-        float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.8f;
-
-
-        Debug.Log(value);
-
-        key1 = key2 = Mathf.Clamp(value, 0f, 1f);
-
+        else if (GameManager.instance.isNovaGlove)
+        {
+            key1 = key2 = WithNovaGloves();
+        }
 
         //Moves the tool on its axis of rotation, if it passes the threshold then the tool's system activates
         firstComponent.localRotation = Quaternion.Slerp(originalRotation1, goalRotation1, key1);
@@ -72,5 +67,24 @@ public class HoldScissorsDeform : MedicalTool
         }
     }
 
-    
+    private float WithLeapMotion()
+    {
+        Leap.Hand currentHand = ClosestHandLeap();
+        if (currentHand == null)
+        {
+            return key1;
+        }
+
+        //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
+        float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.8f;
+
+        return Mathf.Clamp(value, 0f, 1f);
+    }
+
+    private float WithNovaGloves()
+    {
+        return key1;
+    }
+
+
 }

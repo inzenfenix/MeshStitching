@@ -41,15 +41,15 @@ public class AnatomicalForcepsDeform : MedicalTool
     {
         base.Update();
 
-        Leap.Hand currentHand = ClosestHandLeap();
-        if (currentHand == null)
+        if (GameManager.instance.isLeapMotion)
         {
-            return;
+            key1 = key2 = WithLeapMotion();
         }
 
-        float value = currentHand.PinchDistance/16 - 1.1f;
-
-        key1 = key2 = Mathf.Clamp(value, 0f, 1f);
+        else if (GameManager.instance.isNovaGlove)
+        {
+            key1 = key2 = WithNovaGloves();
+        }
 
         //Moves the tool on its axis of rotation, if it passes the threshold then the tool's system activates
         firstComponent.localRotation = Quaternion.Slerp(goalRotation1, originalRotation1, key1);
@@ -66,6 +66,24 @@ public class AnatomicalForcepsDeform : MedicalTool
             forcepsJoined = false;
             OnForcepsSeparate?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    private float WithLeapMotion()
+    {
+        Leap.Hand currentHand = ClosestHandLeap();
+        if (currentHand == null)
+        {
+            return key1;
+        }
+
+        float value = currentHand.PinchDistance / 16 - 1.1f;
+
+        return Mathf.Clamp(value, 0f, 1f);
+    }
+
+    private float WithNovaGloves()
+    {
+        return key1;
     }
 
     public override void DeselectTool()

@@ -55,6 +55,7 @@ namespace SG.Examples
             ////rightHand.SetTrackingProvider(rightGlove);
             //throw new System.NotImplementedException();
             rightHand.HandModelEnabled = false;
+
         }
 
         void Update()
@@ -64,17 +65,17 @@ namespace SG.Examples
                 if (this.rightHand.IsConnected())
                 {
                     this.rightHand.HandModelEnabled = true;
-                    this.leftHand.gameObject.SetActive(false);
+                    //this.leftHand.gameObject.SetActive(false);
                     Debug.Log("Connected to a right hand!");
-                    ActiveHand = this.rightHand;
+                    //ActiveHand = this.rightHand;
                     ActiveHandConnect.Invoke();
                 }
-                else if (this.leftHand.IsConnected())
+                if (this.leftHand.IsConnected())
                 {
                     this.leftHand.HandModelEnabled = true;
-                    this.rightHand.gameObject.SetActive(false);
+                    //this.rightHand.gameObject.SetActive(false);
                     Debug.Log("Connected to a left hand!");
-                    ActiveHand = this.leftHand;
+                    //ActiveHand = this.leftHand;
                     ActiveHandConnect.Invoke();
                 }
             }

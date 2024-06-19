@@ -31,11 +31,16 @@ public class GameManager : MonoBehaviour
     public static bool grabbingToolLeftHand = false;
     public static bool grabbingToolRightHand = false;
 
-    public static bool isLeapMotion = false;
-    public static bool isNovaGlove = false;
+    [Header("\nCurrent controller")]
+    public bool isLeapMotion = false;
+    public bool isNovaGlove = false;
 
+    [Header("\nNova transforms")]
     public Transform[] leftFingerTips;
     public Transform[] rightFingerTips;
+
+    public Transform leftPalm;
+    public Transform rightPalm;
 
 
     private void Start()
@@ -135,13 +140,95 @@ public class GameManager : MonoBehaviour
 
     private void NovaGlove()
     {
+        //If we are not grabbing anything we check if we should try to grab the thread with the hand
+        if (!grabbingToolLeftHand)
+        {
+            leftHookPoint.position = leftFingerTips[0].position;
 
+            if (NovaFingerDistance(0, 1, true) < minPinchDistance && !grabbingWithLeft)
+            {
+                onHookedRope?.Invoke(this, leftHookPoint);
+            }
+
+            else if (NovaFingerDistance(0, 1, true) > minPinchDistance && grabbingWithLeft)
+            {
+                onUnhookedRope?.Invoke(this, leftHookPoint);
+            }
+        }
+
+        //We try the same with the right hand
+        if (rightHandLeap != null && !grabbingToolRightHand)
+        {
+            rightHookPoint.position = rightFingerTips[0].position;
+
+            if (NovaFingerDistance(0, 1, false) < minPinchDistance && !grabbingWithRight)
+            {
+                onHookedRope?.Invoke(this, rightHookPoint);
+            }
+
+            else if (NovaFingerDistance(0, 1, false) > minPinchDistance && grabbingWithRight)
+            {
+                onUnhookedRope?.Invoke(this, rightHookPoint);
+            }
+        }
     }
+
+    public static float NovaFingerDistance(int finger, int finger2, bool isLeft)
+    {
+        if (!GameManager.instance.isNovaGlove)
+            return -1;
+
+        if(finger < 0 || finger > 4 || finger2 < 0 ||finger2 > 4)
+            return -1;
+
+        if(isLeft)
+            return Vector3.Distance(GameManager.instance.leftFingerTips[finger].position, GameManager.instance.leftFingerTips[finger2].position);
+
+        else
+            return Vector3.Distance(GameManager.instance.rightFingerTips[finger].position, GameManager.instance.rightFingerTips[finger2].position);
+    }
+
+    public static float NovaPalmDistance(Transform pos, bool isLeft)
+    {
+        if (!GameManager.instance.isNovaGlove)
+            return -1;
+
+        if (isLeft)
+            return Vector3.Distance(pos.position, GameManager.instance.leftPalm.position);
+
+        else
+            return Vector3.Distance(pos.position, GameManager.instance.rightPalm.position);
+    }
+
+    public static Transform NovaPalmNearby(Transform pos, out bool isLeft)
+    {
+        if (!GameManager.instance.isNovaGlove)
+        {
+            isLeft = false;
+            return null;
+        }
+
+        if (Vector3.Distance(pos.position, GameManager.instance.leftPalm.position) < 0.1f)
+        {
+            isLeft = true;
+            return GameManager.instance.leftPalm;
+        }
+
+        else if (Vector3.Distance(pos.position, GameManager.instance.rightPalm.position) < 0.1f)
+        {   
+            isLeft = false;
+            return GameManager.instance.rightPalm;
+        }
+
+        isLeft = false;
+        return null;
+    }
+
 
     public static float LeapFingerPinchDistance(int finger, Hand hand)
     {
         if (hand == null)
-            return 0;
+            return -1;
 
         return hand.GetFingerPinchDistance(finger);
     }
