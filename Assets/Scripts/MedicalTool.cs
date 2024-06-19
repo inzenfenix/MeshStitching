@@ -24,11 +24,149 @@ public class MedicalTool : MonoBehaviour
     [SerializeField] protected CapsuleHand leftHand;
     [SerializeField] protected CapsuleHand rightHand;
 
+    [Header("First Part")]
+    [SerializeField] protected Transform firstComponent;
+
+    [Range(0f, 1f)]
+    public float key1;
+
+    [Header("\nSecond Part")]
+    [SerializeField] protected Transform secondComponent;
+
+    [Range(0f, 1f)]
+    public float key2;
+
+    protected Quaternion originalRotation1;
+    protected Quaternion goalRotation1;
+
+    protected Quaternion originalRotation2;
+    protected Quaternion goalRotation2;
+
+    protected bool isHandLeft = false;
+
     protected virtual void Awake()
     {
         interactor = GetComponent<InteractionBehaviour>();
 
         rb = GetComponent<Rigidbody>();
+    }
+
+    protected virtual void Update()
+    {
+        rb.isKinematic = true;
+
+        Leap.Hand currentHand = ClosestHandLeap();
+
+        if (currentHand == null)
+        {
+            if (selectedThisTool)
+            {
+                if (leftHand == null || rightHand == null)
+                    return;
+
+                if (isHandLeft)
+                {
+                    leftHand.SetMaterialToNormal();
+                    GameManager.grabbingToolLeftHand = false;
+                }
+
+                else
+                {
+                    rightHand.SetMaterialToNormal();
+                    GameManager.grabbingToolRightHand = false;
+                }
+
+                selectedThisTool = false;
+
+                DeselectTool();
+
+            }
+
+            return;
+        }
+
+        if (IsCurrentHandOccupied(currentHand.IsLeft))
+        {
+            if (selectedThisTool)
+            {
+                if (leftHand == null || rightHand == null)
+                    return;
+
+                if (isHandLeft)
+                {
+                    leftHand.SetMaterialToNormal();
+                    GameManager.grabbingToolLeftHand = false;
+                }
+
+                else
+                {
+                    rightHand.SetMaterialToNormal();
+                    GameManager.grabbingToolRightHand = false;
+                }
+
+                selectedThisTool = false;
+                DeselectTool();
+
+            }
+            return;
+        }
+
+        if (currentHand.GetFingerStrength(4) <= .15d)
+        {
+            if (selectedThisTool)
+            {
+                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
+                else rightHand.SetMaterialToNormal();
+                selectedThisTool = false;
+                DeselectTool();
+
+                if (isHandLeft)
+                {
+                    GameManager.grabbingToolLeftHand = false;
+                }
+
+                else
+                {
+                    GameManager.grabbingToolRightHand = false;
+                }
+
+            }
+
+            return;
+        }
+
+        if (!selectedThisTool)
+        {
+            if (currentHand.IsLeft)
+            {
+                if (GameManager.instance.grabbingWithLeft)
+                {
+                    return;
+                }
+
+                GameManager.grabbingToolLeftHand = true;
+                isHandLeft = true;
+                leftHand.SetTransparentHands();
+            }
+
+            else
+            {
+                if (GameManager.instance.grabbingWithRight)
+                {
+                    return;
+                }
+
+                GameManager.grabbingToolRightHand = true;
+                isHandLeft = false;
+                rightHand.SetTransparentHands();
+            }
+
+            SelectTool();
+            selectedThisTool = true;
+        }
+
+        transform.position = currentHand.PalmPosition;
+        transform.rotation = currentHand.Rotation;
     }
 
     public void SelectTool()

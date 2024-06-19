@@ -9,29 +9,9 @@ public class CutScissorsDeform : MedicalTool
     public event EventHandler OnScissorsJoin;
     public event EventHandler OnScissorsSeparate;
 
-    [Header("Left Scissor")]
-    [SerializeField] private Transform LeftScissor;
-
-    [Range(0f, 1f)]
-    public float leftKey;
-
-    [Header("\nRight Scissor")]
-    [SerializeField] private Transform RightScissor;
-
-    [Range(0f, 1f)]
-    public float rightKey;
-
-    private Quaternion originalRotationLeft;
-    private Quaternion originalRotationRight;
-
-    private Quaternion goalRotationLeft;
-    private Quaternion goalRotationRight;
-
     [SerializeField] private float rotationAmount = -17.8f;
 
     private bool scissorsJoined = true;
-
-    private bool isHandLeft = false;
 
     protected override void Awake()
     {
@@ -40,168 +20,39 @@ public class CutScissorsDeform : MedicalTool
 
     private void Start()
     {
-        originalRotationLeft = LeftScissor.localRotation;
-        goalRotationLeft = Quaternion.Euler(LeftScissor.localRotation.eulerAngles + new Vector3(0, 0, rotationAmount));
+        originalRotation1 = firstComponent.localRotation;
+        goalRotation1 = Quaternion.Euler(firstComponent.localRotation.eulerAngles + new Vector3(0, 0, rotationAmount));
 
-        originalRotationRight = RightScissor.localRotation;
-        goalRotationRight = Quaternion.Euler(RightScissor.localRotation.eulerAngles + new Vector3(0, 0, rotationAmount));
+        originalRotation2 = secondComponent.localRotation;
+        goalRotation2 = Quaternion.Euler(secondComponent.localRotation.eulerAngles + new Vector3(0, 0, rotationAmount));
     }
 
-    private void Update()
+    protected override void Update()
     {
-        rb.isKinematic = true;
+        base.Update();
 
-        //We check for a hand that is close enough to our scissor
         Leap.Hand currentHand = ClosestHandLeap();
-
-        // In case we don't find anything we check that we weren't using it, in case
-        // The hand disappears from the scene
         if (currentHand == null)
         {
-            if (selectedThisTool)
-            {
-                if (isHandLeft)
-                {
-                    leftHand.SetMaterialToNormal();
-                    GameManager.grabbingToolLeftHand = false;
-                }
-
-                else
-                {
-                    rightHand.SetMaterialToNormal();
-                    GameManager.grabbingToolRightHand = false;
-                }
-                selectedThisTool = false;
-                DeselectTool();
-
-            }
-
             return;
         }
-
-        //If the hand is being occupied by other tool that isn't this one
-        if (IsCurrentHandOccupied(currentHand.IsLeft))
-        {
-            if (selectedThisTool)
-            {
-                if (isHandLeft)
-                {
-                    leftHand.SetMaterialToNormal();
-                    GameManager.grabbingToolLeftHand = false;
-                }
-
-                else
-                {
-                    rightHand.SetMaterialToNormal();
-                    GameManager.grabbingToolRightHand = false;
-                }
-
-                selectedThisTool = false;
-                DeselectTool();
-
-            }
-            return;
-        }
-
-        //In case we stop grabbing the tool, we drop it
-        if (currentHand.GetFingerStrength(4) <= .15d)
-        {
-
-            if (selectedThisTool)
-            {
-                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
-                else rightHand.SetMaterialToNormal();
-                selectedThisTool = false;
-                DeselectTool();
-
-                if (isHandLeft)
-                {
-                    GameManager.grabbingToolLeftHand = false;
-                }
-
-                else
-                {
-                    GameManager.grabbingToolRightHand = false;
-                }
-            }
-
-            return;
-        }
-
-        //In case we haven't selected this tool and the hand doesn't have other tool
-        if (!selectedThisTool)
-        {
-            if (currentHand.IsLeft)
-            {
-                if (GameManager.instance.grabbingWithLeft)
-                {
-                    return;
-                }
-
-                GameManager.grabbingToolLeftHand = true;
-                isHandLeft = true;
-                leftHand.SetTransparentHands();
-            }
-            else
-            {
-                if (GameManager.instance.grabbingWithRight)
-                {
-                    return;
-                }
-
-                GameManager.grabbingToolRightHand = true;
-                isHandLeft = false;
-                rightHand.SetTransparentHands();
-            }
-            SelectTool();
-            selectedThisTool = true;
-        }
-
-        transform.position = currentHand.PalmPosition;
-        transform.rotation = currentHand.Rotation;
 
         //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
         float value = currentHand.GetFingerPinchDistance(2) * 10 - 0.8f;
 
-        leftKey = rightKey = Mathf.Clamp(value, 0f, 1f);
-
-        //START TEST CODE
-        /*
-        if (Input.GetKey(KeyCode.L))
-        {
-            float currentValue = leftKey;
-            float nextValue = leftKey + Time.deltaTime * scissorsSpeed;
-
-            currentValue = Mathf.Clamp(nextValue, 0f, 1f);
-
-            leftKey = currentValue;
-            rightKey = currentValue;
-        }
-
-        else if (Input.GetKey(KeyCode.K))
-        {
-            float currentValue = leftKey;
-            float nextValue = leftKey - Time.deltaTime * scissorsSpeed;
-
-            currentValue = Mathf.Clamp(nextValue, 0f, 1f);
-
-            leftKey = currentValue;
-            rightKey = currentValue;
-        }
-        */
-        //END TEST CODE
+        key1 = key2 = Mathf.Clamp(value, 0f, 1f);
 
         //Moves the tool on its axis of rotation, if it passes the threshold then the tool's system activates
-        LeftScissor.localRotation = Quaternion.Slerp(originalRotationLeft, goalRotationLeft, leftKey);
-        RightScissor.localRotation = Quaternion.Slerp(originalRotationRight, goalRotationRight, rightKey);
+        firstComponent.localRotation = Quaternion.Slerp(originalRotation1, goalRotation1, key1);
+        secondComponent.localRotation = Quaternion.Slerp(originalRotation2, goalRotation2, key2);
 
-        if (leftKey > 0.55f && rightKey > 0.55f && scissorsJoined)
+        if (key1 > 0.55f && key2 > 0.55f && scissorsJoined)
         {
             scissorsJoined = false;
             OnScissorsSeparate?.Invoke(this, EventArgs.Empty);
         }
 
-        if (leftKey <= 0.25f && rightKey <= 0.25f && !scissorsJoined)
+        if (key1 <= 0.25f && key2 <= 0.25f && !scissorsJoined)
         {
             scissorsJoined = true;
             OnScissorsJoin?.Invoke(this, EventArgs.Empty);

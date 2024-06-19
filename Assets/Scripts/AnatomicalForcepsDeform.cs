@@ -13,209 +13,55 @@ public class AnatomicalForcepsDeform : MedicalTool
     public event EventHandler OnForcepsJoin;
     public event EventHandler OnForcepsSeparate;
 
-    [Header("TOP PART OF THE FORCEPS")]
-    [SerializeField] private Transform TopBone;
+    private bool forcepsJoined = false;
 
+    [Header("TOP PART OF THE FORCEPS")]
     public Vector3 originalTopRotation;
     public Vector3 deformedTopRotation;
 
-    [Range(0f, 1f)]
-    public float topKey;
-
     [Header("\nBOTTOM PART OF THE FORCEPS")]
-    [SerializeField] private Transform BottomBone;
-
     public Vector3 originalBottomRotation;
     public Vector3 deformedBottomRotation;
-
-    [Range(0f, 1f)]
-    public float bottomKey;
-
-    private Quaternion originalTopRotation_Q;
-    private Quaternion deformedlTopRotation_Q;
-
-    private Quaternion originalBottomRotation_Q;
-    private Quaternion deformedlBottomRotation_Q;
-
-    private bool forcepsJoined = false;
-
-    private bool isHandLeft = false;
 
     protected override void Awake()
     {
         base.Awake();
 
         //Rotations of the scissors, original is closed and deformed is open
-        originalTopRotation_Q = Quaternion.Euler(originalTopRotation);
-        deformedlTopRotation_Q = Quaternion.Euler(deformedTopRotation);
+        originalRotation1 = Quaternion.Euler(originalTopRotation);
+        goalRotation1 = Quaternion.Euler(deformedTopRotation);
 
-        originalBottomRotation_Q = Quaternion.Euler(originalBottomRotation);
-        deformedlBottomRotation_Q = Quaternion.Euler(deformedBottomRotation);
+        originalRotation2 = Quaternion.Euler(originalBottomRotation);
+        goalRotation2 = Quaternion.Euler(deformedBottomRotation);
 
         interactor = GetComponent<InteractionBehaviour>();
     }
 
-    private void Update()
+    protected override void Update()
     {
-        rb.isKinematic = true;
+        base.Update();
 
         Leap.Hand currentHand = ClosestHandLeap();
-
         if (currentHand == null)
         {
-            if (selectedThisTool)
-            {
-                if (leftHand == null || rightHand == null)
-                    return;
-
-                if (isHandLeft)
-                {
-                    leftHand.SetMaterialToNormal();
-                    GameManager.grabbingToolLeftHand = false;
-                }
-
-                else
-                {
-                    rightHand.SetMaterialToNormal();
-                    GameManager.grabbingToolRightHand = false;
-                }
-
-                selectedThisTool = false;
-
-                DeselectTool();
-
-            }
-
             return;
         }
-
-        if (IsCurrentHandOccupied(currentHand.IsLeft))
-        {
-            if (selectedThisTool)
-            {
-                if (leftHand == null || rightHand == null)
-                    return;
-
-                if (isHandLeft)
-                {
-                    leftHand.SetMaterialToNormal();
-                    GameManager.grabbingToolLeftHand = false;
-                }
-
-                else
-                {
-                    rightHand.SetMaterialToNormal();
-                    GameManager.grabbingToolRightHand = false;
-                }
-
-                selectedThisTool = false;
-                DeselectTool();
-
-            }
-            return;
-        }
-
-        if(currentHand.GetFingerStrength(4) <= .15d)
-        {
-            if (selectedThisTool)
-            {
-                if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
-                else rightHand.SetMaterialToNormal();
-                selectedThisTool = false;
-                DeselectTool();
-
-                if(isHandLeft)
-                {
-                    GameManager.grabbingToolLeftHand = false;
-                }
-
-                else
-                {
-                    GameManager.grabbingToolRightHand = false;
-                }
-
-            }
-
-            return;
-        }
-
-        if (!selectedThisTool)
-        {
-            if (currentHand.IsLeft)
-            {
-                if (GameManager.instance.grabbingWithLeft)
-                {
-                    return;
-                }
-
-                GameManager.grabbingToolLeftHand = true;
-                isHandLeft = true;
-                leftHand.SetTransparentHands();
-            }
-
-            else
-            {
-                if(GameManager.instance.grabbingWithRight)
-                {
-                    return;
-                }
-
-                GameManager.grabbingToolRightHand = true;
-                isHandLeft = false;
-                rightHand.SetTransparentHands();
-            }
-
-            SelectTool();
-            selectedThisTool = true;
-        }
-
-        transform.position = currentHand.PalmPosition;
-        transform.rotation = currentHand.Rotation;
 
         float value = currentHand.PinchDistance/16 - 1.1f;
 
-       // Debug.Log(value + ", Distance: " + currentHand.PinchDistance);
-
-        topKey = bottomKey = Mathf.Clamp(value, 0f, 1f);
-
-
-        //START TEST CODE
-        /*
-        if (Input.GetKey(KeyCode.L))
-        {
-            float currentValue = topKey;
-            float nextValue = topKey + Time.deltaTime * forcepsSpeed;
-
-            currentValue = Mathf.Clamp(nextValue, 0f, 1f);
-
-            topKey = currentValue;
-            bottomKey = currentValue;
-        }
-
-        else
-        {
-            float currentValue = topKey;
-            float nextValue = topKey - Time.deltaTime * forcepsSpeed;
-
-            currentValue = Mathf.Clamp(nextValue, 0f, 1f);
-
-            topKey = currentValue;
-            bottomKey = currentValue;
-        }*/
-
-        //END TEST CODE
+        key1 = key2 = Mathf.Clamp(value, 0f, 1f);
 
         //Moves the tool on its axis of rotation, if it passes the threshold then the tool's system activates
-        TopBone.localRotation = Quaternion.Slerp(deformedlTopRotation_Q, originalTopRotation_Q, topKey);
-        BottomBone.localRotation = Quaternion.Slerp(deformedlBottomRotation_Q, originalBottomRotation_Q, bottomKey);
+        firstComponent.localRotation = Quaternion.Slerp(goalRotation1, originalRotation1, key1);
+        secondComponent.localRotation = Quaternion.Slerp(goalRotation2, originalRotation2, key2);
 
-        if (topKey <= 0.25f && bottomKey <= 0.25f && !forcepsJoined)
+        if (key1 <= 0.25f && key2 <= 0.25f && !forcepsJoined)
         {
             forcepsJoined = true;
             OnForcepsJoin?.Invoke(this, EventArgs.Empty);
         }
 
-        if (topKey > 0.8f && bottomKey > 0.8f && forcepsJoined)
+        if (key1 > 0.8f && key2 > 0.8f && forcepsJoined)
         {
             forcepsJoined = false;
             OnForcepsSeparate?.Invoke(this, EventArgs.Empty);
@@ -226,8 +72,8 @@ public class AnatomicalForcepsDeform : MedicalTool
     {
         base.DeselectTool();
 
-        topKey = 0;
-        bottomKey = 0;
+        key1 = 0;
+        key2 = 0;
         forcepsJoined = false;
         OnForcepsSeparate?.Invoke(this, EventArgs.Empty);
     }
