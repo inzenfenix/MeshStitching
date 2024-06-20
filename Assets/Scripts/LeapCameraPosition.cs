@@ -31,28 +31,32 @@ public class LeapCameraPosition : MonoBehaviour
     {
         leapServiceProvider = GetComponent<LeapServiceProvider>();
 
-        if (cameraPosition == CameraPosition.Desktop)
+        switch(cameraPosition)
         {
-            this.transform.position = desktopPosition;
-            this.transform.rotation = Quaternion.Euler(desktopRotation);
+            case CameraPosition.Desktop:
+                this.transform.position = desktopPosition;
+                this.transform.rotation = Quaternion.Euler(desktopRotation);
 
-            leapServiceProvider.ChangeTrackingMode(LeapServiceProvider.TrackingOptimizationMode.Desktop);
+                leapServiceProvider.ChangeTrackingMode(LeapServiceProvider.TrackingOptimizationMode.Desktop);
+                break;
+
+            case CameraPosition.TopDown:
+                this.transform.position = topDownPosition;
+                this.transform.rotation = Quaternion.Euler(topDownRotation);
+
+                leapServiceProvider.ChangeTrackingMode(LeapServiceProvider.TrackingOptimizationMode.Screentop);
+                break;
+
+            case CameraPosition.HMD:
+                this.transform.position = HMDPosition;
+                this.transform.rotation = Quaternion.Euler(HMDRotation);
+
+                leapServiceProvider.ChangeTrackingMode(LeapServiceProvider.TrackingOptimizationMode.HMD);
+                break;
+
+            default:
+                break;
         }
 
-        else if (cameraPosition == CameraPosition.TopDown)
-        {
-            this.transform.position = topDownPosition;
-            this.transform.rotation = Quaternion.Euler(topDownRotation);
-
-            leapServiceProvider.ChangeTrackingMode(LeapServiceProvider.TrackingOptimizationMode.Screentop);
-        }
-
-        else if (cameraPosition == CameraPosition.HMD)
-        {
-            this.transform.position = HMDPosition;
-            this.transform.rotation = Quaternion.Euler(HMDRotation);
-
-            leapServiceProvider.ChangeTrackingMode(LeapServiceProvider.TrackingOptimizationMode.HMD);
-        }
     }
 }

@@ -190,8 +190,6 @@ public class MedicalTool : MonoBehaviour
         {
             if (selectedThisTool)
             {
-                if (leftHand == null || rightHand == null)
-                    return;
 
                 if (isHandLeft)
                 {
@@ -216,32 +214,10 @@ public class MedicalTool : MonoBehaviour
 
         if (IsCurrentHandOccupied(isLeft))
         {
-            if (selectedThisTool)
-            {
-                if (leftHand == null || rightHand == null)
-                    return;
-
-                if (isHandLeft)
-                {
-                    //leftHand.SetMaterialToNormal();
-                    GameManager.grabbingToolLeftHand = false;
-                }
-
-                else
-                {
-                    //rightHand.SetMaterialToNormal();
-                    GameManager.grabbingToolRightHand = false;
-                }
-
-                selectedThisTool = false;
-                DeselectTool();
-
-            }
             return;
         }
 
-        Debug.Log(this.name + " " + GameManager.GetNovaFingerStrength(3, isLeft));
-        if (GameManager.GetNovaFingerStrength(3, isLeft) <= .08d)
+        if (GameManager.GetNovaFingerStrength(2, isLeft) <= .87d)
         {
             if (selectedThisTool)
             {
@@ -276,7 +252,7 @@ public class MedicalTool : MonoBehaviour
 
                 GameManager.grabbingToolLeftHand = true;
                 isHandLeft = true;
-                leftHand.SetTransparentHands();
+                //leftHand.SetTransparentHands();
             }
 
             else
@@ -296,7 +272,7 @@ public class MedicalTool : MonoBehaviour
         }
 
         transform.position = currentHand.position;
-        transform.rotation = currentHand.rotation;
+        transform.rotation = currentHand.rotation * Quaternion.Euler(-90,0,0);
     }
 
     public void SelectTool()
@@ -337,7 +313,18 @@ public class MedicalTool : MonoBehaviour
             }
         }
 
-        //Debug.Log("Selected tool: " + this.gameObject.name);
+        if (GameManager.instance.isNovaGlove)
+        {
+            if(isHandLeft)
+            {
+                selectedTools[0] = gameObject;
+            }
+
+            else
+            {
+                selectedTools[1] = gameObject;
+            }
+        }
     }
 
     public virtual void DeselectTool()
