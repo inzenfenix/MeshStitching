@@ -44,6 +44,8 @@ public class MedicalTool : MonoBehaviour
 
     protected bool isHandLeft = false;
 
+    [SerializeField] protected int grabberFinger = 1;
+
     protected virtual void Awake()
     {
         interactor = GetComponent<InteractionBehaviour>();
@@ -217,7 +219,7 @@ public class MedicalTool : MonoBehaviour
             return;
         }
 
-        if (GameManager.GetNovaFingerStrength(2, isLeft) <= .87d)
+        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .87d)
         {
             if (selectedThisTool)
             {
