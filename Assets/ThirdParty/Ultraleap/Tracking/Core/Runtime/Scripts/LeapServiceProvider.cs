@@ -262,7 +262,6 @@ namespace Leap.Unity
           "Which tracking mode to request that the service optimize for. " +
           "(The LeapXRServiceProvider should be used for all XR headset based applications, where hand tracking devices are mounted on the headset)")]
         [SerializeField]
-        [EditTimeOnly]
         protected TrackingOptimizationMode _trackingOptimization = TrackingOptimizationMode.Desktop;
 
         [Tooltip("Enable to prevent changes to tracking mode during initialization. The mode the service is currently set to will be retained.")]
