@@ -219,7 +219,8 @@ public class MedicalTool : MonoBehaviour
             return;
         }
 
-        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .87d)
+
+        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .88d)
         {
             if (selectedThisTool)
             {
