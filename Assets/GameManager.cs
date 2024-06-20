@@ -20,7 +20,8 @@ public class GameManager : MonoBehaviour
     private Hand leftHandLeap;
     private Hand rightHandLeap;
 
-    private float minPinchDistance = 46f;
+    private float minPinchDistanceLeap = 46f;
+    private float minPinchDistanceNova = .08f;
 
     public bool grabbingWithLeft = false;
     public bool grabbingWithRight = false;
@@ -94,12 +95,12 @@ public class GameManager : MonoBehaviour
         {
             leftHookPoint.position = leftHandLeap.Fingers[0].TipPosition;
 
-            if (leftHandLeap.PinchDistance < minPinchDistance && !grabbingWithLeft)
+            if (leftHandLeap.PinchDistance < minPinchDistanceLeap && !grabbingWithLeft)
             {
                 onHookedRope?.Invoke(this, leftHookPoint);
             }
 
-            else if (leftHandLeap.PinchDistance > minPinchDistance && grabbingWithLeft)
+            else if (leftHandLeap.PinchDistance > minPinchDistanceLeap && grabbingWithLeft)
             {
                 onUnhookedRope?.Invoke(this, leftHookPoint);
             }
@@ -110,12 +111,12 @@ public class GameManager : MonoBehaviour
         {
             rightHookPoint.position = rightHandLeap.Fingers[0].TipPosition;
 
-            if (rightHandLeap.PinchDistance < minPinchDistance && !grabbingWithRight)
+            if (rightHandLeap.PinchDistance < minPinchDistanceLeap && !grabbingWithRight)
             {
                 onHookedRope?.Invoke(this, rightHookPoint);
             }
 
-            else if (rightHandLeap.PinchDistance > minPinchDistance && grabbingWithRight)
+            else if (rightHandLeap.PinchDistance > minPinchDistanceLeap && grabbingWithRight)
             {
                 onUnhookedRope?.Invoke(this, rightHookPoint);
             }
@@ -145,28 +146,29 @@ public class GameManager : MonoBehaviour
         {
             leftHookPoint.position = leftFingerTips[0].position;
 
-            if (NovaFingerDistance(0, 1, true) < minPinchDistance && !grabbingWithLeft)
+            if (NovaFingerDistance(0, 1, true) < minPinchDistanceNova && !grabbingWithLeft)
             {
                 onHookedRope?.Invoke(this, leftHookPoint);
             }
 
-            else if (NovaFingerDistance(0, 1, true) > minPinchDistance && grabbingWithLeft)
+            else if (NovaFingerDistance(0, 1, true) > minPinchDistanceNova && grabbingWithLeft)
             {
                 onUnhookedRope?.Invoke(this, leftHookPoint);
             }
         }
 
         //We try the same with the right hand
-        if (rightHandLeap != null && !grabbingToolRightHand)
+        if (!grabbingToolRightHand)
         {
+
             rightHookPoint.position = rightFingerTips[0].position;
 
-            if (NovaFingerDistance(0, 1, false) < minPinchDistance && !grabbingWithRight)
+            if (NovaFingerDistance(0, 1, false) < minPinchDistanceNova && !grabbingWithRight)
             {
                 onHookedRope?.Invoke(this, rightHookPoint);
             }
 
-            else if (NovaFingerDistance(0, 1, false) > minPinchDistance && grabbingWithRight)
+            else if (NovaFingerDistance(0, 1, false) > minPinchDistanceNova && grabbingWithRight)
             {
                 onUnhookedRope?.Invoke(this, rightHookPoint);
             }
