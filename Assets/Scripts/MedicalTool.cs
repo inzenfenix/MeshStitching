@@ -240,11 +240,9 @@ public class MedicalTool : MonoBehaviour
             return;
         }
 
-        Debug.Log(this.name + " " + GameManager.NovaFingerDistance(0, 1, isLeft));
-
-        if (GameManager.NovaFingerDistance(0, 1, isLeft) <= .08d)
+        Debug.Log(this.name + " " + GameManager.GetNovaFingerStrength(3, isLeft));
+        if (GameManager.GetNovaFingerStrength(3, isLeft) <= .08d)
         {
-            Debug.Log("A");
             if (selectedThisTool)
             {
                 //if (currentHand.IsLeft) leftHand.SetMaterialToNormal();

@@ -188,6 +188,27 @@ public class GameManager : MonoBehaviour
             return Vector3.Distance(GameManager.instance.rightFingerTips[finger].position, GameManager.instance.rightFingerTips[finger2].position);
     }
 
+    public static float GetNovaFingerStrength(int finger, bool isLeft)
+    {
+        if (!GameManager.instance.isNovaGlove)
+            return -1;
+
+        if (finger < 0 || finger > 4)
+            return -1;
+
+        if (isLeft)
+        {
+            float fingerDistance = Vector3.Distance(GameManager.instance.leftFingerTips[finger].position, GameManager.instance.leftPalm.position);
+            return Mathf.Clamp(1 - fingerDistance, 0, 1);
+        }
+
+        else
+        {
+            float fingerDistance = Vector3.Distance(GameManager.instance.rightFingerTips[finger].position, GameManager.instance.rightPalm.position);
+            return Mathf.Clamp(1 - fingerDistance, 0, 1);
+        }
+    }
+
     public static float NovaPalmDistance(Transform pos, bool isLeft)
     {
         if (!GameManager.instance.isNovaGlove)
