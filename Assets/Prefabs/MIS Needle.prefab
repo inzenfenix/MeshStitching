@@ -121,6 +121,7 @@ GameObject:
   - component: {fileID: 649787202322515179}
   - component: {fileID: 6305038713941230143}
   - component: {fileID: 3041113270176980441}
+  - component: {fileID: 2636613566795795430}
   - component: {fileID: 4391550315847352913}
   - component: {fileID: 3135489001159698309}
   - component: {fileID: 6747602587740905272}
@@ -141,7 +142,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.39404234, y: 0.6004287, z: -0.57440984, w: 0.3927713}
   m_LocalPosition: {x: -0.036, y: 1.562, z: 0.436}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6804501443009944113}
@@ -183,6 +184,7 @@ MonoBehaviour:
   key1: 0
   secondComponent: {fileID: 0}
   key2: 0
+  grabberFinger: 1
   needleTop: {fileID: 5603136644678758095}
   needleBottom: {fileID: 5929252957505034437}
   colliders:
@@ -249,6 +251,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &2636613566795795430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755051600263286091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62359d80fdc0e4315ab6331b78ec5b90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kinematicForParticles: 0
 --- !u!114 &4391550315847352913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1097,13 +1112,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3679363761776057548}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000029802319, y: -0.80097073, z: 0.00000008940696, w: 0.5987036}
+  m_LocalRotation: {x: 0, y: -0.7376899, z: 0, w: 0.6751397}
   m_LocalPosition: {x: -0.1138, y: -0.000000007450581, z: 0.09550008}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 649787202322515179}
-  m_LocalEulerAnglesHint: {x: 0, y: -106.446, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -95.07, z: 0}
 --- !u!136 &4035956095724899935
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1124,9 +1139,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.0075
-  m_Height: 0.065
+  m_Height: 0.024665326
   m_Direction: 0
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0.031965435, y: 0.0000000018342897, z: 0.005000014}
 --- !u!114 &1915887023928863530
 MonoBehaviour:
   m_ObjectHideFlags: 0

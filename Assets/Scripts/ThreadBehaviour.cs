@@ -482,7 +482,7 @@ public class ThreadBehaviour : MonoBehaviour
         }
 
         //How far each stitching has to be from each other
-        float stitchThreshold = .037f;
+        float stitchThreshold = .06f;
 
         for (int i = 0; i < stitchAttachments.Count; i++)
         {
