@@ -66,17 +66,17 @@ namespace SG.Examples
                 {
                     this.rightHand.HandModelEnabled = true;
                     //this.leftHand.gameObject.SetActive(false);
-                    Debug.Log("Connected to a right hand!");
-                    ActiveHand = this.rightHand;
-                    ActiveHandConnect.Invoke();
+                    //Debug.Log("Connected to a right hand!");
+                    //ActiveHand = this.rightHand;
+                    //ActiveHandConnect.Invoke();
                 }
                 if (this.leftHand.IsConnected())
                 {
                     this.leftHand.HandModelEnabled = true;
                     //this.rightHand.gameObject.SetActive(false);
-                    Debug.Log("Connected to a left hand!");
+                    //Debug.Log("Connected to a left hand!");
                     //ActiveHand = this.leftHand;
-                    ActiveHandConnect.Invoke();
+                    //ActiveHandConnect.Invoke();
                 }
             }
             else
