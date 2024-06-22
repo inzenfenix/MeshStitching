@@ -90,7 +90,7 @@ public class CutScissorsDeform : MedicalTool
             return key1;
         }
 
-        float value = GameManager.NovaFingerDistance(0, 3, isLeft) * 10 - .3f;
+        float value = GameManager.NovaFingerDistance(0, 3, isLeft) * 20 - .8f;
         return Mathf.Clamp(value, 0f, 1f);
     }
 }

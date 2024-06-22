@@ -78,7 +78,6 @@ public class ViveTracking : MonoBehaviour
         //control 2
 
         Vector3 curPos2 = new Vector3(pose[1].x, pose[1].y, -pose[1].z);
-        if (curPos2 != Vector3.zero)
         {
             t2.position = this.transform.position + curPos2;
             Quaternion prerot1 = Quaternion.Euler(0, -90, 0); //Prerotación
