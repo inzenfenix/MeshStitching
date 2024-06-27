@@ -619,6 +619,7 @@ public class ThreadBehaviour : MonoBehaviour
 
         if(finalHook)
         {
+            finishingAttachment.enabled = false;
             finalHook = false;
         }
 
