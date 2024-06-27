@@ -612,15 +612,16 @@ public class ThreadBehaviour : MonoBehaviour
     private void OnUnhookedRope(object sender, Transform hookPoint)
     {
 
-        if (toolAttachments.Count <= 0)
-        {
-            return;
-        }
-
         if(finalHook)
         {
             finishingAttachment.enabled = false;
+            finishingSuturing = false;
             finalHook = false;
+        }
+
+        if (toolAttachments.Count <= 0)
+        {
+            return;
         }
 
         for (int i = 0; i < toolAttachments.Count; i++)
