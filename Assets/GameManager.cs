@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     private Hand leftHandLeap;
     private Hand rightHandLeap;
 
-    private float minPinchDistanceLeap = 46f;
+    private float minPinchDistanceLeap = 49f;
     private float minPinchDistanceNova = .085f;
 
     public bool grabbingWithLeft = false;

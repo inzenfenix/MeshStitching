@@ -37,6 +37,8 @@ public class ThreadBehaviour : MonoBehaviour
     private ObiParticleAttachment finishingAttachment;
     private int lastParticle;
 
+    private bool finalHook;
+
     private void Awake()
     {
         cursor = GetComponent<ObiRopeCursor>();
@@ -124,7 +126,18 @@ public class ThreadBehaviour : MonoBehaviour
 
             else
             {
-                rope.solver.positions[rope.elements.Count - 1] = finishingTransform.position;
+                Vector3 particlePos = rope.solver.positions[stitchAttachments[0].particleGroup.particleIndices[0]];
+
+                finishingTransform.position = particlePos + Vector3.up * 0.2f;
+
+                var particleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
+                rope.solver.positions[particle] = finishingTransform.position;
+
+                particleGroup.particleIndices.Add(particle);
+
+                finishingAttachment.particleGroup = particleGroup;
+                finishingAttachment.target = finishingTransform;
+
                 finishingAttachment.enabled = true;
             }
         }
@@ -560,14 +573,22 @@ public class ThreadBehaviour : MonoBehaviour
             GameManager.instance.grabbingWithRight = true;
         }
 
-        if (finishingSuturing && element > stitchAttachments[0].particleGroup.particleIndices[0])
+        if (finishingSuturing && element > stitchAttachments[0].particleGroup.particleIndices[0] && !finalHook)
         {
             finishingAttachment.enabled = false;
 
-            finishingTransform.position = curParticlePos;
-            finishingAttachment.particleGroup.particleIndices.Add(element);
+            finishingAttachment.target = hookPoint;
+
+            var currentParticleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
+
+            currentParticleGroup.particleIndices.Add(rope.elements[element].particle1);
+            currentParticleGroup.particleIndices.Add(lastParticle);
+
+            finishingAttachment.particleGroup = currentParticleGroup;
 
             finishingAttachment.enabled = true;
+
+            finalHook = true;
 
             return;
         }
@@ -594,6 +615,11 @@ public class ThreadBehaviour : MonoBehaviour
         if (toolAttachments.Count <= 0)
         {
             return;
+        }
+
+        if(finalHook)
+        {
+            finalHook = false;
         }
 
         for (int i = 0; i < toolAttachments.Count; i++)
