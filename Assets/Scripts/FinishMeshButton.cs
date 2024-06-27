@@ -18,9 +18,27 @@ public class FinishMeshButton : MonoBehaviour
             return;
         }
 
-        Leap.Hand hand = ClosestHand();
+        if (GameManager.instance.isLeapMotion)
+        {
+            Leap.Hand hand = ClosestHand();
 
-        if (hand == null)
+            if (hand == null)
+            {
+                return;
+            }
+        }
+
+        else if(GameManager.instance.isNovaGlove)
+        {
+            Transform pos = GameManager.NovaPalmNearby(transform, out bool isLeft, 0.1f);
+
+            if(pos == null)
+            {
+                return;
+            }
+        }
+
+        else
         {
             return;
         }

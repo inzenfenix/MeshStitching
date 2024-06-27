@@ -247,6 +247,30 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
+    public static Transform NovaPalmNearby(Transform pos, out bool isLeft, float radius)
+    {
+        if (!GameManager.instance.isNovaGlove)
+        {
+            isLeft = false;
+            return null;
+        }
+
+        if (Vector3.Distance(pos.position, GameManager.instance.leftPalm.position) < radius)
+        {
+            isLeft = true;
+            return GameManager.instance.leftPalm;
+        }
+
+        else if (Vector3.Distance(pos.position, GameManager.instance.rightPalm.position) < radius)
+        {
+            isLeft = false;
+            return GameManager.instance.rightPalm;
+        }
+
+        isLeft = false;
+        return null;
+    }
+
 
     public static float LeapFingerPinchDistance(int finger, Hand hand)
     {
