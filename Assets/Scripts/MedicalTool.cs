@@ -1,12 +1,8 @@
-using Leap;
 using Leap.Unity;
 using Leap.Unity.Interaction;
-using Leap.Unity.PhysicalHands;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
+using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MedicalTool : MonoBehaviour
@@ -45,6 +41,10 @@ public class MedicalTool : MonoBehaviour
     protected bool isHandLeft = false;
 
     [SerializeField] protected int grabberFinger = 1;
+
+    Vector3 currentPosOffset = Vector3.zero;
+    Quaternion currentRotOffset = Quaternion.identity;
+    float currentDistance = 0f;
 
     protected virtual void Awake()
     {
@@ -92,7 +92,7 @@ public class MedicalTool : MonoBehaviour
                 }
 
                 selectedThisTool = false;
-
+                currentDistance = 0;
                 DeselectTool();
 
             }
@@ -120,6 +120,7 @@ public class MedicalTool : MonoBehaviour
                 }
 
                 selectedThisTool = false;
+                currentDistance = 0;
                 DeselectTool();
 
             }
@@ -158,7 +159,6 @@ public class MedicalTool : MonoBehaviour
                 {
                     return;
                 }
-
                 GameManager.grabbingToolLeftHand = true;
                 isHandLeft = true;
                 leftHand.SetTransparentHands();
@@ -178,10 +178,13 @@ public class MedicalTool : MonoBehaviour
 
             SelectTool();
             selectedThisTool = true;
+            currentPosOffset = transform.position - currentHand.PalmPosition;
+            currentDistance = Vector3.Distance(transform.position, currentHand.PalmPosition);
+            currentRotOffset = Quaternion.Inverse(currentHand.Rotation) * transform.rotation;
         }
 
-        transform.position = currentHand.PalmPosition;
-        transform.rotation = currentHand.Rotation;
+        transform.position = currentPosOffset + currentHand.PalmPosition;
+        transform.rotation = currentHand.Rotation * currentRotOffset;
     }
 
     public void UsingNovaGloves()
@@ -352,7 +355,7 @@ public class MedicalTool : MonoBehaviour
         if (GameManager.LeftHand == null &&
            GameManager.RightHand != null)
         {
-            if (GameManager.LeapPalmDistance(this.transform, GameManager.RightHand) < minDistance)
+            if (GameManager.LeapPalmDistance(this.transform, GameManager.RightHand) < minDistance + currentDistance)
             {
                 selectedHand = GameManager.RightHand;
             }
@@ -361,7 +364,7 @@ public class MedicalTool : MonoBehaviour
         else if (GameManager.LeftHand != null &&
                  GameManager.RightHand == null)
         {
-            if (GameManager.LeapPalmDistance(this.transform, GameManager.LeftHand) < minDistance)
+            if (GameManager.LeapPalmDistance(this.transform, GameManager.LeftHand) < minDistance + currentDistance)
             {
                 selectedHand = GameManager.LeftHand;
             }
@@ -376,7 +379,7 @@ public class MedicalTool : MonoBehaviour
         else if (GameManager.LeapPalmDistance(this.transform, GameManager.LeftHand) <
                  GameManager.LeapPalmDistance(this.transform, GameManager.RightHand))
         {
-            if (GameManager.LeapPalmDistance(this.transform, GameManager.LeftHand) < minDistance)
+            if (GameManager.LeapPalmDistance(this.transform, GameManager.LeftHand) < minDistance + currentDistance)
             {
                 selectedHand = GameManager.LeftHand;
             }
@@ -384,7 +387,7 @@ public class MedicalTool : MonoBehaviour
 
         else
         {
-            if (GameManager.LeapPalmDistance(this.transform, GameManager.RightHand) < minDistance)
+            if (GameManager.LeapPalmDistance(this.transform, GameManager.RightHand) < minDistance + currentDistance)
             {
                 selectedHand = GameManager.RightHand;
             }

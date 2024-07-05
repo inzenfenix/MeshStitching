@@ -559,7 +559,6 @@ public class ThreadBehaviour : MonoBehaviour
         Vector3 curParticlePos = rope.solver.positions[element];
 
         //Check that the forceps are not too far from the thread
-        Debug.Log(Vector3.Distance(curParticlePos, hookPoint.position));
         if (Vector3.Distance(curParticlePos, hookPoint.position) > forcepsDistanceThreshold)
         {
             return;
