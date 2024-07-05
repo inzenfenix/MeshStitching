@@ -187,6 +187,7 @@ public class MedicalTool : MonoBehaviour
         transform.rotation = currentHand.Rotation * currentRotOffset;
     }
 
+
     public void UsingNovaGloves()
     {
         Transform currentHand = GameManager.NovaPalmNearby(this.transform, out bool isLeft);
