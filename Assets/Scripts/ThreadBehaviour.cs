@@ -8,7 +8,7 @@ using static UnityEngine.ParticleSystem;
 public class ThreadBehaviour : MonoBehaviour
 {
     //The distance between the forceps and the thread to start interacting with each other
-    private static readonly float forcepsDistanceThreshold = 0.02f;
+    private static readonly float forcepsDistanceThreshold = 0.05f;
 
     //How much should the user stretch the thread before it moves the particles
     private readonly float stitchStretchThresholdOffset = 0.005f;
@@ -352,7 +352,7 @@ public class ThreadBehaviour : MonoBehaviour
         //Return particles back to normal if there's no attachments
         if (stitchAttachments.Count <= 0)
         {
-            for (int i = 10; i < rope.elements.Count - 10; i++)
+            for (int i = 3; i < rope.elements.Count - 3; i++)
             {
                 rope.solver.invMasses[i] = 0.1f;
 
@@ -371,9 +371,8 @@ public class ThreadBehaviour : MonoBehaviour
         {
             if (stitchAttachments.Count > 1)
             {
-                if (rope.solver.positions[i].y > 0.95f)
+                if (rope.solver.positions[i].y > 0.95f && i > 3 && i < rope.elements.Count - 3)
                 {
-                    Debug.Log(i);
                     ChangeParticleColliders(i, true);
                     continue;
                 }
@@ -382,7 +381,7 @@ public class ThreadBehaviour : MonoBehaviour
             //In the case that we are at the start or end of the thread, we want this particles to not have any
             //Physical interaction and have them always with the default properties
 
-            if (i > rope.elements.Count - 8 || i < 8)
+            if (i > rope.elements.Count - 3 || i < 3)
             {
                 int nullMask = 0;
                 rope.solver.filters[i] = ObiUtils.MakeFilter(nullMask, 10);
@@ -398,7 +397,7 @@ public class ThreadBehaviour : MonoBehaviour
         {
             //In the case that we are at the start or end of the thread, we want this particles to not have any
             //Physical interaction and have them always with the default properties
-            if (i > rope.elements.Count - 6 || i < 4)
+            if (i > rope.elements.Count - 3 || i < 3)
             {
                 int maskDefault = 0;
                 rope.solver.filters[i] = ObiUtils.MakeFilter(maskDefault, 10);
@@ -556,9 +555,11 @@ public class ThreadBehaviour : MonoBehaviour
         //Checks for the closest particle
         int element = ClosestParticle(hookPoint.position);
         
-        Vector3 curParticlePos = rope.solver.positions[rope.elements[element].particle1];
+        
+        Vector3 curParticlePos = rope.solver.positions[element];
 
         //Check that the forceps are not too far from the thread
+        Debug.Log(Vector3.Distance(curParticlePos, hookPoint.position));
         if (Vector3.Distance(curParticlePos, hookPoint.position) > forcepsDistanceThreshold)
         {
             return;
@@ -663,7 +664,7 @@ public class ThreadBehaviour : MonoBehaviour
             if (Vector3.Distance(possibleParticlePos, pos) < Vector3.Distance(curParticlePos, pos))
             {
                 curParticlePos = possibleParticlePos;
-                element = i;
+                element = rope.elements[i].particle1;
             }
         }
 

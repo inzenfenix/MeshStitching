@@ -299,4 +299,11 @@ public class GameManager : MonoBehaviour
     {
         get => instance.rightHandLeap;
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.black;
+       /* if(leftHookPoint != null)
+            Gizmos.DrawSphere(leftHookPoint.position, .025f);*/
+    }
 }
