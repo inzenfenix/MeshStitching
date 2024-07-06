@@ -493,6 +493,11 @@ public class ThreadBehaviour : MonoBehaviour
             e.y = .97f;
         }
 
+        else if (needleDetector.side == NeedleDetector.Side.LeftDown || needleDetector.side == NeedleDetector.Side.RightDown)
+        {
+            e.y = .85f;
+        }
+
         //How far each stitching has to be from each other
         float stitchThreshold = .06f;
 

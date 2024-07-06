@@ -104,6 +104,7 @@ public class MedicalTool : MonoBehaviour
 
                 selectedThisTool = false;
                 currentDistance = 0;
+                rb.velocity = Vector3.zero;
                 DeselectTool();
 
             }
@@ -132,6 +133,7 @@ public class MedicalTool : MonoBehaviour
 
                 selectedThisTool = false;
                 currentDistance = 0;
+                rb.velocity = Vector3.zero;
                 DeselectTool();
 
             }

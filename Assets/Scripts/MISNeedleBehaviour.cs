@@ -6,15 +6,25 @@ using UnityEngine;
 
 public class MISNeedleBehaviour : MedicalTool
 {
-    [Header("Needle components")]
+    [Header("Are you using keyboard?")]
+    [SerializeField] private bool usingKeyboard;
+
+    [Header("\nNeedle components")]
     [SerializeField] private Transform needleTop;
     [SerializeField] private Transform needleBottom;
 
-    [Header("Insertion Components")]
+    [Header("\nInsertion Components")]
     [SerializeField] private Collider[] colliders;
-    private bool isNeedleInserted;
+
+    private int isNeedleInserted;
 
     [SerializeField] Transform[] forcepsHookPoints;
+
+    private Transform currentTool;
+
+    [SerializeField] Transform suturingTransform;
+
+    private bool startedSuturing = false;
 
 
     protected override void Awake()
@@ -56,6 +66,46 @@ public class MISNeedleBehaviour : MedicalTool
         rb.velocity = Vector3.zero;
 
         //Test code
+        if(usingKeyboard)
+        {
+            KeyboardMovement();
+        }
+
+        if(isNeedleInserted > 0)
+        {
+            if(!startedSuturing)
+            {
+                
+                startedSuturing = true;
+                transform.parent = suturingTransform;
+            }
+
+            if (currentTool == null) return;
+
+            Transform tool = currentTool;
+
+            Rigidbody toolRb = null;
+
+            while(!tool.TryGetComponent<Rigidbody>(out toolRb) && tool.parent != null)
+            {
+                tool = currentTool.parent;
+            }
+
+            if (toolRb == null) return;
+
+            suturingTransform.rotation *= Quaternion.Euler(0f, 0f, toolRb.velocity.magnitude * Time.deltaTime);
+        }
+
+        if(isNeedleInserted == 0)
+        {
+            startedSuturing = false;
+            suturingTransform.parent = this.transform;
+            transform.parent = currentTool;
+        }
+    }
+
+    private void KeyboardMovement()
+    {
         if (Input.GetKey(KeyCode.W))
         {
             float zSpeed = 1.5f;
@@ -88,14 +138,14 @@ public class MISNeedleBehaviour : MedicalTool
         if (Input.GetKey(KeyCode.E))
         {
             float rightRotationSpeed = 100f;
-            Vector3 rightRotation =  new Vector3(0, 0, rightRotationSpeed * Time.deltaTime);
+            Vector3 rightRotation = new Vector3(0, 0, rightRotationSpeed * Time.deltaTime);
             transform.Rotate(rightRotation, Space.World);
         }
 
         if (Input.GetKey(KeyCode.Q))
         {
             float lefttRotationSpeed = -100f;
-            Vector3 leftRotation =  new Vector3(0, 0, lefttRotationSpeed * Time.deltaTime);
+            Vector3 leftRotation = new Vector3(0, 0, lefttRotationSpeed * Time.deltaTime);
             transform.Rotate(leftRotation, Space.World);
         }
 
@@ -117,16 +167,21 @@ public class MISNeedleBehaviour : MedicalTool
 
     private void NeedleDetector_onNeedleEnter(object sender, Vector3 e)
     {
-        isNeedleInserted = true;
+        if (!startedSuturing)
+        {
+            suturingTransform.parent = null;
+            transform.parent = null;
+        }
+        isNeedleInserted++;
     }
 
     private void NeedleDetector_onNeedleExit(object sender, Vector3 e)
     {
-        isNeedleInserted = false;
+        isNeedleInserted--;
 
         for(int i = 0; i < colliders.Length; i++)
         {
-            colliders[i].isTrigger = false;
+            //colliders[i].isTrigger = false;
         }
     }
 
@@ -137,22 +192,22 @@ public class MISNeedleBehaviour : MedicalTool
 
     private void NeedleDetector_onNeedleMidEnter(object sender, Collider e)
     {
-        if(!isNeedleInserted)
+        if(isNeedleInserted == 0)
         {
             return;
         }
 
-        SetTriggerOnOff(e, true);
+        //SetTriggerOnOff(e, true);
     }
 
     private void NeedleDetector_onNeedleMidExit(object sender, Collider e)
     {
-        if(!isNeedleInserted)
+        if(isNeedleInserted == 0)
         {
             return;
         }
 
-        SetTriggerOnOff(e, false);
+        //SetTriggerOnOff(e, false);
     }
 
     private void SetTriggerOnOff(Collider collider, bool enabled)
@@ -180,13 +235,22 @@ public class MISNeedleBehaviour : MedicalTool
         {
             return;
         }
-        
 
-        this.transform.parent = forceps;
+        currentTool = forceps;
+
+        if (isNeedleInserted == 0)
+        {
+            this.transform.parent = forceps;
+        }
     }
 
     private void OnUnhookedNeedle(object sender, Transform forceps)
     {
-        this.transform.parent = null;
+        currentTool = null;
+        if(isNeedleInserted == 0)
+        {
+            this.transform.parent = null;
+        }
+       
     }
 }
