@@ -46,6 +46,8 @@ public class MedicalTool : MonoBehaviour
     Quaternion currentRotOffset = Quaternion.identity;
     float currentDistance = 0f;
 
+    [SerializeField] protected LayerMask bodyMask;
+
     protected virtual void Awake()
     {
         interactor = GetComponent<InteractionBehaviour>();
@@ -55,7 +57,16 @@ public class MedicalTool : MonoBehaviour
 
     protected virtual void Update()
     {
-        rb.isKinematic = true;
+        if(selectedThisTool)
+        {
+            rb.isKinematic = true;
+        }
+
+        else
+        {
+            rb.isKinematic = false;
+        }
+        
 
         if (GameManager.instance.isLeapMotion)
         {
@@ -183,8 +194,33 @@ public class MedicalTool : MonoBehaviour
             currentRotOffset = Quaternion.Inverse(currentHand.Rotation) * transform.rotation;
         }
 
-        transform.position = currentPosOffset + currentHand.PalmPosition;
-        transform.rotation = currentHand.Rotation * currentRotOffset;
+        rb.MoveRotation(currentHand.Rotation * currentRotOffset);
+
+        Vector3 newPos = (currentPosOffset + currentHand.PalmPosition);
+
+        Collider[] nearbyColliders = Physics.OverlapSphere(newPos, 0.01f, bodyMask);
+
+        if (nearbyColliders.Length > 0)
+        {
+            newPos.y = transform.position.y;
+            //return;
+        }
+
+        Collider[] nearbyColliders2 = Physics.OverlapSphere(newPos, 1f, bodyMask);
+
+        foreach(Collider collider in nearbyColliders2)
+        {
+            if(currentHand.PalmPosition.y < collider.transform.position.y + .1f)
+            {
+                newPos.y = transform.position.y;
+                //return;
+            }
+        }
+
+        rb.MovePosition(newPos);
+
+        //transform.position = currentPosOffset + currentHand.PalmPosition;
+        //transform.rotation = currentHand.Rotation * currentRotOffset;
     }
 
 

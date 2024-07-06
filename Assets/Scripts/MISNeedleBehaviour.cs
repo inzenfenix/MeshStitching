@@ -29,11 +29,11 @@ public class MISNeedleBehaviour : MedicalTool
         NeedleDetector.onNeedleMidEnter += NeedleDetector_onNeedleMidEnter;
         NeedleDetector.onNeedleMidExit += NeedleDetector_onNeedleMidExit;
 
-        AnatomicalForcepsBehaviour.onHookedRope += OnHookedRope;
-        AnatomicalForcepsBehaviour.onUnhookedRope += OnUnhookedRope;
+        AnatomicalForcepsBehaviour.onHookedRope += OnHookedNeedle;
+        AnatomicalForcepsBehaviour.onUnhookedRope += OnUnhookedNeedle;
 
-        HoldScissorsBehaviour.onHookedRope += OnHookedRope;
-        HoldScissorsBehaviour.onUnhookedRope += OnUnhookedRope;
+        HoldScissorsBehaviour.onHookedRope += OnHookedNeedle;
+        HoldScissorsBehaviour.onUnhookedRope += OnUnhookedNeedle;
     }
 
     private void OnDisable()
@@ -43,14 +43,14 @@ public class MISNeedleBehaviour : MedicalTool
         NeedleDetector.onNeedleMidEnter -= NeedleDetector_onNeedleMidEnter;
         NeedleDetector.onNeedleMidExit -= NeedleDetector_onNeedleMidExit;
 
-        AnatomicalForcepsBehaviour.onHookedRope -= OnHookedRope;
-        AnatomicalForcepsBehaviour.onUnhookedRope -= OnUnhookedRope;
+        AnatomicalForcepsBehaviour.onHookedRope -= OnHookedNeedle;
+        AnatomicalForcepsBehaviour.onUnhookedRope -= OnUnhookedNeedle;
 
-        HoldScissorsBehaviour.onHookedRope -= OnHookedRope;
-        HoldScissorsBehaviour.onUnhookedRope -= OnUnhookedRope;
+        HoldScissorsBehaviour.onHookedRope -= OnHookedNeedle;
+        HoldScissorsBehaviour.onUnhookedRope -= OnUnhookedNeedle;
     }
 
-    private void Update()
+    protected override void Update()
     {
 
         rb.velocity = Vector3.zero;
@@ -161,7 +161,7 @@ public class MISNeedleBehaviour : MedicalTool
     }
 
     //If we want to grab the needle with the forceps
-    private void OnHookedRope(object sender, Transform forceps)
+    private void OnHookedNeedle(object sender, Transform forceps)
     {
         float forcepsDistanceThreshold = .03f;
         Vector3 selectedHookPoint = new Vector3(int.MinValue, int.MinValue, int.MinValue);
@@ -185,7 +185,7 @@ public class MISNeedleBehaviour : MedicalTool
         this.transform.parent = forceps;
     }
 
-    private void OnUnhookedRope(object sender, Transform forceps)
+    private void OnUnhookedNeedle(object sender, Transform forceps)
     {
         this.transform.parent = null;
     }
