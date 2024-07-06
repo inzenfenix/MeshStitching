@@ -497,7 +497,7 @@ public class ThreadBehaviour : MonoBehaviour
         else if (needleDetector.side == NeedleDetector.Side.LeftDown || needleDetector.side == NeedleDetector.Side.RightDown)
         {
             Debug.Log(needleDetector.side);
-            e.y = .85f;
+            e.y = .925f;
         }
 
         //How far each stitching has to be from each other
