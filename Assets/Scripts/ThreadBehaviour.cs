@@ -490,11 +490,13 @@ public class ThreadBehaviour : MonoBehaviour
         //If the side the needle exited from is either the left or right one, we want the y position to always be the same
         if (needleDetector.side != NeedleDetector.Side.LeftDown && needleDetector.side != NeedleDetector.Side.RightDown)
         {
+            Debug.Log(needleDetector.side);
             e.y = .97f;
         }
 
         else if (needleDetector.side == NeedleDetector.Side.LeftDown || needleDetector.side == NeedleDetector.Side.RightDown)
         {
+            Debug.Log(needleDetector.side);
             e.y = .85f;
         }
 
