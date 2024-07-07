@@ -325,14 +325,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 0}
   rightHand: {fileID: 0}
-  TopBone: {fileID: 5059483156739914149}
+  firstComponent: {fileID: 0}
+  key1: 0
+  secondComponent: {fileID: 0}
+  key2: 0
+  grabberFinger: 1
+  bodyMask:
+    serializedVersion: 2
+    m_Bits: 0
   originalTopRotation: {x: -3.217, y: -0.239, z: 12.862}
   deformedTopRotation: {x: 4.365, y: 1.492, z: 12.88}
-  topKey: 0
-  BottomBone: {fileID: 6988610818611205237}
   originalBottomRotation: {x: 0.112, y: 0, z: 0.235}
   deformedBottomRotation: {x: 7.888, y: 0.032, z: 0.237}
-  bottomKey: 0
 --- !u!114 &4061200785579593417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,7 +461,6 @@ Transform:
   m_Children:
   - {fileID: 5838451211368865108}
   - {fileID: 2453952766645772789}
-  - {fileID: 3977421024906889072}
   m_Father: {fileID: 1281102162478182468}
   m_LocalEulerAnglesHint: {x: -5, y: 0, z: 0}
 --- !u!1 &8023047398797356775
@@ -484,12 +487,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8023047398797356775}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.043619405, y: -0, z: -0, w: 0.9990483}
-  m_LocalPosition: {x: 0, y: -0.026, z: 0.944}
-  m_LocalScale: {x: 3.3333333, y: 3.3333328, z: 3.3333328}
+  m_LocalRotation: {x: -0.00038813404, y: -0.7559111, z: -0.65467405, w: -0.00028818476}
+  m_LocalPosition: {x: 0.000514776, y: 0.008541226, z: -0.056553654}
+  m_LocalScale: {x: 3.3333328, y: 3.3333328, z: 3.3333335}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2095665806882100198}
+  m_Father: {fileID: 3154941703994250675}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8688513646394124094
 GameObject:
@@ -519,7 +522,8 @@ Transform:
   m_LocalPosition: {x: -0, y: 0.83962846, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3977421024906889072}
   m_Father: {fileID: 6988610818611205237}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8805882910597619033
