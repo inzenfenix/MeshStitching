@@ -111,6 +111,24 @@ public class MISNeedleBehaviour : MedicalTool
 
             if (currentTool == null) return;
 
+            float forcepsDistanceThreshold = .04f;
+            bool isTooFar = true;
+
+            for (int i = 0; i < forcepsHookPoints.Length; i++)
+            {
+                if (Vector3.Distance(forcepsHookPoints[i].position, currentTool.position) < forcepsDistanceThreshold)
+                {
+                    isTooFar = false;
+                    break;
+                }
+            }
+
+            if (isTooFar)
+            {
+                OnUnhookedNeedle(isTooFar, currentTool);
+                return;
+            }
+
             Transform tool = currentTool;
             Rigidbody toolRb = tool.GetComponent<HookPointBehaviour>().GetRb();
 
