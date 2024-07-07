@@ -39,6 +39,8 @@ public class ThreadBehaviour : MonoBehaviour
 
     private bool finalHook;
 
+    private bool startedFinishingSuturing;
+
     private void Awake()
     {
         cursor = GetComponent<ObiRopeCursor>();
@@ -98,6 +100,7 @@ public class ThreadBehaviour : MonoBehaviour
         }
 
         finishingSuturing = !finishingSuturing;
+        startedFinishingSuturing = true;
         int particle = lastParticle;
 
         if(finishingSuturing)
@@ -184,7 +187,7 @@ public class ThreadBehaviour : MonoBehaviour
             cursor.ChangeLength(rope.restLength + ropeLengthSpeed * Time.deltaTime);
         }
 
-        if (!finishingSuturing)
+        if (!startedFinishingSuturing)
         {
             UpdateStichAttachments();
             ChangeInBetweenParticlesProperties();
@@ -497,7 +500,7 @@ public class ThreadBehaviour : MonoBehaviour
         else if (needleDetector.side == NeedleDetector.Side.LeftDown || needleDetector.side == NeedleDetector.Side.RightDown)
         {
             Debug.Log(needleDetector.side);
-            e.y = .925f;
+            e.y = .9f;
         }
 
         //How far each stitching has to be from each other
@@ -588,7 +591,7 @@ public class ThreadBehaviour : MonoBehaviour
 
             var currentParticleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
 
-            currentParticleGroup.particleIndices.Add(rope.elements[element].particle1);
+            currentParticleGroup.particleIndices.Add(element);
             currentParticleGroup.particleIndices.Add(lastParticle);
 
             finishingAttachment.particleGroup = currentParticleGroup;

@@ -147,6 +147,7 @@ public class MedicalTool : MonoBehaviour
                 if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
                 else rightHand.SetMaterialToNormal();
                 selectedThisTool = false;
+                currentDistance = 0;
                 DeselectTool();
 
                 if (isHandLeft)

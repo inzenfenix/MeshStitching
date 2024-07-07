@@ -2,6 +2,7 @@ using Obi;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MISNeedleBehaviour : MedicalTool
@@ -26,10 +27,19 @@ public class MISNeedleBehaviour : MedicalTool
 
     private bool startedSuturing = false;
 
+    private Transform currentParent;
+
+    private Vector3 posOffset;
+    Quaternion rotOffset = Quaternion.identity;
+
+    private bool selectedNeedle = true;
+
 
     protected override void Awake()
     {
         base.Awake();
+
+        selectedNeedle = true;
     }
 
     private void OnEnable()
@@ -63,21 +73,40 @@ public class MISNeedleBehaviour : MedicalTool
     protected override void Update()
     {
 
-        rb.velocity = Vector3.zero;
+        if (selectedNeedle)
+        {
+            rb.isKinematic = true;
+        }
+
+        else
+        {
+            rb.isKinematic = false;
+        }
 
         //Test code
-        if(usingKeyboard)
+        if (usingKeyboard)
         {
             KeyboardMovement();
         }
 
-        if(isNeedleInserted > 0)
+        if (GameManager.instance.isLeapMotion)
+        {
+            //UsingLeapMotion();
+        }
+
+        if (isNeedleInserted > 0)
         {
             if(!startedSuturing)
             {
                 
                 startedSuturing = true;
+                currentParent = suturingTransform;
                 transform.parent = suturingTransform;
+
+                posOffset = transform.position - currentParent.position;
+                rotOffset = Quaternion.Inverse(currentParent.rotation) * transform.rotation;
+                rb.velocity = Vector3.zero;
+
             }
 
             if (currentTool == null) return;
@@ -93,15 +122,31 @@ public class MISNeedleBehaviour : MedicalTool
 
             if (toolRb == null) return;
 
-            suturingTransform.rotation *= Quaternion.Euler(0f, 0f, toolRb.velocity.magnitude * Time.deltaTime);
+            Debug.Log(toolRb.velocity);
+
+            suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, -toolRb.velocity.magnitude * 75f * Time.deltaTime);
+
+            return;
         }
 
-        if(isNeedleInserted == 0)
+        if(isNeedleInserted == 0 && startedSuturing)
         {
             startedSuturing = false;
             suturingTransform.parent = this.transform;
-            transform.parent = currentTool;
+            transform.parent = null;
+            currentTool = null;
+            if(currentParent == suturingTransform)
+            {
+                currentParent = null;
+            }
         }
+
+        if (currentParent == null) return;
+
+        Vector3 newPos = posOffset + currentParent.position;
+
+        rb.MoveRotation(currentParent.rotation * rotOffset);
+        rb.MovePosition(newPos);
     }
 
     private void KeyboardMovement()
@@ -167,17 +212,29 @@ public class MISNeedleBehaviour : MedicalTool
 
     private void NeedleDetector_onNeedleEnter(object sender, Vector3 e)
     {
+        if (currentParent == null) return;
+
         if (!startedSuturing)
         {
+            selectedNeedle = true;
             suturingTransform.parent = null;
+            
             transform.parent = null;
+            currentParent = null;
+
+            transform.parent = suturingTransform;
         }
+
         isNeedleInserted++;
     }
 
     private void NeedleDetector_onNeedleExit(object sender, Vector3 e)
     {
+        if (currentParent == null) return;
+
         isNeedleInserted--;
+
+        if (isNeedleInserted < 0) isNeedleInserted = 0;
 
         for(int i = 0; i < colliders.Length; i++)
         {
@@ -238,18 +295,31 @@ public class MISNeedleBehaviour : MedicalTool
 
         currentTool = forceps;
 
-        if (isNeedleInserted == 0)
+        if (isNeedleInserted <= 0)
         {
-            this.transform.parent = forceps;
+            selectedNeedle = true;
+            posOffset = transform.position - forceps.position;
+            rotOffset = Quaternion.Inverse(forceps.rotation) * transform.rotation;
+            currentParent = forceps;
+            rb.velocity = Vector3.zero;
+            //this.transform.parent = forceps;
         }
     }
 
     private void OnUnhookedNeedle(object sender, Transform forceps)
     {
-        currentTool = null;
-        if(isNeedleInserted == 0)
+        if(currentTool == null)
         {
+            return;
+        }
+
+        currentTool = null;
+        if(isNeedleInserted <= 0)
+        {
+            selectedNeedle = false;
+            currentParent = null;
             this.transform.parent = null;
+            rb.velocity = Vector3.zero;
         }
        
     }
