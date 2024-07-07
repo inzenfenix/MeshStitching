@@ -112,19 +112,12 @@ public class MISNeedleBehaviour : MedicalTool
             if (currentTool == null) return;
 
             Transform tool = currentTool;
-
-            Rigidbody toolRb = null;
-
-            while(!tool.TryGetComponent<Rigidbody>(out toolRb) && tool.parent != null)
-            {
-                tool = currentTool.parent;
-            }
+            Rigidbody toolRb = tool.GetComponent<HookPointBehaviour>().GetRb();
 
             if (toolRb == null) return;
 
-            Debug.Log(toolRb.velocity);
 
-            suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, -toolRb.velocity.magnitude * 75f * Time.deltaTime);
+           suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, -toolRb.velocity.magnitude * 85f * Time.deltaTime);
 
             return;
         }
@@ -275,7 +268,7 @@ public class MISNeedleBehaviour : MedicalTool
     //If we want to grab the needle with the forceps
     private void OnHookedNeedle(object sender, Transform forceps)
     {
-        float forcepsDistanceThreshold = .03f;
+        float forcepsDistanceThreshold = .04f;
         Vector3 selectedHookPoint = new Vector3(int.MinValue, int.MinValue, int.MinValue);
 
         for(int i = 0; i < forcepsHookPoints.Length; i++)
@@ -314,7 +307,7 @@ public class MISNeedleBehaviour : MedicalTool
         }
 
         currentTool = null;
-        if(isNeedleInserted <= 0)
+        if (isNeedleInserted <= 0)
         {
             selectedNeedle = false;
             currentParent = null;
