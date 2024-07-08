@@ -111,7 +111,7 @@ public class MISNeedleBehaviour : MedicalTool
 
             if (currentTool == null) return;
 
-            float forcepsDistanceThreshold = .04f;
+            float forcepsDistanceThreshold = .05f;
             bool isTooFar = true;
 
             for (int i = 0; i < forcepsHookPoints.Length; i++)
@@ -134,8 +134,39 @@ public class MISNeedleBehaviour : MedicalTool
 
             if (toolRb == null) return;
 
+            float direction = 1;
 
-           suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, -toolRb.velocity.magnitude * 240f * Time.deltaTime);
+            if (toolRb.velocity.magnitude < 0.0000001f && toolRb.velocity.magnitude > -0.0000001f) return;
+
+            if(suturingTransform.rotation.eulerAngles.z < 147)
+            {
+                if (toolRb.velocity.y > 0 && toolRb.name.Contains("Hold"))
+                {
+                    direction *= -1.1f;
+                }
+
+                else if(toolRb.velocity.y < 0 && toolRb.name.Contains("Hold"))
+                {
+                    return;
+                }
+            }
+
+            else if (toolRb.velocity.y < 0 && toolRb.name.Contains("Hold"))
+            {
+                direction *= 1.1f;
+            }
+
+            else if (toolRb.velocity.y > 0 && toolRb.name.Contains("Hold"))
+            {
+                return;
+            }
+
+            if (toolRb.velocity.y > 0 && toolRb.name.Contains("Forceps"))
+            {
+                return;
+            }
+
+            suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, 800f * -toolRb.velocity.magnitude * Time.deltaTime * direction);
 
             return;
         }

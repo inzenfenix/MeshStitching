@@ -21,11 +21,6 @@ public class NeedleDetector : MonoBehaviour
 
     public Side side;
 
-    private void Start()
-    {
-        int a = 1 + 1;
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("BottomNeedle"))
