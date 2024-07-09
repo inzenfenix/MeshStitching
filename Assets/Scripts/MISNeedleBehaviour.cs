@@ -140,20 +140,15 @@ public class MISNeedleBehaviour : MedicalTool
 
             if(suturingTransform.rotation.eulerAngles.z < 147)
             {
-                if (toolRb.velocity.y > 0 && toolRb.name.Contains("Hold"))
-                {
-                    direction *= -1.1f;
-                }
-
-                else if(toolRb.velocity.y < 0 && toolRb.name.Contains("Hold"))
+                if(toolRb.velocity.y < 0 && toolRb.name.Contains("Hold"))
                 {
                     return;
                 }
-            }
 
-            else if (toolRb.velocity.y < 0 && toolRb.name.Contains("Hold"))
-            {
-                direction *= 1.1f;
+                else if (toolRb.velocity.y < 0 && toolRb.name.Contains("Forceps"))
+                {
+                    return;
+                }
             }
 
             else if (toolRb.velocity.y > 0 && toolRb.name.Contains("Hold"))
@@ -161,12 +156,7 @@ public class MISNeedleBehaviour : MedicalTool
                 return;
             }
 
-            if (toolRb.velocity.y > 0 && toolRb.name.Contains("Forceps"))
-            {
-                return;
-            }
-
-            suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, 800f * -toolRb.velocity.magnitude * Time.deltaTime * direction);
+            suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, 100f * -(toolRb.velocity.magnitude + toolRb.angularVelocity.magnitude) * Time.deltaTime * direction);
 
             return;
         }

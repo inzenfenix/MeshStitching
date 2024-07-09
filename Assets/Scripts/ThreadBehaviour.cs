@@ -610,7 +610,7 @@ public class ThreadBehaviour : MonoBehaviour
 
         var particleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
 
-        particleGroup.particleIndices.Add(rope.elements[element].particle1);
+        particleGroup.particleIndices.Add(element);
 
         curAttachment.particleGroup = particleGroup;
         curAttachment.target = hookPoint;
