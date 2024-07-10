@@ -147,6 +147,7 @@ public class MedicalTool : MonoBehaviour
                 if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
                 else rightHand.SetMaterialToNormal();
                 selectedThisTool = false;
+                rb.velocity = Vector3.zero;
                 currentDistance = 0;
                 DeselectTool();
 
@@ -197,7 +198,7 @@ public class MedicalTool : MonoBehaviour
             currentRotOffset = Quaternion.Inverse(currentHand.Rotation) * transform.rotation;
         }
 
-        rb.MoveRotation(currentHand.Rotation * currentRotOffset);
+        
 
         Vector3 newPos = (currentPosOffset + currentHand.PalmPosition);
 
@@ -221,6 +222,7 @@ public class MedicalTool : MonoBehaviour
         }
 
         rb.MovePosition(newPos);
+        rb.MoveRotation(currentHand.Rotation * currentRotOffset);
 
         //transform.position = currentPosOffset + currentHand.PalmPosition;
         //transform.rotation = currentHand.Rotation * currentRotOffset;
@@ -249,8 +251,10 @@ public class MedicalTool : MonoBehaviour
                 }
 
                 selectedThisTool = false;
-
+                
                 DeselectTool();
+                rb.velocity = Vector3.zero;
+                currentDistance = 0;
 
             }
 
@@ -270,6 +274,8 @@ public class MedicalTool : MonoBehaviour
                 //if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
                 //else rightHand.SetMaterialToNormal();
                 selectedThisTool = false;
+                rb.velocity = Vector3.zero;
+                currentDistance = 0;
                 DeselectTool();
 
                 if (isHandLeft)
@@ -315,10 +321,34 @@ public class MedicalTool : MonoBehaviour
 
             SelectTool();
             selectedThisTool = true;
+            currentPosOffset = transform.position - currentHand.position;
+            currentDistance = Vector3.Distance(transform.position, currentHand.position);
+            currentRotOffset = Quaternion.Inverse(currentHand.rotation) * transform.rotation;
         }
 
-        transform.position = currentHand.position;
-        transform.rotation = currentHand.rotation * Quaternion.Euler(-90,0,0);
+        Vector3 newPos = (currentPosOffset + currentHand.position);
+
+        Collider[] nearbyColliders = Physics.OverlapSphere(newPos, 0.01f, bodyMask);
+
+        if (nearbyColliders.Length > 0)
+        {
+            newPos.y = transform.position.y;
+            //return;
+        }
+
+        Collider[] nearbyColliders2 = Physics.OverlapSphere(newPos, 1f, bodyMask);
+
+        foreach (Collider collider in nearbyColliders2)
+        {
+            if (currentHand.position.y < collider.transform.position.y + .1f)
+            {
+                newPos.y = transform.position.y;
+                //return;
+            }
+        }
+
+        rb.MovePosition(newPos);
+        rb.MoveRotation(currentHand.rotation * currentRotOffset);
     }
 
     public void SelectTool()
