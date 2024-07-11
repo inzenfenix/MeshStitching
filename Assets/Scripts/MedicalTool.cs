@@ -231,7 +231,7 @@ public class MedicalTool : MonoBehaviour
 
     public void UsingNovaGloves()
     {
-        Transform currentHand = GameManager.NovaPalmNearby(this.transform, out bool isLeft);
+        Transform currentHand = GameManager.NovaPalmNearby(this.transform, out bool isLeft, currentDistance);
 
         if (currentHand == null)
         {
@@ -267,7 +267,7 @@ public class MedicalTool : MonoBehaviour
         }
 
 
-        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .875d)
+        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .8625d)
         {
             if (selectedThisTool)
             {

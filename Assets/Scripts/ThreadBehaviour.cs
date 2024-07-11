@@ -8,7 +8,7 @@ using static UnityEngine.ParticleSystem;
 public class ThreadBehaviour : MonoBehaviour
 {
     //The distance between the forceps and the thread to start interacting with each other
-    private static readonly float forcepsDistanceThreshold = 0.05f;
+    private static readonly float forcepsDistanceThreshold = 0.025f;
 
     //How much should the user stretch the thread before it moves the particles
     private readonly float stitchStretchThresholdOffset = 0.005f;
@@ -494,13 +494,13 @@ public class ThreadBehaviour : MonoBehaviour
         if (needleDetector.side != NeedleDetector.Side.LeftDown && needleDetector.side != NeedleDetector.Side.RightDown)
         {
             Debug.Log(needleDetector.side);
-            e.y = .97f;
+            e.y = needleDetector.pos.y + .01f;
         }
 
         else if (needleDetector.side == NeedleDetector.Side.LeftDown || needleDetector.side == NeedleDetector.Side.RightDown)
         {
             Debug.Log(needleDetector.side);
-            e.y = .9f;
+            e.y = needleDetector.pos.y + .0125f; ;
         }
 
         //How far each stitching has to be from each other

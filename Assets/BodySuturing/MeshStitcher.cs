@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
 
 
  //Object containing the data for the deformation of vertices

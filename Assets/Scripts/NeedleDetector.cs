@@ -21,6 +21,13 @@ public class NeedleDetector : MonoBehaviour
 
     public Side side;
 
+    public Vector3 pos;
+
+    private void Start()
+    {
+        pos = transform.position;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("BottomNeedle"))

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Leap;
 using System;
-using UnityEditor.SearchService;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -21,7 +20,7 @@ public class GameManager : MonoBehaviour
     private Hand rightHandLeap;
 
     private float minPinchDistanceLeap = 49f;
-    private float minPinchDistanceNova = .085f;
+    private float minPinchDistanceNova = .015f;
 
     public bool grabbingWithLeft = false;
     public bool grabbingWithRight = false;
@@ -223,7 +222,7 @@ public class GameManager : MonoBehaviour
             return Vector3.Distance(pos.position, GameManager.instance.rightPalm.position);
     }
 
-    public static Transform NovaPalmNearby(Transform pos, out bool isLeft)
+    public static Transform NovaPalmNearby(Transform pos,  out bool isLeft, float offset = 0)
     {
         if (!GameManager.instance.isNovaGlove)
         {
@@ -231,13 +230,13 @@ public class GameManager : MonoBehaviour
             return null;
         }
 
-        if (Vector3.Distance(pos.position, GameManager.instance.leftPalm.position) < 0.1f)
+        if (Vector3.Distance(pos.position, GameManager.instance.leftPalm.position) < 0.075f + offset)
         {
             isLeft = true;
             return GameManager.instance.leftPalm;
         }
 
-        else if (Vector3.Distance(pos.position, GameManager.instance.rightPalm.position) < 0.1f)
+        else if (Vector3.Distance(pos.position, GameManager.instance.rightPalm.position) < 0.075f + offset)
         {   
             isLeft = false;
             return GameManager.instance.rightPalm;
@@ -247,7 +246,7 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    public static Transform NovaPalmNearby(Transform pos, out bool isLeft, float radius)
+    public static Transform NovaPalmNearby(Transform pos, float radius, out bool isLeft)
     {
         if (!GameManager.instance.isNovaGlove)
         {

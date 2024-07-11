@@ -30,7 +30,7 @@ public class FinishMeshButton : MonoBehaviour
 
         else if(GameManager.instance.isNovaGlove)
         {
-            Transform pos = GameManager.NovaPalmNearby(transform, out bool isLeft, 0.1f);
+            Transform pos = GameManager.NovaPalmNearby(transform, 0.1f,out bool isLeft);
 
             if(pos == null)
             {
