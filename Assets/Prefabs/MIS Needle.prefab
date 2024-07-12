@@ -121,10 +121,8 @@ GameObject:
   - component: {fileID: 649787202322515179}
   - component: {fileID: 6305038713941230143}
   - component: {fileID: 3041113270176980441}
-  - component: {fileID: 2636613566795795430}
-  - component: {fileID: 4391550315847352913}
-  - component: {fileID: 3135489001159698309}
   - component: {fileID: 6747602587740905272}
+  - component: {fileID: 3959071286528141029}
   m_Layer: 11
   m_Name: MIS Needle
   m_TagString: Untagged
@@ -185,6 +183,10 @@ MonoBehaviour:
   secondComponent: {fileID: 0}
   key2: 0
   grabberFinger: 1
+  bodyMask:
+    serializedVersion: 2
+    m_Bits: 0
+  usingKeyboard: 0
   needleTop: {fileID: 5603136644678758095}
   needleBottom: {fileID: 5929252957505034437}
   colliders:
@@ -224,6 +226,7 @@ MonoBehaviour:
   - {fileID: 4919568914894357840}
   - {fileID: 4091751834910928721}
   - {fileID: 8872406820498257772}
+  suturingTransform: {fileID: 0}
 --- !u!54 &3041113270176980441
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -251,63 +254,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!114 &2636613566795795430
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 755051600263286091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62359d80fdc0e4315ab6331b78ec5b90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  kinematicForParticles: 0
---- !u!114 &4391550315847352913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 755051600263286091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62359d80fdc0e4315ab6331b78ec5b90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  kinematicForParticles: 0
---- !u!114 &3135489001159698309
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 755051600263286091}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f10fa40360571247a7ca806d6859557, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
-  _ignoreHoverMode: 0
-  _isIgnoringAllHoverState: 0
-  _ignorePrimaryHover: 0
-  _ignoreContact: 0
-  _ignoreGraspingMode: 0
-  _ignoreGrasping: 0
-  _contactForceMode: 0
-  _allowMultiGrasp: 1
-  _moveObjectWhenGrasped: 1
-  graspedMovementType: 1
-  _overrideInteractionLayer: 0
-  _interactionLayer:
-    layerIndex: 0
-  _overrideNoContactLayer: 0
-  _noContactLayer:
-    layerIndex: 0
-  _eventTable:
-    _entries: []
 --- !u!65 &6747602587740905272
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -329,6 +275,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.2587386, y: 0.028354827, z: 0.12959546}
   m_Center: {x: 0.0032655308, y: 9.9632915e-12, z: 0.063486636}
+--- !u!114 &3959071286528141029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755051600263286091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62359d80fdc0e4315ab6331b78ec5b90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kinematicForParticles: 0
 --- !u!1 &853999529245367786
 GameObject:
   m_ObjectHideFlags: 0

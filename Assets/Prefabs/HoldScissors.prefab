@@ -44,7 +44,6 @@ GameObject:
   - component: {fileID: 6798337120967088363}
   - component: {fileID: 5010108542421634178}
   - component: {fileID: 1901358119212594122}
-  - component: {fileID: 5391210552448851458}
   m_Layer: 0
   m_Name: HoldScissors
   m_TagString: Untagged
@@ -95,12 +94,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ca3ac8e3ee30fa4f97d7e05fa3013b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LeftScissor: {fileID: 6629570554022495003}
-  leftKey: 0
-  RightScissor: {fileID: 3732182517073904533}
-  rightKey: 0
+  leftHand: {fileID: 0}
+  rightHand: {fileID: 0}
+  firstComponent: {fileID: 0}
+  key1: 0
+  secondComponent: {fileID: 0}
+  key2: 0
+  grabberFinger: 1
+  bodyMask:
+    serializedVersion: 2
+    m_Bits: 0
   rotationAmount: -18.744
   activated: 1
+  holdRotationAmount: 2.5
 --- !u!65 &5010108542421634178
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -149,57 +155,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &5391210552448851458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5184600747866129231}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f10fa40360571247a7ca806d6859557, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
-  _ignoreHoverMode: 0
-  _isIgnoringAllHoverState: 0
-  _ignorePrimaryHover: 0
-  _ignoreContact: 0
-  _ignoreGraspingMode: 0
-  _ignoreGrasping: 0
-  _contactForceMode: 0
-  _allowMultiGrasp: 0
-  _moveObjectWhenGrasped: 1
-  graspedMovementType: 1
-  _overrideInteractionLayer: 0
-  _interactionLayer:
-    layerIndex: 0
-  _overrideNoContactLayer: 0
-  _noContactLayer:
-    layerIndex: 0
-  _eventTable:
-    _entries:
-    - enumValue: 140
-      callback:
-        m_PersistentCalls:
-          m_Calls: []
-    - enumValue: 141
-      callback:
-        m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 6798337120967088363}
-            m_TargetAssemblyTypeName: MedicalTool, Assembly-CSharp
-            m_MethodName: DeselectTool
-            m_Mode: 2
-            m_Arguments:
-              m_ObjectArgument: {fileID: 5184600747866129231}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
 --- !u!1001 &3643331761090887808
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -325,18 +280,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44b5b9f5ddee6e44c86e962014eec67b, type: 3}
---- !u!4 &3732182517073904533 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -9131937924057300203, guid: 44b5b9f5ddee6e44c86e962014eec67b, type: 3}
-  m_PrefabInstance: {fileID: 3643331761090887808}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3820476985143322475 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 44b5b9f5ddee6e44c86e962014eec67b, type: 3}
-  m_PrefabInstance: {fileID: 3643331761090887808}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &6629570554022495003 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -1256713590742842469, guid: 44b5b9f5ddee6e44c86e962014eec67b, type: 3}
   m_PrefabInstance: {fileID: 3643331761090887808}
   m_PrefabAsset: {fileID: 0}

@@ -500,7 +500,7 @@ public class ThreadBehaviour : MonoBehaviour
         else if (needleDetector.side == NeedleDetector.Side.LeftDown || needleDetector.side == NeedleDetector.Side.RightDown)
         {
             Debug.Log(needleDetector.side);
-            e.y = needleDetector.pos.y + .0125f; ;
+            //e.y = needleDetector.pos.y + .01f;
         }
 
         //How far each stitching has to be from each other
@@ -766,7 +766,7 @@ public class ThreadBehaviour : MonoBehaviour
         for(int i = 0; i < rope.elements.Count; i++)
         {
             Gizmos.color = Color.black;
-            Gizmos.DrawSphere(rope.GetParticlePosition(rope.elements[i].particle1), 0.005f);
+            Gizmos.DrawSphere(rope.GetParticlePosition(rope.elements[i].particle1), 0.0025f);
         }
     }
 }

@@ -230,13 +230,13 @@ public class GameManager : MonoBehaviour
             return null;
         }
 
-        if (Vector3.Distance(pos.position, GameManager.instance.leftPalm.position) < 0.075f + offset)
+        if (Vector3.Distance(pos.position, GameManager.instance.leftPalm.position) < 0.05f + offset)
         {
             isLeft = true;
             return GameManager.instance.leftPalm;
         }
 
-        else if (Vector3.Distance(pos.position, GameManager.instance.rightPalm.position) < 0.075f + offset)
+        else if (Vector3.Distance(pos.position, GameManager.instance.rightPalm.position) < 0.05f + offset)
         {   
             isLeft = false;
             return GameManager.instance.rightPalm;

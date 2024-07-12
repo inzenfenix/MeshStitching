@@ -251,6 +251,8 @@ public class MedicalTool : MonoBehaviour
                 }
 
                 selectedThisTool = false;
+
+                isHandLeft = false;
                 
                 DeselectTool();
                 rb.velocity = Vector3.zero;
@@ -261,7 +263,7 @@ public class MedicalTool : MonoBehaviour
             return;
         }
 
-        if (IsCurrentHandOccupied(isLeft))
+        if (IsCurrentHandOccupied(isHandLeft))
         {
             return;
         }
@@ -287,6 +289,8 @@ public class MedicalTool : MonoBehaviour
                 {
                     GameManager.grabbingToolRightHand = false;
                 }
+
+                isHandLeft = false;
 
             }
 
