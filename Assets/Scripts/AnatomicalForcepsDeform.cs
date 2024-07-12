@@ -99,7 +99,7 @@ public class AnatomicalForcepsDeform : MedicalTool
             return key1;
         }
 
-        float value = GameManager.NovaFingerDistance(0, 1, isLeft) * 11 - .09f;
+        float value = GameManager.NovaFingerDistance(0, 1, isLeft) * 11 - .08f;
         return Mathf.Clamp(value, 0f, 1f);
     }
 

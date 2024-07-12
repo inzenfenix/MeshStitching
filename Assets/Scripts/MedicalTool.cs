@@ -202,7 +202,7 @@ public class MedicalTool : MonoBehaviour
 
         Vector3 newPos = (currentPosOffset + currentHand.PalmPosition);
 
-        Collider[] nearbyColliders = Physics.OverlapSphere(newPos, 0.01f, bodyMask);
+        Collider[] nearbyColliders = Physics.OverlapSphere(newPos, 0.0075f, bodyMask);
 
         if (nearbyColliders.Length > 0)
         {
@@ -214,7 +214,7 @@ public class MedicalTool : MonoBehaviour
 
         foreach(Collider collider in nearbyColliders2)
         {
-            if(currentHand.PalmPosition.y < collider.transform.position.y + .1f)
+            if(currentHand.PalmPosition.y < collider.transform.position.y + .05f)
             {
                 newPos.y = transform.position.y;
                 //return;
@@ -263,13 +263,18 @@ public class MedicalTool : MonoBehaviour
             return;
         }
 
-        if (IsCurrentHandOccupied(isHandLeft))
+        if (IsCurrentHandOccupied(isLeft))
+        {
+            return;
+        }
+
+        if (IsCurrentHandOccupied(isHandLeft) && selectedThisTool)
         {
             return;
         }
 
 
-        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .8625d)
+        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .855d)
         {
             if (selectedThisTool)
             {
@@ -332,7 +337,7 @@ public class MedicalTool : MonoBehaviour
 
         Vector3 newPos = (currentPosOffset + currentHand.position);
 
-        Collider[] nearbyColliders = Physics.OverlapSphere(newPos, 0.01f, bodyMask);
+        Collider[] nearbyColliders = Physics.OverlapSphere(newPos, 0.0075f, bodyMask);
 
         if (nearbyColliders.Length > 0)
         {
@@ -340,11 +345,11 @@ public class MedicalTool : MonoBehaviour
             //return;
         }
 
-        Collider[] nearbyColliders2 = Physics.OverlapSphere(newPos, 1f, bodyMask);
+        Collider[] nearbyColliders2 = Physics.OverlapSphere(newPos, .05f, bodyMask);
 
         foreach (Collider collider in nearbyColliders2)
         {
-            if (currentHand.position.y < collider.transform.position.y + .1f)
+            if (currentHand.position.y < collider.transform.position.y + .05f)
             {
                 newPos.y = transform.position.y;
                 //return;

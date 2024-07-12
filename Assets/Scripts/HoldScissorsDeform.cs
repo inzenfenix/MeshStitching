@@ -81,7 +81,7 @@ public class HoldScissorsDeform : MedicalTool
         }
 
         //Formula to obtain a value between 0 and 1 from the distance between the middle finger and the thumb
-        float value = currentHand.GetFingerPinchDistance(2) * 11 - 0.45f;
+        float value = currentHand.GetFingerPinchDistance(2) * 11 - 0.4f;
 
         return Mathf.Clamp(value, 0f, 1f);
     }
@@ -101,7 +101,7 @@ public class HoldScissorsDeform : MedicalTool
         }
 
 
-        float value = GameManager.NovaFingerDistance(0, 3, isLeft) * 20 - .8f;
+        float value = GameManager.NovaFingerDistance(0, 2, isLeft) * 22 - .8f;
         Debug.Log(value);
 
         return Mathf.Clamp(value, 0f, 1f);

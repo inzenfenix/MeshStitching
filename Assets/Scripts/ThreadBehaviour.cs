@@ -494,7 +494,7 @@ public class ThreadBehaviour : MonoBehaviour
         if (needleDetector.side != NeedleDetector.Side.LeftDown && needleDetector.side != NeedleDetector.Side.RightDown)
         {
             Debug.Log(needleDetector.side);
-            e.y = needleDetector.pos.y + .01f;
+            e.y = needleDetector.pos.y + .0075f;
         }
 
         else if (needleDetector.side == NeedleDetector.Side.LeftDown || needleDetector.side == NeedleDetector.Side.RightDown)
@@ -504,7 +504,7 @@ public class ThreadBehaviour : MonoBehaviour
         }
 
         //How far each stitching has to be from each other
-        float stitchThreshold = .06f;
+        float stitchThreshold = .02f;
 
         for (int i = 0; i < stitchAttachments.Count; i++)
         {

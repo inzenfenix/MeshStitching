@@ -17,6 +17,6 @@ MonoBehaviour:
   stickiness: 0
   stickDistance: 0
   frictionCombine: 0
-  stickinessCombine: 0
+  stickinessCombine: 1
   rollingContacts: 0
   rollingFriction: 0
