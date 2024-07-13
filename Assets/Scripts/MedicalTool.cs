@@ -140,7 +140,7 @@ public class MedicalTool : MonoBehaviour
             return;
         }
 
-        if (currentHand.GetFingerStrength(4) <= .15d)
+        if (currentHand.GetFingerStrength(4) <= .1425d)
         {
             if (selectedThisTool)
             {

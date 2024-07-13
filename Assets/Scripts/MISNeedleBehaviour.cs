@@ -158,7 +158,7 @@ public class MISNeedleBehaviour : MedicalTool
 
             float magnitude = Mathf.Clamp(toolRb.velocity.magnitude + toolRb.angularVelocity.magnitude, 0, .5f);
 
-            suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, 200f * -magnitude * Time.deltaTime * direction);
+            suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, 400f * -magnitude * Time.deltaTime * direction);
 
             return;
         }
