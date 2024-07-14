@@ -55,13 +55,13 @@ public class AnatomicalForcepsDeform : MedicalTool
         firstComponent.localRotation = Quaternion.Slerp(goalRotation1, originalRotation1, key1);
         secondComponent.localRotation = Quaternion.Slerp(goalRotation2, originalRotation2, key2);
 
-        if (key1 <= 0.4f && key2 <= 0.4f && !forcepsJoined)
+        if (key1 <= 0.2f && key2 <= 0.2f && !forcepsJoined)
         {
             forcepsJoined = true;
             OnForcepsJoin?.Invoke(this, EventArgs.Empty);
         }
 
-        if (key1 > 0.7f && key2 > 0.7f && forcepsJoined)
+        if (key1 > 0.4f && key2 > 0.4f && forcepsJoined)
         {
             forcepsJoined = false;
             OnForcepsSeparate?.Invoke(this, EventArgs.Empty);

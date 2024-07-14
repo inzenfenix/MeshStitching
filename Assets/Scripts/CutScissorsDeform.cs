@@ -45,13 +45,13 @@ public class CutScissorsDeform : MedicalTool
         firstComponent.localRotation = Quaternion.Slerp(originalRotation1, goalRotation1, key1);
         secondComponent.localRotation = Quaternion.Slerp(originalRotation2, goalRotation2, key2);
 
-        if (key1 > 0.55f && key2 > 0.55f && scissorsJoined)
+        if (key1 > 0.4f && key2 > 0.4f && scissorsJoined)
         {
             scissorsJoined = false;
             OnScissorsSeparate?.Invoke(this, EventArgs.Empty);
         }
 
-        if (key1 <= 0.25f && key2 <= 0.25f && !scissorsJoined)
+        if (key1 <= 0.2f && key2 <= 0.2f && !scissorsJoined)
         {
             scissorsJoined = true;
             OnScissorsJoin?.Invoke(this, EventArgs.Empty);

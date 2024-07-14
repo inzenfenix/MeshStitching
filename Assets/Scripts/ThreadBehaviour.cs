@@ -112,7 +112,7 @@ public class ThreadBehaviour : MonoBehaviour
 
                 Vector3 particlePos = rope.solver.positions[stitchAttachments[0].particleGroup.particleIndices[0]];
 
-                finishingTransform.position = particlePos + Vector3.up * 0.2f;
+                finishingTransform.position = particlePos + Vector3.up * 0.04f;
 
                 finishingAttachment = rope.solver.actors[0].AddComponent<ObiParticleAttachment>();
 
@@ -357,8 +357,6 @@ public class ThreadBehaviour : MonoBehaviour
         {
             for (int i = 3; i < rope.elements.Count - 3; i++)
             {
-                rope.solver.invMasses[i] = 0.1f;
-
                 int particle1 = rope.elements[i].particle1;
                 int particle2 = rope.elements[i].particle2;
 
@@ -408,6 +406,20 @@ public class ThreadBehaviour : MonoBehaviour
             }
 
             ChangeParticleColliders(i, true);
+        }
+
+        for (int i = stitchAttachments[stitchAttachments.Count - 1].particleGroup.particleIndices[0]; i < stitchAttachments[0].particleGroup.particleIndices[0]; i++)
+        {
+            //In the case that we are at the start or end of the thread, we want this particles to not have any
+            //Physical interaction and have them always with the default properties
+            if (i > rope.elements.Count - 3 || i < 3)
+            {
+                int maskDefault = 0;
+                rope.solver.filters[i] = ObiUtils.MakeFilter(maskDefault, 10);
+                continue;
+            }
+
+            ChangeParticleColliders(i, false);
         }
     }
 
