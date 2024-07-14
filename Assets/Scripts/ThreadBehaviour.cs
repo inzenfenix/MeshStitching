@@ -374,7 +374,7 @@ public class ThreadBehaviour : MonoBehaviour
         {
             if (stitchAttachments.Count > 1)
             {
-                if (rope.solver.positions[i].y > 0.202f && i > 3 && i < rope.elements.Count - 3)
+                if (rope.solver.positions[i].y > 0.208f && i > 3 && i < rope.elements.Count - 3)
                 {
                     ChangeParticleColliders(i, true);
                     continue;
@@ -504,7 +504,7 @@ public class ThreadBehaviour : MonoBehaviour
         }
 
         //How far each stitching has to be from each other
-        float stitchThreshold = .015f;
+        float stitchThreshold = .01f;
 
         for (int i = 0; i < stitchAttachments.Count; i++)
         {
