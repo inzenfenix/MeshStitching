@@ -41,6 +41,8 @@ public class ThreadBehaviour : MonoBehaviour
 
     private bool startedFinishingSuturing;
 
+    [SerializeField] private Transform hidingBlock;
+
     private void Awake()
     {
         cursor = GetComponent<ObiRopeCursor>();
@@ -112,7 +114,7 @@ public class ThreadBehaviour : MonoBehaviour
 
                 Vector3 particlePos = rope.solver.positions[stitchAttachments[0].particleGroup.particleIndices[0]];
 
-                finishingTransform.position = particlePos + Vector3.up * 0.04f;
+                finishingTransform.position = particlePos + Vector3.up * 0.075f;
 
                 finishingAttachment = rope.solver.actors[0].AddComponent<ObiParticleAttachment>();
 
@@ -131,7 +133,7 @@ public class ThreadBehaviour : MonoBehaviour
             {
                 Vector3 particlePos = rope.solver.positions[stitchAttachments[0].particleGroup.particleIndices[0]];
 
-                finishingTransform.position = particlePos + Vector3.up * 0.2f;
+                finishingTransform.position = particlePos + Vector3.up * 0.075f;
 
                 var particleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
                 rope.solver.positions[particle] = finishingTransform.position;
@@ -190,7 +192,7 @@ public class ThreadBehaviour : MonoBehaviour
         if (!startedFinishingSuturing)
         {
             UpdateStichAttachments();
-            ChangeInBetweenParticlesProperties();
+            //ChangeInBetweenParticlesProperties();
         }
     }
 
@@ -200,7 +202,7 @@ public class ThreadBehaviour : MonoBehaviour
         //If no stitch attachment, the length needed to unstretch the thread goes back to default
         if (stitchAttachments.Count <= 0)
         {
-            stitchStretchThreshold = ThreadLength() + stitchStretchThresholdOffset * .1f;
+            stitchStretchThreshold = ThreadLength() + stitchStretchThresholdOffset * .5f;
             return;
         }
 
@@ -372,7 +374,7 @@ public class ThreadBehaviour : MonoBehaviour
         {
             if (stitchAttachments.Count > 1)
             {
-                if (rope.solver.positions[i].y > 0.208f && i > 3 && i < rope.elements.Count - 3)
+                if (rope.solver.positions[i].y > hidingBlock.position.y && i > 3 && i < rope.elements.Count - 3)
                 {
                     ChangeParticleColliders(i, true);
                     continue;

@@ -357,7 +357,7 @@ public class MedicalTool : MonoBehaviour
         }
 
         rb.MovePosition(newPos);
-        rb.MoveRotation(currentHand.rotation * currentRotOffset);
+        rb.MoveRotation(currentHand.rotation);
     }
 
     public void SelectTool()

@@ -19,4 +19,4 @@ MonoBehaviour:
   frictionCombine: 0
   stickinessCombine: 1
   rollingContacts: 1
-  rollingFriction: 0.05
+  rollingFriction: 0.025
