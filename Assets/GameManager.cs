@@ -85,6 +85,9 @@ public class GameManager : MonoBehaviour
         else if(isNovaGloveOrQuest)
             NovaGlove();
 
+        leftHookPoint.rotation = leftPalm.rotation;
+        rightHookPoint.rotation = rightPalm.rotation;
+
     }
 
     private void OnEnable()

@@ -90,6 +90,8 @@ public class ThreadBehaviour : MonoBehaviour
         NeedleDetector.onNeedleEnter -= NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
 
+        CutScissorsBehaviour.onCutRope -= CutScissorsBehaviour_onCutRope;
+
         FinishMeshButton.OnButtonTouchedFinish -= FinishMeshButton_OnButtonTouched;
     }
 
@@ -721,9 +723,10 @@ public class ThreadBehaviour : MonoBehaviour
         for(int i = 0; i < rope.elements.Count; i++)
         {
             particle = rope.elements[i].particle1;
+
             Vector3 particlePos = rope.GetParticlePosition(particle);
 
-            float minDistance = 0.06f;
+            float minDistance = 0.01f;
 
             if(Vector3.Distance(particlePos, cutPosition) < minDistance)
             {

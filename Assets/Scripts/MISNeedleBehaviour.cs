@@ -34,6 +34,8 @@ public class MISNeedleBehaviour : MedicalTool
 
     private bool selectedNeedle = true;
 
+    private bool grabbedByHands = false;
+
 
     protected override void Awake()
     {
@@ -46,28 +48,30 @@ public class MISNeedleBehaviour : MedicalTool
     { 
         NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
         NeedleDetector.onNeedleEnter += NeedleDetector_onNeedleEnter;
-        NeedleDetector.onNeedleMidEnter += NeedleDetector_onNeedleMidEnter;
-        NeedleDetector.onNeedleMidExit += NeedleDetector_onNeedleMidExit;
 
         AnatomicalForcepsBehaviour.onHookedRope += OnHookedNeedle;
         AnatomicalForcepsBehaviour.onUnhookedRope += OnUnhookedNeedle;
 
         HoldScissorsBehaviour.onHookedRope += OnHookedNeedle;
         HoldScissorsBehaviour.onUnhookedRope += OnUnhookedNeedle;
+
+        GameManager.onHookedRope += GameManager_onHookedRope;
+        GameManager.onUnhookedRope += GameManager_onUnhookedRope;
     }
 
     private void OnDisable()
     {
         NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
         NeedleDetector.onNeedleEnter -= NeedleDetector_onNeedleEnter;
-        NeedleDetector.onNeedleMidEnter -= NeedleDetector_onNeedleMidEnter;
-        NeedleDetector.onNeedleMidExit -= NeedleDetector_onNeedleMidExit;
 
         AnatomicalForcepsBehaviour.onHookedRope -= OnHookedNeedle;
         AnatomicalForcepsBehaviour.onUnhookedRope -= OnUnhookedNeedle;
 
         HoldScissorsBehaviour.onHookedRope -= OnHookedNeedle;
         HoldScissorsBehaviour.onUnhookedRope -= OnUnhookedNeedle;
+
+        GameManager.onHookedRope -= GameManager_onHookedRope;
+        GameManager.onUnhookedRope -= GameManager_onUnhookedRope;
     }
 
     protected override void Update()
@@ -94,11 +98,18 @@ public class MISNeedleBehaviour : MedicalTool
             //UsingLeapMotion();
         }
 
+        if(grabbedByHands)
+        {
+            rb.MoveRotation(currentParent.rotation * rotOffset);
+            rb.MovePosition(posOffset + currentParent.position);
+            return;
+        }
+
         if (isNeedleInserted > 0)
         {
             if(!startedSuturing)
             {
-                
+
                 startedSuturing = true;
                 currentParent = suturingTransform;
                 transform.parent = suturingTransform;
@@ -111,56 +122,10 @@ public class MISNeedleBehaviour : MedicalTool
 
             if (currentTool == null) return;
 
-            float forcepsDistanceThreshold = .05f;
-            bool isTooFar = true;
-
-            for (int i = 0; i < forcepsHookPoints.Length; i++)
-            {
-                if (Vector3.Distance(forcepsHookPoints[i].position, currentTool.position) < forcepsDistanceThreshold)
-                {
-                    isTooFar = false;
-                    break;
-                }
-            }
-
-            if (isTooFar)
-            {
-                OnUnhookedNeedle(isTooFar, currentTool);
-                return;
-            }
-
-            Transform tool = currentTool;
-            Rigidbody toolRb = tool.GetComponent<HookPointBehaviour>().GetRb();
-
-            if (toolRb == null) return;
-
-            float direction = 1;
-
-            if (toolRb.velocity.magnitude < 0.0000001f && toolRb.velocity.magnitude > -0.0000001f) return;
-
-            if(suturingTransform.rotation.eulerAngles.z < 147)
-            {
-                if(toolRb.velocity.y < 0 && toolRb.name.Contains("Hold"))
-                {
-                    return;
-                }
-
-                else if (toolRb.velocity.y < 0 && toolRb.name.Contains("Forceps"))
-                {
-                    return;
-                }
-            }
-
-            else if (toolRb.velocity.y > 0 && toolRb.name.Contains("Hold"))
+            if (SuturingMovement())
             {
                 return;
             }
-
-            float magnitude = Mathf.Clamp(toolRb.velocity.magnitude + toolRb.angularVelocity.magnitude, 0, .5f);
-
-            suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, 400f * -magnitude * Time.deltaTime * direction);
-
-            return;
         }
 
         if(isNeedleInserted == 0 && startedSuturing)
@@ -244,9 +209,112 @@ public class MISNeedleBehaviour : MedicalTool
     }
 
 
+    private bool SuturingMovement()
+    {
+        float forcepsDistanceThreshold = .05f;
+        bool isTooFar = true;
+
+        for (int i = 0; i < forcepsHookPoints.Length; i++)
+        {
+            if (Vector3.Distance(forcepsHookPoints[i].position, currentTool.position) < forcepsDistanceThreshold)
+            {
+                isTooFar = false;
+                break;
+            }
+        }
+
+        if (isTooFar)
+        {
+            OnUnhookedNeedle(isTooFar, currentTool);
+            return true;
+        }
+
+        Transform tool = currentTool;
+        Rigidbody toolRb = tool.GetComponent<HookPointBehaviour>().GetRb();
+
+        if (toolRb == null) return true;
+
+        float direction = 1;
+
+        if (toolRb.velocity.magnitude < 0.0000001f && toolRb.velocity.magnitude > -0.0000001f) return true;
+
+        if (suturingTransform.rotation.eulerAngles.z < 147)
+        {
+            if (toolRb.velocity.y < 0 && toolRb.name.Contains("Hold"))
+            {
+                return true;
+            }
+
+            else if (toolRb.velocity.y < 0 && toolRb.name.Contains("Forceps"))
+            {
+                return true;
+            }
+        }
+
+        else if (toolRb.velocity.y > 0 && toolRb.name.Contains("Hold"))
+        {
+            return true;
+        }
+
+        float magnitude = Mathf.Clamp(toolRb.velocity.magnitude + toolRb.angularVelocity.magnitude, 0, .5f);
+
+        suturingTransform.RotateAround(suturingTransform.position, suturingTransform.up, 400f * -magnitude * Time.deltaTime * direction);
+
+        return true;
+    }
+
+    private void GameManager_onHookedRope(object sender, Transform e)
+    {
+        if (isNeedleInserted > 0) return;
+
+        float handsDistanceThreshold = .025f;
+        Vector3 selectedHookPoint = new Vector3(int.MinValue, int.MinValue, int.MinValue);
+
+        for (int i = 0; i < forcepsHookPoints.Length; i++)
+        {
+            if (Vector3.Distance(forcepsHookPoints[i].position, e.position) < handsDistanceThreshold)
+            {
+                selectedHookPoint = forcepsHookPoints[i].position;
+                break;
+            }
+        }
+
+        if (selectedHookPoint == new Vector3(int.MinValue, int.MinValue, int.MinValue))
+        {
+            return;
+        }
+
+        selectedNeedle = true;
+
+        posOffset = transform.position - e.position;
+        rotOffset = Quaternion.Inverse(e.rotation) * transform.rotation;
+
+        currentParent = e;
+        grabbedByHands = true;
+
+        rb.velocity = Vector3.zero;
+    }
+
+    private void GameManager_onUnhookedRope(object sender, Transform e)
+    {
+        if (isNeedleInserted > 0) return;
+
+        if(!grabbedByHands) return;
+
+        selectedNeedle = false;
+        currentParent = null;
+        grabbedByHands = false;
+
+        rb.velocity = Vector3.zero;
+    }
+
     private void NeedleDetector_onNeedleEnter(object sender, Vector3 e)
     {
         if (currentParent == null) return;
+
+        if (currentTool == null) return;
+
+        if (grabbedByHands) grabbedByHands = false;
 
         if (!startedSuturing)
         {
@@ -276,31 +344,6 @@ public class MISNeedleBehaviour : MedicalTool
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        //Debug.Log(collision.gameObject);
-    }
-
-    private void NeedleDetector_onNeedleMidEnter(object sender, Collider e)
-    {
-        if(isNeedleInserted == 0)
-        {
-            return;
-        }
-
-        //SetTriggerOnOff(e, true);
-    }
-
-    private void NeedleDetector_onNeedleMidExit(object sender, Collider e)
-    {
-        if(isNeedleInserted == 0)
-        {
-            return;
-        }
-
-        //SetTriggerOnOff(e, false);
-    }
-
     private void SetTriggerOnOff(Collider collider, bool enabled)
     {
         collider.isTrigger = enabled;
@@ -309,6 +352,7 @@ public class MISNeedleBehaviour : MedicalTool
     //If we want to grab the needle with the forceps
     private void OnHookedNeedle(object sender, Transform forceps)
     {
+
         float forcepsDistanceThreshold = .04f;
         Vector3 selectedHookPoint = new Vector3(int.MinValue, int.MinValue, int.MinValue);
 
@@ -327,6 +371,12 @@ public class MISNeedleBehaviour : MedicalTool
             return;
         }
 
+        if (grabbedByHands)
+        {
+            currentParent = null;
+            grabbedByHands = false;
+        }
+
         currentTool = forceps;
 
         if (isNeedleInserted <= 0)
@@ -338,6 +388,8 @@ public class MISNeedleBehaviour : MedicalTool
             rb.velocity = Vector3.zero;
             //this.transform.parent = forceps;
         }
+
+        
     }
 
     private void OnUnhookedNeedle(object sender, Transform forceps)
