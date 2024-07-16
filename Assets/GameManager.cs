@@ -101,12 +101,12 @@ public class GameManager : MonoBehaviour
 
     private void FinishMeshButton_OnButtonTouchedIncrease(object sender, EventArgs e)
     {
-        cameraRig.localScale += Vector3.up * 7f * Time.deltaTime;
+        cameraRig.position += Vector3.up * 5f * Time.deltaTime;
     }
 
     private void FinishMeshButton_OnButtonTouchedDecrease(object sender, EventArgs e)
     {
-        cameraRig.localScale -= Vector3.up * 7f * Time.deltaTime;
+        cameraRig.position -= Vector3.up * 5f * Time.deltaTime;
     }
 
     
