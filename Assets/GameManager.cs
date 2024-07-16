@@ -91,12 +91,16 @@ public class GameManager : MonoBehaviour
     {
         FinishMeshButton.OnButtonTouchedDecrease += FinishMeshButton_OnButtonTouchedDecrease;
         FinishMeshButton.OnButtonTouchedIncrease += FinishMeshButton_OnButtonTouchedIncrease;
+        FinishMeshButton.OnButtonResetGame += FinishMeshButton_OnButtonResetGame;
     }
+
+    
 
     private void OnDisable()
     {
         FinishMeshButton.OnButtonTouchedDecrease -= FinishMeshButton_OnButtonTouchedDecrease;
         FinishMeshButton.OnButtonTouchedIncrease -= FinishMeshButton_OnButtonTouchedIncrease;
+        FinishMeshButton.OnButtonResetGame -= FinishMeshButton_OnButtonResetGame;
     }
 
     private void FinishMeshButton_OnButtonTouchedIncrease(object sender, EventArgs e)
@@ -109,7 +113,12 @@ public class GameManager : MonoBehaviour
         cameraRig.position -= Vector3.up * 5f * Time.deltaTime;
     }
 
-    
+    private void FinishMeshButton_OnButtonResetGame(object sender, EventArgs e)
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+
 
     private void LeapMotion()
     {

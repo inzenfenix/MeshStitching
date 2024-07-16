@@ -9,6 +9,7 @@ public enum OptionsButton
     finish,
     increaseHeight,
     decreaseHeight,
+    resetGame
 };
 
 public class FinishMeshButton : MonoBehaviour
@@ -18,6 +19,8 @@ public class FinishMeshButton : MonoBehaviour
     public static event EventHandler OnButtonTouchedIncrease;
 
     public static event EventHandler OnButtonTouchedDecrease;
+
+    public static event EventHandler OnButtonResetGame;
 
 
     private float delay;
@@ -69,6 +72,9 @@ public class FinishMeshButton : MonoBehaviour
                 break;
             case OptionsButton.decreaseHeight:
                 OnButtonTouchedDecrease?.Invoke(this, EventArgs.Empty);
+                break;
+            case OptionsButton.resetGame:
+                OnButtonResetGame?.Invoke(this, EventArgs.Empty);
                 break;
             default:
                 break;
