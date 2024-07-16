@@ -4,11 +4,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using Leap.Unity;
 
+public enum OptionsButton
+{
+    finish,
+    increaseHeight,
+    decreaseHeight,
+};
+
 public class FinishMeshButton : MonoBehaviour
 {
-    public static event EventHandler OnButtonTouched;
+    public static event EventHandler OnButtonTouchedFinish;
+
+    public static event EventHandler OnButtonTouchedIncrease;
+
+    public static event EventHandler OnButtonTouchedDecrease;
+
 
     private float delay;
+
+    [SerializeField] private OptionsButton buttonOptions;
 
     private void Update()
     {
@@ -28,7 +42,7 @@ public class FinishMeshButton : MonoBehaviour
             }
         }
 
-        else if(GameManager.instance.isNovaGlove)
+        else if(GameManager.instance.isNovaGloveOrQuest)
         {
             Transform pos = GameManager.NovaPalmNearby(transform, 0.1f,out bool isLeft);
 
@@ -44,7 +58,22 @@ public class FinishMeshButton : MonoBehaviour
         }
 
         delay = 2.5f;
-        OnButtonTouched?.Invoke(this, EventArgs.Empty);
+
+        switch(buttonOptions)
+        {
+            case OptionsButton.finish:
+                OnButtonTouchedFinish?.Invoke(this, EventArgs.Empty);
+                break;
+            case OptionsButton.increaseHeight:
+                OnButtonTouchedIncrease?.Invoke(this, EventArgs.Empty);
+                break;
+            case OptionsButton.decreaseHeight:
+                OnButtonTouchedDecrease?.Invoke(this, EventArgs.Empty);
+                break;
+            default:
+                break;
+        }
+        
     }
 
     Leap.Hand ClosestHand()

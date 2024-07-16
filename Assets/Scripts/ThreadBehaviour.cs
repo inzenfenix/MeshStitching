@@ -73,7 +73,7 @@ public class ThreadBehaviour : MonoBehaviour
         //Scissors event to know if the thread has been cut
         CutScissorsBehaviour.onCutRope += CutScissorsBehaviour_onCutRope;
 
-        FinishMeshButton.OnButtonTouched += FinishMeshButton_OnButtonTouched;
+        FinishMeshButton.OnButtonTouchedFinish += FinishMeshButton_OnButtonTouched;
     }
 
     private void OnDisable()
@@ -90,7 +90,7 @@ public class ThreadBehaviour : MonoBehaviour
         NeedleDetector.onNeedleEnter -= NeedleDetector_onNeedleEnter;
         NeedleDetector.onNeedleExit -= NeedleDetector_onNeedleExit;
 
-        FinishMeshButton.OnButtonTouched -= FinishMeshButton_OnButtonTouched;
+        FinishMeshButton.OnButtonTouchedFinish -= FinishMeshButton_OnButtonTouched;
     }
 
     private void FinishMeshButton_OnButtonTouched(object sender, System.EventArgs e)

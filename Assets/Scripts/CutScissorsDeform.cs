@@ -36,7 +36,7 @@ public class CutScissorsDeform : MedicalTool
             key1 = key2 = WithLeapMotion();
         }
 
-        else if(GameManager.instance.isNovaGlove)
+        else if(GameManager.instance.isNovaGloveOrQuest)
         {
             key1 = key2 = WithNovaGloves();
         }

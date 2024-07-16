@@ -73,7 +73,7 @@ public class MedicalTool : MonoBehaviour
             UsingLeapMotion();
         }
 
-        else if(GameManager.instance.isNovaGlove)
+        else if(GameManager.instance.isNovaGloveOrQuest)
         {
             UsingNovaGloves();
         }
@@ -398,7 +398,7 @@ public class MedicalTool : MonoBehaviour
             }
         }
 
-        if (GameManager.instance.isNovaGlove)
+        if (GameManager.instance.isNovaGloveOrQuest)
         {
             if(isHandLeft)
             {

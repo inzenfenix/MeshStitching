@@ -33,14 +33,18 @@ public class GameManager : MonoBehaviour
 
     [Header("\nCurrent controller")]
     public bool isLeapMotion = false;
-    public bool isNovaGlove = false;
+    public bool isNovaGloveOrQuest = false;
 
-    [Header("\nNova transforms")]
+    [Header("\nNova/Quest transforms")]
     public Transform[] leftFingerTips;
     public Transform[] rightFingerTips;
 
+    [Header("\nNova/Quest palms")]
     public Transform leftPalm;
     public Transform rightPalm;
+
+    [Header("\nQuest VR Rig Camera")]
+    [SerializeField] private Transform cameraRig;
 
 
     private void Start()
@@ -78,10 +82,34 @@ public class GameManager : MonoBehaviour
         if(isLeapMotion)
             LeapMotion();
 
-        else if(isNovaGlove)
+        else if(isNovaGloveOrQuest)
             NovaGlove();
 
     }
+
+    private void OnEnable()
+    {
+        FinishMeshButton.OnButtonTouchedDecrease += FinishMeshButton_OnButtonTouchedDecrease;
+        FinishMeshButton.OnButtonTouchedIncrease += FinishMeshButton_OnButtonTouchedIncrease;
+    }
+
+    private void OnDisable()
+    {
+        FinishMeshButton.OnButtonTouchedDecrease -= FinishMeshButton_OnButtonTouchedDecrease;
+        FinishMeshButton.OnButtonTouchedIncrease -= FinishMeshButton_OnButtonTouchedIncrease;
+    }
+
+    private void FinishMeshButton_OnButtonTouchedIncrease(object sender, EventArgs e)
+    {
+        cameraRig.localScale += Vector3.up * 7f * Time.deltaTime;
+    }
+
+    private void FinishMeshButton_OnButtonTouchedDecrease(object sender, EventArgs e)
+    {
+        cameraRig.localScale -= Vector3.up * 7f * Time.deltaTime;
+    }
+
+    
 
     private void LeapMotion()
     {
@@ -176,7 +204,7 @@ public class GameManager : MonoBehaviour
 
     public static float NovaFingerDistance(int finger, int finger2, bool isLeft)
     {
-        if (!GameManager.instance.isNovaGlove)
+        if (!GameManager.instance.isNovaGloveOrQuest)
             return -1;
 
         if(finger < 0 || finger > 4 || finger2 < 0 ||finger2 > 4)
@@ -191,7 +219,7 @@ public class GameManager : MonoBehaviour
 
     public static float GetNovaFingerStrength(int finger, bool isLeft)
     {
-        if (!GameManager.instance.isNovaGlove)
+        if (!GameManager.instance.isNovaGloveOrQuest)
             return -1;
 
         if (finger < 0 || finger > 4)
@@ -212,7 +240,7 @@ public class GameManager : MonoBehaviour
 
     public static float NovaPalmDistance(Transform pos, bool isLeft)
     {
-        if (!GameManager.instance.isNovaGlove)
+        if (!GameManager.instance.isNovaGloveOrQuest)
             return -1;
 
         if (isLeft)
@@ -224,7 +252,7 @@ public class GameManager : MonoBehaviour
 
     public static Transform NovaPalmNearby(Transform pos,  out bool isLeft, float offset = 0)
     {
-        if (!GameManager.instance.isNovaGlove)
+        if (!GameManager.instance.isNovaGloveOrQuest)
         {
             isLeft = false;
             return null;
@@ -248,7 +276,7 @@ public class GameManager : MonoBehaviour
 
     public static Transform NovaPalmNearby(Transform pos, float radius, out bool isLeft)
     {
-        if (!GameManager.instance.isNovaGlove)
+        if (!GameManager.instance.isNovaGloveOrQuest)
         {
             isLeft = false;
             return null;
