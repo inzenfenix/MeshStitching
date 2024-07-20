@@ -41,7 +41,7 @@ public class ThreadBehaviour : MonoBehaviour
 
     private bool startedFinishingSuturing;
 
-    [SerializeField] private Transform hidingBlock;
+    [SerializeField] private Transform bodyHeight;
 
     private void Awake()
     {
@@ -376,7 +376,7 @@ public class ThreadBehaviour : MonoBehaviour
         {
             if (stitchAttachments.Count > 1)
             {
-                if (rope.solver.positions[i].y > hidingBlock.position.y && i > 3 && i < rope.elements.Count - 3)
+                if (rope.solver.positions[i].y > bodyHeight.position.y && i > 3 && i < rope.elements.Count - 3)
                 {
                     ChangeParticleColliders(i, true);
                     continue;
@@ -520,7 +520,7 @@ public class ThreadBehaviour : MonoBehaviour
         }
 
         //How far each stitching has to be from each other
-        float stitchThreshold = .01f;
+        float stitchThreshold = .0075f;
 
         for (int i = 0; i < stitchAttachments.Count; i++)
         {

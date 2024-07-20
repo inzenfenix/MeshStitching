@@ -48,6 +48,8 @@ public class MedicalTool : MonoBehaviour
 
     [SerializeField] protected LayerMask bodyMask;
 
+    [SerializeField] private bool isForceps;
+
     protected virtual void Awake()
     {
         interactor = GetComponent<InteractionBehaviour>();
@@ -231,7 +233,7 @@ public class MedicalTool : MonoBehaviour
 
     public void UsingNovaGloves()
     {
-        Transform currentHand = GameManager.NovaPalmNearby(this.transform, out bool isLeft, currentDistance);
+        Transform currentHand = GameManager.NovaPalmNearby(this.transform, out bool isLeft, currentDistance, isForceps);
 
         if (currentHand == null)
         {
@@ -274,7 +276,7 @@ public class MedicalTool : MonoBehaviour
         }
 
 
-        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .855d)
+        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .922d)
         {
             if (selectedThisTool)
             {
@@ -356,7 +358,7 @@ public class MedicalTool : MonoBehaviour
             }
         }
 
-        rb.MovePosition(newPos);
+        rb.MovePosition(currentHand.position);
         rb.MoveRotation(currentHand.rotation * Quaternion.Euler(0,90,0));
 
     }

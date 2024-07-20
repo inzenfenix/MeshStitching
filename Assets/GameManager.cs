@@ -43,6 +43,10 @@ public class GameManager : MonoBehaviour
     public Transform leftPalm;
     public Transform rightPalm;
 
+    [Header("\nNova/Quest palms for forceps")]
+    public Transform leftPalmForceps;
+    public Transform rightPalmForceps;
+
     [Header("\nQuest VR Rig Camera")]
     [SerializeField] private Transform cameraRig;
 
@@ -63,12 +67,17 @@ public class GameManager : MonoBehaviour
         {
             leftHookPoint = (new GameObject()).transform;
             leftHookPoint.name = "LeftHook";
+            leftHookPoint.position = leftFingerTips[0].position;
+            leftHookPoint.parent = leftFingerTips[0];
+            
         }
 
         if (rightHookPoint == null)
         {
             rightHookPoint = (new GameObject()).transform;
             rightHookPoint.name = "RightHook";
+            rightHookPoint.position = rightFingerTips[0].position;
+            rightHookPoint.parent = rightFingerTips[0];
         }
     }
 
@@ -85,8 +94,8 @@ public class GameManager : MonoBehaviour
         else if(isNovaGloveOrQuest)
             NovaGlove();
 
-        leftHookPoint.rotation = leftPalm.rotation;
-        rightHookPoint.rotation = rightPalm.rotation;
+        //leftHookPoint.rotation = leftPalm.rotation;
+        //rightHookPoint.rotation = rightPalm.rotation;
 
     }
 
@@ -183,7 +192,7 @@ public class GameManager : MonoBehaviour
         //If we are not grabbing anything we check if we should try to grab the thread with the hand
         if (!grabbingToolLeftHand)
         {
-            leftHookPoint.position = leftFingerTips[0].position;
+            //leftHookPoint.position = leftFingerTips[0].position;
 
             if (NovaFingerDistance(0, 1, true) < minPinchDistanceNova && !grabbingWithLeft)
             {
@@ -200,7 +209,7 @@ public class GameManager : MonoBehaviour
         if (!grabbingToolRightHand)
         {
 
-            rightHookPoint.position = rightFingerTips[0].position;
+            //rightHookPoint.position = rightFingerTips[0].position;
 
             if (NovaFingerDistance(0, 1, false) < minPinchDistanceNova && !grabbingWithRight)
             {
@@ -262,7 +271,7 @@ public class GameManager : MonoBehaviour
             return Vector3.Distance(pos.position, GameManager.instance.rightPalm.position);
     }
 
-    public static Transform NovaPalmNearby(Transform pos,  out bool isLeft, float offset = 0)
+    public static Transform NovaPalmNearby(Transform pos,  out bool isLeft, float offset = 0, bool isForceps = false)
     {
         if (!GameManager.instance.isNovaGloveOrQuest)
         {
@@ -273,12 +282,18 @@ public class GameManager : MonoBehaviour
         if (Vector3.Distance(pos.position, GameManager.instance.leftPalm.position) < 0.05f + offset)
         {
             isLeft = true;
+
+            if(isForceps) return GameManager.instance.leftPalmForceps;
+
             return GameManager.instance.leftPalm;
         }
 
         else if (Vector3.Distance(pos.position, GameManager.instance.rightPalm.position) < 0.05f + offset)
         {   
             isLeft = false;
+
+            if (isForceps) return GameManager.instance.rightPalmForceps;
+
             return GameManager.instance.rightPalm;
         }
 
