@@ -271,7 +271,7 @@ public class GameManager : MonoBehaviour
             return Vector3.Distance(pos.position, GameManager.instance.rightPalm.position);
     }
 
-    public static Transform NovaPalmNearby(Transform pos,  out bool isLeft, float offset = 0, bool isForceps = false)
+    public static Transform NovaQuestPalmNearby(Transform pos,  out bool isLeft, float offset = 0, bool isForceps = false)
     {
         if (!GameManager.instance.isNovaGloveOrQuest)
         {
@@ -279,7 +279,7 @@ public class GameManager : MonoBehaviour
             return null;
         }
 
-        if (Vector3.Distance(pos.position, GameManager.instance.leftPalm.position) < 0.05f + offset)
+        if (Vector3.Distance(pos.position, GameManager.instance.leftPalm.position) < 0.025f + offset)
         {
             isLeft = true;
 
@@ -288,7 +288,7 @@ public class GameManager : MonoBehaviour
             return GameManager.instance.leftPalm;
         }
 
-        else if (Vector3.Distance(pos.position, GameManager.instance.rightPalm.position) < 0.05f + offset)
+        else if (Vector3.Distance(pos.position, GameManager.instance.rightPalm.position) < 0.025f + offset)
         {   
             isLeft = false;
 

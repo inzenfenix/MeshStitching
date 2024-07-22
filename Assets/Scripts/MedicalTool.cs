@@ -20,6 +20,9 @@ public class MedicalTool : MonoBehaviour
     [SerializeField] protected CapsuleHand leftHand;
     [SerializeField] protected CapsuleHand rightHand;
 
+    [SerializeField] protected SkinnedMeshRenderer leftHandQuest;
+    [SerializeField] protected SkinnedMeshRenderer rightHandQuest;
+
     [Header("First Part")]
     [SerializeField] protected Transform firstComponent;
 
@@ -55,6 +58,15 @@ public class MedicalTool : MonoBehaviour
         interactor = GetComponent<InteractionBehaviour>();
 
         rb = GetComponent<Rigidbody>();
+    }
+
+    protected void OnEnable()
+    {
+        key1 = key2 = 0;
+        currentDistance = 0;
+        selectedThisTool = false;
+
+        leftHandQuest.enabled = rightHandQuest.enabled = true;
     }
 
     protected virtual void Update()
@@ -233,7 +245,7 @@ public class MedicalTool : MonoBehaviour
 
     public void UsingNovaGloves()
     {
-        Transform currentHand = GameManager.NovaPalmNearby(this.transform, out bool isLeft, currentDistance, isForceps);
+        Transform currentHand = GameManager.NovaQuestPalmNearby(this.transform, out bool isLeft, currentDistance, isForceps);
 
         if (currentHand == null)
         {
@@ -243,11 +255,13 @@ public class MedicalTool : MonoBehaviour
                 if (isHandLeft)
                 {
                     //leftHand.SetMaterialToNormal();
+                    leftHandQuest.enabled = true;
                     GameManager.grabbingToolLeftHand = false;
                 }
 
                 else
                 {
+                    rightHandQuest.enabled = true;
                     //rightHand.SetMaterialToNormal();
                     GameManager.grabbingToolRightHand = false;
                 }
@@ -280,14 +294,17 @@ public class MedicalTool : MonoBehaviour
         {
             if (selectedThisTool)
             {
-                //if (currentHand.IsLeft) leftHand.SetMaterialToNormal();
-                //else rightHand.SetMaterialToNormal();
+                if (isLeft) leftHandQuest.enabled = true;
+                else rightHandQuest.enabled = true;
+
                 selectedThisTool = false;
+
                 rb.velocity = Vector3.zero;
                 currentDistance = 0;
+
                 DeselectTool();
 
-                if (isHandLeft)
+                if (isLeft)
                 {
                     GameManager.grabbingToolLeftHand = false;
                 }
@@ -315,6 +332,7 @@ public class MedicalTool : MonoBehaviour
 
                 GameManager.grabbingToolLeftHand = true;
                 isHandLeft = true;
+                leftHandQuest.enabled = false;
                 //leftHand.SetTransparentHands();
             }
 
@@ -327,6 +345,7 @@ public class MedicalTool : MonoBehaviour
 
                 GameManager.grabbingToolRightHand = true;
                 isHandLeft = false;
+                rightHandQuest.enabled = false;
                 //rightHand.SetTransparentHands();
             }
 

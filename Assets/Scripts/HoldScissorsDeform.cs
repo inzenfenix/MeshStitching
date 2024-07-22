@@ -89,7 +89,7 @@ public class HoldScissorsDeform : MedicalTool
 
     private float WithNovaGloves()
     {
-        Transform currentHand = GameManager.NovaPalmNearby(this.transform, out bool isLeft);
+        Transform currentHand = GameManager.NovaQuestPalmNearby(this.transform, out bool isLeft);
         if (currentHand == null)
         {
             return key1;
