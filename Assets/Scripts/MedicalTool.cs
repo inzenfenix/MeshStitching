@@ -23,6 +23,9 @@ public class MedicalTool : MonoBehaviour
     [SerializeField] protected SkinnedMeshRenderer leftHandQuest;
     [SerializeField] protected SkinnedMeshRenderer rightHandQuest;
 
+    [SerializeField] protected Mesh defLeftHandQuestMesh;
+    [SerializeField] protected Mesh defRightHandQuestMesh;
+
     [Header("First Part")]
     [SerializeField] protected Transform firstComponent;
 

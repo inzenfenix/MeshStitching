@@ -12,11 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a1f07dc5afe854f9f12a4194aca3fb, type: 3}
   m_Name: WebGL
   m_EditorClassIdentifier: 
-  features:
-  - {fileID: -1415033081987392022}
+  features: []
   m_renderMode: 1
   m_depthSubmissionMode: 0
-  m_optimizeBufferDiscards: 0
   m_symmetricProjection: 0
 --- !u!114 &-9093167798883144606
 MonoBehaviour:
@@ -133,10 +131,8 @@ MonoBehaviour:
   - {fileID: 6644876285922370751}
   - {fileID: -525001790469828604}
   - {fileID: -4181969442890769665}
-  - {fileID: 1148070543570870156}
   m_renderMode: 1
   m_depthSubmissionMode: 0
-  m_optimizeBufferDiscards: 0
   m_symmetricProjection: 0
 --- !u!114 &-7612043047463283731
 MonoBehaviour:
@@ -173,9 +169,7 @@ MonoBehaviour:
     enabled: 1
   forceRemoveInternetPermission: 0
   symmetricProjection: 0
-  foveatedRenderingApi: 0
   systemSplashScreen: {fileID: 0}
-  optimizeBufferDiscards: 1
   lateLatchingMode: 0
   lateLatchingDebug: 0
 --- !u!114 &-7499817412611682024
@@ -257,10 +251,8 @@ MonoBehaviour:
   - {fileID: -4148584847185911202}
   - {fileID: -5002254788634167834}
   - {fileID: -2634190565112404663}
-  - {fileID: -4527461622376498675}
   m_renderMode: 1
   m_depthSubmissionMode: 0
-  m_optimizeBufferDiscards: 0
   m_symmetricProjection: 0
 --- !u!114 &-5997817762466845319
 MonoBehaviour:
