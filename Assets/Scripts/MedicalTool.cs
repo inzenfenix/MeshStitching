@@ -394,7 +394,7 @@ public class MedicalTool : MonoBehaviour
 
     private void UsingQuestControllers()
     {
-        Transform currentHand = GameManager.QuestControllerNearby(this.transform, out bool isLeft, currentDistance, isForceps);
+        Transform currentHand = GameManager.QuestControllerNearby(this.transform, out bool isLeft, currentDistance, isForceps, selectedThisTool, isHandLeft);
 
         if (currentHand == null)
         {
@@ -427,6 +427,14 @@ public class MedicalTool : MonoBehaviour
 
             return;
         }
+
+        if (isLeft && GameManager.instance.grabbingWithLeft && selectedTools[0] != this.gameObject) return;
+
+        if (!isLeft && GameManager.instance.grabbingWithRight && selectedTools[1] != this.gameObject) return;
+
+        if (selectedThisTool && isHandLeft && !isLeft) return;
+
+        if (selectedThisTool && !isHandLeft && isLeft) return;
 
         if (IsCurrentHandOccupied(isLeft))
         {
@@ -573,7 +581,7 @@ public class MedicalTool : MonoBehaviour
             }
         }
 
-        if (GameManager.instance.isNovaGloveOrQuest)
+        if (GameManager.instance.isNovaGloveOrQuest || GameManager.instance.isQuestControllers)
         {
             if(isHandLeft)
             {

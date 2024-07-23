@@ -116,7 +116,7 @@ public class HoldScissorsDeform : MedicalTool
 
     private float WithQuestControllers()
     {
-        Transform currentHand = GameManager.QuestControllerNearby(this.transform, out bool isLeft);
+        Transform currentHand = GameManager.QuestControllerNearby(this.transform, out bool isLeft, 0, false, selectedThisTool, isHandLeft);
         if (currentHand == null)
         {
             return key1;

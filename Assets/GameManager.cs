@@ -369,7 +369,7 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    public static Transform QuestControllerNearby(Transform pos, out bool isLeft, float offset = 0, bool isForceps = false)
+    public static Transform QuestControllerNearby(Transform pos, out bool isLeft, float offset = 0, bool isForceps = false, bool isToolSelected = false, bool isHandLeft = false)
     {
         if (!GameManager.instance.isQuestControllers)
         {
@@ -377,18 +377,46 @@ public class GameManager : MonoBehaviour
             return null;
         }
 
-        if (Vector3.Distance(pos.position, GameManager.instance.leftController.position) < 0.05f + offset)
+        if (isToolSelected)
         {
-            isLeft = true;
+            if (Vector3.Distance(pos.position, GameManager.instance.leftController.position) < 0.05f + offset && isHandLeft)
+            {
+                isLeft = true;
 
-            return GameManager.instance.leftController;
+                if (GameManager.instance.grabbingWithLeft) return null;
+
+                return GameManager.instance.leftController;
+            }
+
+            else if (Vector3.Distance(pos.position, GameManager.instance.rightController.position) < 0.05f + offset && !isHandLeft)
+            {
+                isLeft = false;
+
+                if (GameManager.instance.grabbingWithRight) return null;
+
+                return GameManager.instance.rightController;
+            }
         }
 
-        else if (Vector3.Distance(pos.position, GameManager.instance.rightController.position) < 0.05f + offset)
+        else
         {
-            isLeft = false;
+            if (Vector3.Distance(pos.position, GameManager.instance.leftController.position) < 0.05f + offset)
+            {
+                isLeft = true;
 
-            return GameManager.instance.rightController;
+                if (GameManager.instance.grabbingWithLeft) return null;
+
+                return GameManager.instance.leftController;
+            }
+
+            else if (Vector3.Distance(pos.position, GameManager.instance.rightController.position) < 0.05f + offset)
+            {
+                isLeft = false;
+
+                if (GameManager.instance.grabbingWithRight) return null;
+
+                return GameManager.instance.rightController;
+            }
         }
 
         isLeft = false;

@@ -284,6 +284,16 @@ public class MISNeedleBehaviour : MedicalTool
             return;
         }
 
+        if(e.name.ToLower().Contains("left"))
+        {
+            GameManager.instance.grabbingWithLeft = true;
+        }
+
+        if (e.name.ToLower().Contains("right"))
+        {
+            GameManager.instance.grabbingWithRight = true;
+        }
+
         selectedNeedle = true;
 
         posOffset = transform.position - e.position;
@@ -300,6 +310,16 @@ public class MISNeedleBehaviour : MedicalTool
         if (isNeedleInserted > 0) return;
 
         if(!grabbedByHands) return;
+
+        if (e.name.ToLower().Contains("left"))
+        {
+            GameManager.instance.grabbingWithLeft = false;
+        }
+
+        if (e.name.ToLower().Contains("right"))
+        {
+            GameManager.instance.grabbingWithRight = false;
+        }
 
         selectedNeedle = false;
         currentParent = null;
