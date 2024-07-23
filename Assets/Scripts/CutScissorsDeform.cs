@@ -31,6 +31,8 @@ public class CutScissorsDeform : MedicalTool
     {
         base.Update();
 
+        if (!selectedThisTool) return;
+
         if (GameManager.instance.isLeapMotion)
         {
             key1 = key2 = WithLeapMotion();
@@ -39,6 +41,11 @@ public class CutScissorsDeform : MedicalTool
         else if(GameManager.instance.isNovaGloveOrQuest)
         {
             key1 = key2 = WithNovaGloves();
+        }
+
+        else if (GameManager.instance.isQuestControllers)
+        {
+            key1 = key2 = WithQuestControllers();
         }
 
         //Moves the tool on its axis of rotation, if it passes the threshold then the tool's system activates
@@ -92,5 +99,21 @@ public class CutScissorsDeform : MedicalTool
 
         float value = GameManager.NovaFingerDistance(0, 3, isLeft) * 20 - .8f;
         return Mathf.Clamp(value, 0f, 1f);
+    }
+
+    private float WithQuestControllers()
+    {
+        Transform currentHand = GameManager.QuestControllerNearby(this.transform, out bool isLeft);
+        if (currentHand == null)
+        {
+            return key1;
+        }
+
+        if (IsCurrentHandOccupied(isLeft))
+        {
+            return key1;
+        }
+
+        return isLeft ? 1 - OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) : 1 - OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger);
     }
 }

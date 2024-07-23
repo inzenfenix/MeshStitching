@@ -44,7 +44,7 @@ public class MISNeedleBehaviour : MedicalTool
         selectedNeedle = true;
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     { 
         NeedleDetector.onNeedleExit += NeedleDetector_onNeedleExit;
         NeedleDetector.onNeedleEnter += NeedleDetector_onNeedleEnter;

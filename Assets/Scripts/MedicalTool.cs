@@ -63,7 +63,7 @@ public class MedicalTool : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    protected void OnEnable()
+    protected virtual void OnEnable()
     {
         key1 = key2 = 0;
         currentDistance = 0;
@@ -94,7 +94,14 @@ public class MedicalTool : MonoBehaviour
         {
             UsingNovaGloves();
         }
+
+        else if(GameManager.instance.isQuestControllers)
+        {
+            UsingQuestControllers();
+        }
     }
+
+    
 
     public void UsingLeapMotion()
     {
@@ -293,7 +300,7 @@ public class MedicalTool : MonoBehaviour
         }
 
 
-        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .922d)
+        if (GameManager.GetNovaFingerStrength(grabberFinger, isLeft) <= .915d)
         {
             if (selectedThisTool)
             {
@@ -383,6 +390,149 @@ public class MedicalTool : MonoBehaviour
         rb.MovePosition(currentHand.position);
         rb.MoveRotation(currentHand.rotation * Quaternion.Euler(0,90,0));
 
+    }
+
+    private void UsingQuestControllers()
+    {
+        Transform currentHand = GameManager.QuestControllerNearby(this.transform, out bool isLeft, currentDistance, isForceps);
+
+        if (currentHand == null)
+        {
+            if (selectedThisTool)
+            {
+
+                if (isHandLeft)
+                {
+                    //leftHand.SetMaterialToNormal();
+                    //leftHandQuest.enabled = true;
+                    GameManager.grabbingToolLeftHand = false;
+                }
+
+                else
+                {
+                    //rightHandQuest.enabled = true;
+                    //rightHand.SetMaterialToNormal();
+                    GameManager.grabbingToolRightHand = false;
+                }
+
+                selectedThisTool = false;
+
+                isHandLeft = false;
+
+                DeselectTool();
+                rb.velocity = Vector3.zero;
+                currentDistance = 0;
+
+            }
+
+            return;
+        }
+
+        if (IsCurrentHandOccupied(isLeft))
+        {
+            return;
+        }
+
+        if (IsCurrentHandOccupied(isHandLeft) && selectedThisTool)
+        {
+            return;
+        }
+
+        bool unclippedToController = false;
+
+        if (isLeft && !OVRInput.Get(OVRInput.Button.PrimaryHandTrigger)) unclippedToController = true;
+        else if (!isLeft && !OVRInput.Get(OVRInput.Button.SecondaryHandTrigger)) unclippedToController = true;
+
+
+        if (unclippedToController)
+        {
+            if (selectedThisTool)
+            {
+                //if (isLeft) leftHandQuest.enabled = true;
+                //else rightHandQuest.enabled = true;
+
+                selectedThisTool = false;
+
+                rb.velocity = Vector3.zero;
+                currentDistance = 0;
+
+                DeselectTool();
+
+                if (isLeft)
+                {
+                    GameManager.grabbingToolLeftHand = false;
+                }
+
+                else
+                {
+                    GameManager.grabbingToolRightHand = false;
+                }
+
+                isHandLeft = false;
+
+            }
+
+            return;
+        }
+
+        if (!selectedThisTool)
+        {
+            if (isLeft)
+            {
+                if (GameManager.instance.grabbingWithLeft)
+                {
+                    return;
+                }
+
+                GameManager.grabbingToolLeftHand = true;
+                isHandLeft = true;
+                //leftHandQuest.enabled = false;
+                //leftHand.SetTransparentHands();
+            }
+
+            else
+            {
+                if (GameManager.instance.grabbingWithRight)
+                {
+                    return;
+                }
+
+                GameManager.grabbingToolRightHand = true;
+                isHandLeft = false;
+                //rightHandQuest.enabled = false;
+                //rightHand.SetTransparentHands();
+            }
+
+            SelectTool();
+            selectedThisTool = true;
+            currentPosOffset = transform.position - currentHand.position;
+            currentDistance = Vector3.Distance(transform.position, currentHand.position);
+            currentRotOffset = Quaternion.Inverse(currentHand.rotation) * transform.rotation;
+        }
+
+        Vector3 newPos = (currentPosOffset + currentHand.position);
+
+        Collider[] nearbyColliders = Physics.OverlapSphere(newPos, 0.0075f, bodyMask);
+
+        if (nearbyColliders.Length > 0)
+        {
+            newPos.y = transform.position.y;
+            //return;
+        }
+
+        Collider[] nearbyColliders2 = Physics.OverlapSphere(newPos, .05f, bodyMask);
+
+        foreach (Collider collider in nearbyColliders2)
+        {
+            if (currentHand.position.y < collider.transform.position.y + .05f)
+            {
+                newPos.y = transform.position.y;
+                //return;
+            }
+        }
+
+        rb.MovePosition(currentHand.position);
+        rb.MoveRotation(currentHand.rotation);
     }
 
     public void SelectTool()

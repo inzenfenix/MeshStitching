@@ -5,6 +5,7 @@ using UnityEngine;
 using Leap;
 using System;
 using UnityEngine.SceneManagement;
+using Meta.WitAi.Attributes;
 
 public class GameManager : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
     [Header("\nCurrent controller")]
     public bool isLeapMotion = false;
     public bool isNovaGloveOrQuest = false;
+    public bool isQuestControllers = false;
 
     [Header("\nNova/Quest transforms")]
     public Transform[] leftFingerTips;
@@ -49,6 +51,10 @@ public class GameManager : MonoBehaviour
 
     [Header("\nQuest VR Rig Camera")]
     [SerializeField] private Transform cameraRig;
+
+    [Header("\nQuest controllers")]
+    public Transform leftController;
+    public Transform rightController;
 
 
     private void Start()
@@ -67,8 +73,17 @@ public class GameManager : MonoBehaviour
         {
             leftHookPoint = (new GameObject()).transform;
             leftHookPoint.name = "LeftHook";
-            leftHookPoint.position = leftFingerTips[0].position;
-            leftHookPoint.parent = leftFingerTips[0];
+            if (isNovaGloveOrQuest)
+            {
+                leftHookPoint.position = leftFingerTips[0].position;
+                leftHookPoint.parent = leftFingerTips[0];
+            }
+            
+            else if(isQuestControllers)
+            {
+                leftHookPoint.position = leftController.position;
+                leftHookPoint.parent = leftController.parent;
+            }
             
         }
 
@@ -76,8 +91,18 @@ public class GameManager : MonoBehaviour
         {
             rightHookPoint = (new GameObject()).transform;
             rightHookPoint.name = "RightHook";
-            rightHookPoint.position = rightFingerTips[0].position;
-            rightHookPoint.parent = rightFingerTips[0];
+
+            if (isNovaGloveOrQuest)
+            {
+                rightHookPoint.position = rightFingerTips[0].position;
+                rightHookPoint.parent = rightFingerTips[0];
+            }
+
+            else if (isQuestControllers)
+            {
+                rightHookPoint.position = rightController.position;
+                rightHookPoint.parent = rightController.parent;
+            }
         }
     }
 
@@ -88,14 +113,22 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
-        if(isLeapMotion)
+        if (isLeapMotion)
             LeapMotion();
 
-        else if(isNovaGloveOrQuest)
-            NovaGlove();
+        else if (isNovaGloveOrQuest)
+            NovaGloveOrQuestHands();
+
+        else if (isQuestControllers)
+            QuestControllers();
 
         //leftHookPoint.rotation = leftPalm.rotation;
         //rightHookPoint.rotation = rightPalm.rotation;
+
+        //if(OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger))
+            //Debug.Log("Trigger activated");
+
+        //Debug.Log(OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger));
 
     }
 
@@ -187,7 +220,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void NovaGlove()
+    private void NovaGloveOrQuestHands()
     {
         //If we are not grabbing anything we check if we should try to grab the thread with the hand
         if (!grabbingToolLeftHand)
@@ -217,6 +250,41 @@ public class GameManager : MonoBehaviour
             }
 
             else if (NovaFingerDistance(0, 1, false) > minPinchDistanceNova && grabbingWithRight)
+            {
+                onUnhookedRope?.Invoke(this, rightHookPoint);
+            }
+        }
+    }
+
+    private void QuestControllers()
+    {
+        if (!grabbingToolLeftHand)
+        {
+            //leftHookPoint.position = leftFingerTips[0].position;
+
+            if (OVRInput.Get(OVRInput.Button.PrimaryHandTrigger) && !grabbingWithLeft)
+            {
+                onHookedRope?.Invoke(this, leftHookPoint);
+            }
+
+            else if (!OVRInput.Get(OVRInput.Button.PrimaryHandTrigger) && grabbingWithLeft)
+            {
+                onUnhookedRope?.Invoke(this, leftHookPoint);
+            }
+        }
+
+        //We try the same with the right hand
+        if (!grabbingToolRightHand)
+        {
+
+            //rightHookPoint.position = rightFingerTips[0].position;
+
+            if (OVRInput.Get(OVRInput.Button.SecondaryHandTrigger) && !grabbingWithRight)
+            {
+                onHookedRope?.Invoke(this, rightHookPoint);
+            }
+
+            else if (!OVRInput.Get(OVRInput.Button.SecondaryHandTrigger) && grabbingWithRight)
             {
                 onUnhookedRope?.Invoke(this, rightHookPoint);
             }
@@ -301,7 +369,33 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    public static Transform NovaPalmNearby(Transform pos, float radius, out bool isLeft)
+    public static Transform QuestControllerNearby(Transform pos, out bool isLeft, float offset = 0, bool isForceps = false)
+    {
+        if (!GameManager.instance.isQuestControllers)
+        {
+            isLeft = false;
+            return null;
+        }
+
+        if (Vector3.Distance(pos.position, GameManager.instance.leftController.position) < 0.05f + offset)
+        {
+            isLeft = true;
+
+            return GameManager.instance.leftController;
+        }
+
+        else if (Vector3.Distance(pos.position, GameManager.instance.rightController.position) < 0.05f + offset)
+        {
+            isLeft = false;
+
+            return GameManager.instance.rightController;
+        }
+
+        isLeft = false;
+        return null;
+    }
+
+    public static Transform NovaPalmNearbyRadius(Transform pos, float radius, out bool isLeft)
     {
         if (!GameManager.instance.isNovaGloveOrQuest)
         {
@@ -319,6 +413,30 @@ public class GameManager : MonoBehaviour
         {
             isLeft = false;
             return GameManager.instance.rightPalm;
+        }
+
+        isLeft = false;
+        return null;
+    }
+
+    public static Transform QuestControllerNearbyRadius(Transform pos, float radius, out bool isLeft)
+    {
+        if (!GameManager.instance.isQuestControllers)
+        {
+            isLeft = false;
+            return null;
+        }
+
+        if (Vector3.Distance(pos.position, GameManager.instance.leftController.position) < radius)
+        {
+            isLeft = true;
+            return GameManager.instance.leftController;
+        }
+
+        else if (Vector3.Distance(pos.position, GameManager.instance.rightController.position) < radius)
+        {
+            isLeft = false;
+            return GameManager.instance.rightController;
         }
 
         isLeft = false;
