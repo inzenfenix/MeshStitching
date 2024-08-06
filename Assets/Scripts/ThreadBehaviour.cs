@@ -718,20 +718,24 @@ public class ThreadBehaviour : MonoBehaviour
     private void CutRope(Vector3 cutPosition)
     {
         bool cut = false;
-        int particle = 0;
+        int particle1 = 0;
+        int particle2 = 0;
 
-        for(int i = 0; i < rope.elements.Count; i++)
+        for (int i = 0; i < rope.elements.Count; i++)
         {
-            particle = rope.elements[i].particle1;
+            particle1 = rope.elements[i].particle1;
+            particle2 = rope.elements[i].particle2;
 
-            Vector3 particlePos = rope.GetParticlePosition(particle);
+            Vector3 particlePos1 = rope.GetParticlePosition(particle1);
+            Vector3 particlePos2 = rope.GetParticlePosition(particle2);
 
-            float minDistance = 0.01f;
+            float minDistance = 0.0075f;
 
-            if(Vector3.Distance(particlePos, cutPosition) < minDistance)
+            if(Vector3.Distance(particlePos1, cutPosition) < minDistance || Vector3.Distance(particlePos2, cutPosition) < minDistance)
             {
                 rope.Tear(rope.elements[i]);
-                particle = i + 3;
+                particle1 += 3;
+                particle2 += 3;
                 cut = true;
                 break;
             }
@@ -743,8 +747,8 @@ public class ThreadBehaviour : MonoBehaviour
             rope.RebuildConstraintsFromElements();
             if(stitchAttachments.Count > 0)
             {
-                if(particle - 5 > stitchAttachments[0].particleGroup.particleIndices[0])
-                    lastParticle = particle - 5;
+                if(particle1 - 5 > stitchAttachments[0].particleGroup.particleIndices[0])
+                    lastParticle = particle1 - 5;
             }
                 
 
@@ -752,7 +756,7 @@ public class ThreadBehaviour : MonoBehaviour
             {
                 Vector3 upPos = Vector3.up * 1000f;
 
-                rope.solver.positions[particle] = upPos;
+                rope.solver.positions[particle1] = upPos;
 
                 Transform hook = (new GameObject()).transform;
                 hook.position = upPos;
@@ -763,7 +767,7 @@ public class ThreadBehaviour : MonoBehaviour
 
                 var particleGroup = ScriptableObject.CreateInstance<ObiParticleGroup>();
 
-                particleGroup.particleIndices.Add(particle);
+                particleGroup.particleIndices.Add(particle1);
 
                 curAttachment.particleGroup = particleGroup;
                 curAttachment.target = hook;

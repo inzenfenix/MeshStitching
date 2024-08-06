@@ -123,7 +123,7 @@ public class AnatomicalForcepsDeform : MedicalTool
             return key1;
         }
 
-        return isLeft ? 1 - OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) : 1 - OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger);
+        return isLeft ? 1 - OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger) : 1 - OVRInput.Get(OVRInput.Axis1D.SecondaryHandTrigger);
     }
 
     public override void DeselectTool()

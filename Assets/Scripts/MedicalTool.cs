@@ -448,8 +448,11 @@ public class MedicalTool : MonoBehaviour
 
         bool unclippedToController = false;
 
-        if (isLeft && !OVRInput.Get(OVRInput.Button.PrimaryHandTrigger)) unclippedToController = true;
-        else if (!isLeft && !OVRInput.Get(OVRInput.Button.SecondaryHandTrigger)) unclippedToController = true;
+        if (isLeft && !OVRInput.Get(OVRInput.Button.PrimaryHandTrigger) && !name.Contains("Forceps")) unclippedToController = true;
+        else if (!isLeft && !OVRInput.Get(OVRInput.Button.SecondaryHandTrigger) && !name.Contains("Forceps")) unclippedToController = true;
+
+        else if (isLeft && !OVRInput.Get(OVRInput.Button.Three) && name.Contains("Forceps")) unclippedToController = true;
+        else if (!isLeft && !OVRInput.Get(OVRInput.Button.One) && name.Contains("Forceps")) unclippedToController = true;
 
 
         if (unclippedToController)
